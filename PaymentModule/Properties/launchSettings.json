@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PaymentModule (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "PaymentModule (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
