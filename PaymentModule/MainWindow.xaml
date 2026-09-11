@@ -21,7 +21,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ==== ВЕРХ: место для надписей ==== -->
+        <!--надписи-->
         <StackPanel Grid.Row="0" Spacing="4">
             <TextBlock Text="Платежный модуль" FontSize="28" FontWeight="Bold"/>
             <StackPanel Spacing="10" Orientation="Horizontal">
@@ -48,11 +48,11 @@
                      SelectionChanged="NavList_SelectionChanged">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Margin" Value="5" />
-                        <Setter Property="Background" Value="CadetBlue" />
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="Background" Value="DarkCyan"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
-                <ListBoxItem Content="Перевод на другой счёт"/>
+                <ListBoxItem Content="Перевод на другой счёт" CornerRadius="10"/>
                 <ListBoxItem Content="Перевод в другую валюту"/>
                 <ListBoxItem Content="Пополнение"/>
                 <ListBoxItem Content="Снятие"/>
@@ -64,21 +64,21 @@
                 <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed">
                     <TextBox x:Name="accountFrom" Header="Номер счёта откуда перевести" PlaceholderText="Введите значение"/>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Pre1" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum1Pre1" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum1Pre1Text" Text="Введи чтото"/>
                     </StackPanel>
                     <TextBox x:Name="accountTo" Header="Номер счёта куда перевести" PlaceholderText="Введите значение"/>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Pre2" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum1Pre2" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum1Pre2Text" Text="Ты ничо не ввел"/>
                     </StackPanel>
                     <TextBox x:Name="amountToPay" Header="Сумма перевода" PlaceholderText="Введите сумму" />
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Pre3" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"
+                        <Rectangle x:Name="Colum1Pre3" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum1Pre3Text" Text="Ты опять ничо не ввел"/>
                     </StackPanel>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Post1" Width="20" Height="20" Fill="Gray" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum1Post1" Width="20" Height="20" Fill="Gray" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum1Post1Text" Text="вроде должна гореть красным если ты нищ и не смог перевести"/>
                     </StackPanel>
 
@@ -90,10 +90,10 @@
                 <StackPanel x:Name="Panel2" Spacing="12" Visibility="Collapsed">
                     <TextBox x:Name="accountExchange" Header="Номер счёта" PlaceholderText="Введите значение"/>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum2Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum2Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum2Pre1Text" Text="Pre чтото должно быть"/>
                     </StackPanel>
-                    <ComboBox Header="Валюта" SelectedIndex="0">
+                    <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="0">
                         <ComboBoxItem Content="Российский рубль"/>
                         <ComboBoxItem Content="Евро"/>
                         <ComboBoxItem Content="Доллар"/>
@@ -101,7 +101,7 @@
                         <ComboBoxItem Content="ъ"/>
                     </ComboBox>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum2Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum2Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum2Post1Text" Text="Post чтото должно быть"/>
                     </StackPanel>
                     <Button Content="конвертировать" HorizontalAlignment="Left"/>
@@ -112,16 +112,16 @@
                 <StackPanel x:Name="Panel3" Spacing="12" Visibility="Collapsed">
                     <TextBox x:Name="accountBalance" Header="Номер счёта" PlaceholderText="Введите значение"/>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum3Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum3Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum3Pre1Text" Text="хз"/>
                     </StackPanel>
                     <TextBox x:Name="balance" Header="Сумма" PlaceholderText="Введите значение"/>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum2Pre2"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum2Pre2"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum2Pre2Text" Text="Pre"/>
                     </StackPanel>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum3Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum3Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum3Post1Text" Text="Post"/>
                     </StackPanel>
                     <Button Content="Разбогатеть" HorizontalAlignment="Left"/>
@@ -132,16 +132,16 @@
                 <StackPanel x:Name="Panel4" Spacing="12" Visibility="Collapsed">
                     <TextBox x:Name="withDrawAccount" Header="Номер счёта" PlaceholderText="Введите значение"/>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum4Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum4Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum4Pre1Text" Text="Pre"/>
                     </StackPanel>
                     <TextBox x:Name="withDrawMoney" Header="Сумма" PlaceholderText="Введите значение"/>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum4Pre2"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum4Pre2"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum4Pre2Text" Text="Pre"/>
                     </StackPanel>
                     <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum4Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum4Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
                         <TextBlock x:Name="Colum4Post1Text" Text="Post"/>
                     </StackPanel>
                     <Button Content="Снять" HorizontalAlignment="Left"/>
