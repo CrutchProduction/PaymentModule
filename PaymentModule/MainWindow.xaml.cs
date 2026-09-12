@@ -34,6 +34,12 @@ namespace PaymentModule
             Panel2.Visibility = Visibility.Collapsed;
             Panel3.Visibility = Visibility.Collapsed;
             Panel4.Visibility = Visibility.Collapsed;
+            //скрываем контракты
+            contract1.Visibility = Visibility.Collapsed;
+            contract2.Visibility = Visibility.Collapsed;
+            contract3.Visibility = Visibility.Collapsed;
+            contract4.Visibility = Visibility.Collapsed;
+
 
             //показываем
             switch (NavList.SelectedIndex)
@@ -43,6 +49,70 @@ namespace PaymentModule
                 case 2: Panel3.Visibility = Visibility.Visible; break;
                 case 3: Panel4.Visibility = Visibility.Visible; break;
             }
+        }
+
+        private void contract1_Click(object sender, RoutedEventArgs e)
+        {
+            //показываем контракт       
+            contract1.Visibility = Visibility.Visible;
+            //скрываем текущую панель  
+            Panel1.Visibility = Visibility.Collapsed;
+        }
+
+        private void hideContract1_Click(object sender, RoutedEventArgs e)
+        {
+            //скрываем контракт        
+            contract1.Visibility = Visibility.Collapsed;
+            //показываем текущую панель
+            Panel1.Visibility = Visibility.Visible;
+        }
+
+        private void contract2_Click(object sender, RoutedEventArgs e)
+        {
+            //показываем контракт      
+            contract2.Visibility = Visibility.Visible;
+            //скрываем текущую панель  
+            Panel2.Visibility = Visibility.Collapsed;
+        }
+
+        private void hideContract2_Click(object sender, RoutedEventArgs e)
+        {
+            //скрываем контракт        
+            contract2.Visibility = Visibility.Collapsed;
+            //показываем текущую панель
+            Panel2.Visibility = Visibility.Visible;
+        }
+
+        private void contract3_Click(object sender, RoutedEventArgs e)
+        {
+            //показываем контракт      
+            contract3.Visibility = Visibility.Visible;
+            //скрываем текущую панель  
+            Panel3.Visibility = Visibility.Collapsed;
+        }
+
+        private void hideContract3_Click(object sender, RoutedEventArgs e)
+        {
+            //скрываем контракт        
+            contract3.Visibility = Visibility.Collapsed;
+            //показываем текущую панель
+            Panel3.Visibility = Visibility.Visible;
+        }
+
+        private void contract4_Click(object sender, RoutedEventArgs e)
+        {
+            //показываем контракт      
+            contract4.Visibility = Visibility.Visible;
+            //скрываем текущую панель  
+            Panel4.Visibility = Visibility.Collapsed;
+        }
+
+        private void hideContract4_Click(object sender, RoutedEventArgs e)
+        {
+            //скрываем контракт        
+            contract4.Visibility = Visibility.Collapsed;
+            //показываем текущую панель
+            Panel4.Visibility = Visibility.Visible;
         }
     }
 }

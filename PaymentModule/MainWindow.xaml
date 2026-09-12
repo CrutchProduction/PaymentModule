@@ -83,7 +83,7 @@
                     </StackPanel>
 
                     <Button Content="Попрощаться со своими деньгами" HorizontalAlignment="Left"/>
-                    <Button Content="Показать контракт (не СВО)" HorizontalAlignment="Left"/>
+                    <Button x:Name="cotract1" Content="Показать контракт (не СВО)" HorizontalAlignment="Left" Click="contract1_Click"/>
                 </StackPanel>
 
                 <!--панель2-->
@@ -105,7 +105,7 @@
                         <TextBlock x:Name="Colum2Post1Text" Text="Post чтото должно быть"/>
                     </StackPanel>
                     <Button Content="конвертировать" HorizontalAlignment="Left"/>
-                    <Button Content="Контракт (не Штурм)" HorizontalAlignment="Left"/>
+                    <Button x:Name="cotract2" Content="Контракт (не Штурм)" HorizontalAlignment="Left" Click="contract2_Click"/>
                 </StackPanel>
 
                 <!-- панель3 -->
@@ -125,7 +125,7 @@
                         <TextBlock x:Name="Colum3Post1Text" Text="Post"/>
                     </StackPanel>
                     <Button Content="Разбогатеть" HorizontalAlignment="Left"/>
-                    <Button Content="Показать контракт" HorizontalAlignment="Left"/>
+                    <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click"/>
                 </StackPanel>
 
                 <!--панель4-->
@@ -145,9 +145,33 @@
                         <TextBlock x:Name="Colum4Post1Text" Text="Post"/>
                     </StackPanel>
                     <Button Content="Снять" HorizontalAlignment="Left"/>
-                    <Button Content="Показать контракт" HorizontalAlignment="Left"/>
+                    <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click"/>
                 </StackPanel>
 
+            </Grid>
+
+            <!--Панель для показа контракта-->
+            <Grid Grid.Column="1">
+                <!--контракт 1-->
+                <StackPanel x:Name="contract1" Spacing="12" Visibility="Collapsed" Background="Black">
+                    <TextBlock Text="еще не придумал 1"/>
+                    <Button x:Name="hideContract1" Content="Скрыть контракт" Click="hideContract1_Click"/>
+                </StackPanel>
+                 <!--контракт 2-->
+                <StackPanel x:Name="contract2" Spacing="12" Visibility="Collapsed" Background="Black">
+                    <TextBlock Text="еще не придумал 2"/>
+                    <Button x:Name="hideContract2" Content="Скрыть контракт" Click="hideContract2_Click"/>
+                </StackPanel>
+                <!--контракт 3-->
+                <StackPanel x:Name="contract3" Spacing="12" Visibility="Collapsed" Background="Black">
+                    <TextBlock Text="еще не придумал 3"/>
+                    <Button x:Name="hideContract3" Content="Скрыть контракт" Click="hideContract3_Click"/>
+                </StackPanel>
+                <!--контракт 4-->
+                <StackPanel x:Name="contract4" Spacing="12" Visibility="Collapsed" Background="Black">
+                    <TextBlock Text="еще не придумал 4"/>
+                    <Button x:Name="hideContract4" Content="Скрыть контракт" Click="hideContract4_Click"/>
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>
