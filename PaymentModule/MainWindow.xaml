@@ -15,7 +15,7 @@
 
     <Grid Padding="20" RowSpacing="16">
         <Grid.RowDefinitions>
-            <!-- Верхняя область для надписей -->
+            <!--верхняя область-->
             <RowDefinition Height="Auto"/>
             <!-- Основная область: слева список, справа контент -->
             <RowDefinition Height="*"/>
@@ -30,16 +30,16 @@
                 <TextBlock x:Name="amount" Text="67" FontSize="20"/>
                 <TextBlock x:Name="exchange" Text="Руб." FontSize="20"/>
             </StackPanel>
-            
-            
         </StackPanel>
 
         <Grid Grid.Row="1" ColumnSpacing="16">
             <Grid.ColumnDefinitions>
                 <!--список-->
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="300"/>
                 <!--панель-->
                 <ColumnDefinition Width="*"/>
+                <!--контракт-->
+                <ColumnDefinition Width="0" x:Name="panelContract"/>
             </Grid.ColumnDefinitions>
 
             <!--listbox-->
@@ -50,9 +50,10 @@
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Margin" Value="5"/>
                         <Setter Property="Background" Value="DarkCyan"/>
+                        <Setter Property="FontSize" Value="20"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
-                <ListBoxItem Content="Перевод на другой счёт" CornerRadius="10"/>
+                <ListBoxItem Content="Перевод на другой счёт"/>
                 <ListBoxItem Content="Перевод в другую валюту"/>
                 <ListBoxItem Content="Пополнение"/>
                 <ListBoxItem Content="Снятие"/>
@@ -60,118 +61,325 @@
 
             <Grid Grid.Column="1">
 
+                <Grid.Resources>
+                    <!-- Для TextBlock (он не Control) -->
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                    <!-- Для всех Control (Button, TextBox, CheckBox и т.д.) -->
+                    <Style TargetType="Button">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                </Grid.Resources>
+
                 <!--панель1-->
+                
                 <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed">
-                    <TextBox x:Name="accountFrom" Header="Номер счёта откуда перевести" PlaceholderText="Введите значение"/>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Pre1" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum1Pre1Text" Text="Введи чтото"/>
-                    </StackPanel>
-                    <TextBox x:Name="accountTo" Header="Номер счёта куда перевести" PlaceholderText="Введите значение"/>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Pre2" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum1Pre2Text" Text="Ты ничо не ввел"/>
-                    </StackPanel>
-                    <TextBox x:Name="amountToPay" Header="Сумма перевода" PlaceholderText="Введите сумму" />
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Pre3" Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum1Pre3Text" Text="Ты опять ничо не ввел"/>
-                    </StackPanel>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum1Post1" Width="20" Height="20" Fill="Gray" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum1Post1Text" Text="вроде должна гореть красным если ты нищ и не смог перевести"/>
+                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0" TextWrapping="Wrap"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="accountFrom" Grid.Column="0"
+                             PlaceholderText="Введите значение"
+                             HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                        <Rectangle x:Name="Colum1Pre1" Grid.Column="1"
+                           Width="40" Height="40" Fill="Red"
+                           RadiusY="6" RadiusX="6" Margin="5"/>
+
+                    </Grid>
+                    <TextBlock Text="Номер счёта куда перевести" TextWrapping="Wrap"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="accountTo" Grid.Column="0" PlaceholderText="Введите значение" TextWrapping="Wrap"/>
+                        <Rectangle x:Name="Colum1Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red"  RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+
+                    <TextBlock Text="Сумма перевода" TextWrapping="Wrap"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="amountToPay" Grid.Column="0" PlaceholderText="Введите сумму" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                        <Rectangle x:Name="Colum1Pre3" Grid.Column="1" Width="40" Height="40" Fill="Red" RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+
+
+                    <Grid Padding="0, 40, 0, 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Content="Попрощаться со своими деньгами" Grid.Column="0"/>
+                        <Rectangle x:Name="Colum1Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" RadiusY="6" RadiusX="6" Margin="5" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal">
+                        
                     </StackPanel>
 
-                    <Button Content="Попрощаться со своими деньгами" HorizontalAlignment="Left"/>
                     <Button x:Name="cotract1" Content="Показать контракт (не СВО)" HorizontalAlignment="Left" Click="contract1_Click"/>
                 </StackPanel>
 
                 <!--панель2-->
                 <StackPanel x:Name="Panel2" Spacing="12" Visibility="Collapsed">
-                    <TextBox x:Name="accountExchange" Header="Номер счёта" PlaceholderText="Введите значение"/>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum2Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum2Pre1Text" Text="Pre чтото должно быть"/>
-                    </StackPanel>
-                    <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="0">
+                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="accountExchange" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
+                        <Rectangle x:Name="Colum2Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red"  RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+
+                    
+                    <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="0" CornerRadius="10">
                         <ComboBoxItem Content="Российский рубль"/>
                         <ComboBoxItem Content="Евро"/>
                         <ComboBoxItem Content="Доллар"/>
                         <ComboBoxItem Content="Юань" />
                         <ComboBoxItem Content="ъ"/>
                     </ComboBox>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum2Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum2Post1Text" Text="Post чтото должно быть"/>
-                    </StackPanel>
-                    <Button Content="конвертировать" HorizontalAlignment="Left"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Grid.Column="1" x:Name="Colum2Post1"  Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="6" RadiusX="6" Margin="5"/>
+                        <Button Grid.Column="0" Content="конвертировать" HorizontalAlignment="Left"/>
+                    </Grid>
+
                     <Button x:Name="cotract2" Content="Контракт (не Штурм)" HorizontalAlignment="Left" Click="contract2_Click"/>
                 </StackPanel>
 
                 <!-- панель3 -->
                 <StackPanel x:Name="Panel3" Spacing="12" Visibility="Collapsed">
-                    <TextBox x:Name="accountBalance" Header="Номер счёта" PlaceholderText="Введите значение"/>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum3Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum3Pre1Text" Text="хз"/>
-                    </StackPanel>
-                    <TextBox x:Name="balance" Header="Сумма" PlaceholderText="Введите значение"/>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum2Pre2"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum2Pre2Text" Text="Pre"/>
-                    </StackPanel>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum3Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum3Post1Text" Text="Post"/>
-                    </StackPanel>
-                    <Button Content="Разбогатеть" HorizontalAlignment="Left"/>
+                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="accountBalance" Grid.Column="0" PlaceholderText="Введите значение"/>
+                        <Rectangle x:Name="Colum3Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+                    <TextBlock Text="Сумма"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="balance" Grid.Column="0"  PlaceholderText="Введите значение"/>
+                        <Rectangle x:Name="Colum2Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Разбогатеть" Grid.Column="0" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum3Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+
                     <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click"/>
                 </StackPanel>
 
                 <!--панель4-->
                 <StackPanel x:Name="Panel4" Spacing="12" Visibility="Collapsed">
-                    <TextBox x:Name="withDrawAccount" Header="Номер счёта" PlaceholderText="Введите значение"/>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum4Pre1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum4Pre1Text" Text="Pre"/>
-                    </StackPanel>
-                    <TextBox x:Name="withDrawMoney" Header="Сумма" PlaceholderText="Введите значение"/>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum4Pre2"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum4Pre2Text" Text="Pre"/>
-                    </StackPanel>
-                    <StackPanel Spacing="10" Orientation="Horizontal">
-                        <Rectangle x:Name="Colum4Post1"  Width="20" Height="20" Fill="Red" HorizontalAlignment="Left" RadiusY="6" RadiusX="6"/>
-                        <TextBlock x:Name="Colum4Post1Text" Text="Post"/>
-                    </StackPanel>
-                    <Button Content="Снять" HorizontalAlignment="Left"/>
+                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="withDrawAccount" Grid.Column="0" PlaceholderText="Введите значение"/>
+                        <Rectangle x:Name="Colum4Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+                    <TextBlock Text="Сумма"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="withDrawMoney" Grid.Column="0" PlaceholderText="Введите значение"/>
+                        <Rectangle x:Name="Colum4Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Снять" Grid.Column="0" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="Colum4Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="6" RadiusX="6" Margin="5"/>
+                    </Grid>
+
                     <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click"/>
                 </StackPanel>
 
             </Grid>
 
             <!--Панель для показа контракта-->
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="2">
+                <Grid.Resources>
+                    <!-- Для TextBlock (он не Control) -->
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                    <!-- Для всех Control (Button, TextBox, CheckBox и т.д.) -->
+                    <Style TargetType="Button">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                </Grid.Resources>
                 <!--контракт 1-->
-                <StackPanel x:Name="contract1" Spacing="12" Visibility="Collapsed" Background="Black">
-                    <TextBlock Text="еще не придумал 1"/>
-                    <Button x:Name="hideContract1" Content="Скрыть контракт" Click="hideContract1_Click"/>
-                </StackPanel>
-                 <!--контракт 2-->
-                <StackPanel x:Name="contract2" Spacing="12" Visibility="Collapsed" Background="Black">
-                    <TextBlock Text="еще не придумал 2"/>
-                    <Button x:Name="hideContract2" Content="Скрыть контракт" Click="hideContract2_Click"/>
-                </StackPanel>
+                <ScrollViewer x:Name="contractV1" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="contract1" Visibility="Collapsed">
+                        <TextBlock Text="Перевод средств на другой счёт" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock Text="Предусловия:" Foreground="Gray"/>
+                        <TextBlock Text="Счёт отправителя существует" Padding="0,20, 0, 0" TextWrapping="Wrap"/>
+                        <TextBlock Text="Счёт отправителя не совпадает с получателем"/>
+                        <TextBlock Text="Счёт получателя существует" Padding="0,45, 0, 0" TextWrapping="Wrap"/>
+                        <TextBlock Text="Валюты на счетах совпадают"/>
+                        <TextBlock Text="Баланс отправителя должен быть больше суммы перевода" Padding="0,63, 0, 0" TextWrapping="Wrap"/>
+                        <TextBlock Text="Постусловия:" Foreground="Gray" Padding="0, 35, 0, 0"/>
+                        <TextBlock Text="Баланс отправителя уменьшен"  FontSize="20" TextWrapping="Wrap"/>
+                        <TextBlock Text="Баланс получателя увеличен"/>
+                        <TextBlock Text="Эффекты:" Foreground="Gray"/>
+                        <TextBlock Text="Изменение балансов получателя и отправителя" TextWrapping="Wrap"/>
+                        <TextBlock Text="Исключения:" Foreground="Gray"/>
+                        <TextBlock Text="Счёт не существует" TextWrapping="Wrap"/>
+                        <TextBlock Text="Неккоректная сумма" TextWrapping="Wrap"/>
+                        <TextBlock Text="Недостаточно средств" TextWrapping="Wrap"/>
+                        <TextBlock Text="Счета совпадают" TextWrapping="Wrap"/>
+                        <TextBlock Text="Граничные примеры:" Foreground="Gray" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Валидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Green" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Сумма на счету отправителя: 1000 | Отправляемая сумма: 500" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Невалидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Red" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Сумма на счету отправителя: 400 | Отправляемая сумма: 500" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+
+                <!--контракт 2-->
+                <ScrollViewer x:Name="contractV2" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="contract2" Visibility="Collapsed">
+                        <TextBlock Text="Обмен валюты" FontWeight="Bold"/>
+                        <TextBlock Text="Предусловия:" Foreground="Gray" Padding="0, 20, 0, 0"/>
+                        <TextBlock Text="Номер счёта существует"/>
+                        <TextBlock Text="Баланс больше 0"/>
+                        <TextBlock Text="Постусловие:" Foreground="Gray" Padding="0, 85, 0, 0"/>
+                        <TextBlock Text="Баланс пересчитан по курсу"/>
+                        <TextBlock Text="Эффект:" Foreground="Gray"/>
+                        <TextBlock Text="Изменение валюты счёта"/>
+                        <TextBlock Text="Исключения:" Foreground="Gray"/>
+                        <TextBlock Text="Счёт не найден"/>
+                        <TextBlock Text="Валюты совпадают"/>
+                        <TextBlock Text="Граничные примеры:" Foreground="Gray"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Валидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Green" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Сумма на счету равна 100 руб." TextWrapping="Wrap"/>
+                        <TextBlock Text="Выбранная валюта - Доллар"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Невалидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Red" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Сумма на счету равен 100 руб." TextWrapping="Wrap"/>
+                        <TextBlock Text="Выбранная валюта - Рубль"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+
                 <!--контракт 3-->
-                <StackPanel x:Name="contract3" Spacing="12" Visibility="Collapsed" Background="Black">
-                    <TextBlock Text="еще не придумал 3"/>
-                    <Button x:Name="hideContract3" Content="Скрыть контракт" Click="hideContract3_Click"/>
-                </StackPanel>
+                <ScrollViewer x:Name="contractV3" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="contract3" Visibility="Collapsed">
+                        <TextBlock Text="Пополнение баланса" FontWeight="Bold"/>
+                        <TextBlock Text="Предусловия:" Foreground="Gray" Padding="0, 40, 0, 0"/>
+                        <TextBlock Text="Счёт существует"/>
+                        <TextBlock Text="Сумма пополнения больше 0" Padding="0, 55, 0, 0"/>
+                        <TextBlock Text="Сумма пополнения меньше лимита"/>
+                        <TextBlock Text="Постусловие:" Foreground="Gray"/>
+                        <TextBlock Text="Увеличение баланса на указанную сумму"/>
+                        <TextBlock Text="Эффект:" Foreground="Gray"/>
+                        <TextBlock Text="увеличение баланса"/>
+                        <TextBlock Text="Исключения:" Foreground="Gray"/>
+                        <TextBlock Text="Счёт не найден"/>
+                        <TextBlock Text="Сумма пополнения равна 0"/>
+                        <TextBlock Text="Граничные примеры:" Foreground="Gray"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Валидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Green" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Баланс 1000 руб." TextWrapping="Wrap"/>
+                        <TextBlock Text="Сумма пополнения 100 руб."/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Невалидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Red" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Баланс 100 руб." TextWrapping="Wrap"/>
+                        <TextBlock Text="Сумма пополнения 0 руб."/>
+                    </StackPanel>
+                </ScrollViewer>
                 <!--контракт 4-->
-                <StackPanel x:Name="contract4" Spacing="12" Visibility="Collapsed" Background="Black">
-                    <TextBlock Text="еще не придумал 4"/>
-                    <Button x:Name="hideContract4" Content="Скрыть контракт" Click="hideContract4_Click"/>
-                </StackPanel>
+                <ScrollViewer x:Name="contractV4" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="contract4" Visibility="Collapsed">
+                        <TextBlock Text="Снятие средств баланса" FontWeight="Bold"/>
+                        <TextBlock Text="Предусловия:" Foreground="Gray" Padding="0, 40, 0, 0"/>
+                        <TextBlock Text="Счёт существует"/>
+                        <TextBlock Text="Баланс счёта не равен 0"/>
+                        <TextBlock Text="Сумма снятия больше 0" Padding="0, 27, 0, 0"/>
+                        <TextBlock Text="Баланс счёта больше суммы снятия" />
+                        <TextBlock Text="Постусловие:" Foreground="Gray"/>
+                        <TextBlock Text="Баланс счёта уменьшился на указанную сумму"/>
+                        <TextBlock Text="Эффект:" Foreground="Gray"/>
+                        <TextBlock Text="Уменьшение баланса"/>
+                        <TextBlock Text="Исключения:" Foreground="Gray"/>
+                        <TextBlock Text="Счёт не найден"/>
+                        <TextBlock Text="Сумма снятия равна 0"/>
+                        <TextBlock Text="Недостаточно средств"/>
+                        <TextBlock Text="Граничные примеры:" Foreground="Gray"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Валидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Green" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Баланс 1000 руб." TextWrapping="Wrap"/>
+                        <TextBlock Text="Сумма снятия 500 руб."/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Невалидный"/>
+                            <Rectangle Width="20" Height="20" Fill="Red" RadiusX="4" RadiusY="4" Margin="5, 5, 0, 0"/>
+                        </StackPanel>
+                        <TextBlock Text="Баланс 1000 руб." TextWrapping="Wrap"/>
+                        <TextBlock Text="Сумма снятия 2000 руб."/>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
         </Grid>
     </Grid>
