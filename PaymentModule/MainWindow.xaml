@@ -148,6 +148,12 @@
 
                     
                     <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="0" CornerRadius="10">
+                        <ComboBox.ItemContainerStyle>
+                            <Style TargetType="ComboBoxItem">
+                                <!-- Указываем радиус скругления -->
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
                         <ComboBoxItem Content="Российский рубль"/>
                         <ComboBoxItem Content="Евро"/>
                         <ComboBoxItem Content="Доллар"/>
