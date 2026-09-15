@@ -158,7 +158,8 @@
                         <ComboBoxItem Content="Евро"/>
                         <ComboBoxItem Content="Доллар"/>
                         <ComboBoxItem Content="Юань" />
-                        <ComboBoxItem Content="ъ"/>
+                        <ComboBoxItem Content="ъ"/> 
+                        <!-- Не учитывал последнюю строку при разработке библеотеки классов - Коля -->
                     </ComboBox>
 
                     <Grid>

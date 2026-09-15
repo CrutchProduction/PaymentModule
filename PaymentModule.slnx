@@ -4,6 +4,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="PaymentClassLibrary/PaymentClassLibrary.csproj" Id="ff149fb1-209a-46fc-b2b1-a4f426460838" />
   <Project Path="PaymentModule/PaymentModule.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
