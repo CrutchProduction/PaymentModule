@@ -58,7 +58,8 @@
                 <ListBoxItem Content="Пополнение"/>
                 <ListBoxItem Content="Снятие"/>
             </ListBox>
-
+            
+            
             <Grid Grid.Column="1">
 
                 <Grid.Resources>
@@ -79,165 +80,175 @@
                 </Grid.Resources>
 
                 <!--панель1-->
-                
-                <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed">
-                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0" TextWrapping="Wrap"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                <ScrollViewer x:Name="PanelV1" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed">
+                        <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0" TextWrapping="Wrap"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                        <TextBox x:Name="accountFrom" Grid.Column="0"
+                            <TextBox x:Name="accountFrom" Grid.Column="0"
                              PlaceholderText="Введите значение"
                              HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum1Pre1" Grid.Column="1"
+                            <Rectangle x:Name="Colum1Pre1" Grid.Column="1"
                            Width="40" Height="40" Fill="Red"
                            RadiusY="10" RadiusX="10" Margin="5"/>
 
-                    </Grid>
-                    <TextBlock Text="Номер счёта куда перевести" TextWrapping="Wrap"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="accountTo" Grid.Column="0" PlaceholderText="Введите значение" TextWrapping="Wrap" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum1Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red"  RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
+                        </Grid>
+                        <TextBlock Text="Номер счёта куда перевести" TextWrapping="Wrap"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="accountTo" Grid.Column="0" PlaceholderText="Введите значение" TextWrapping="Wrap" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum1Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red"  RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
 
-                    <TextBlock Text="Сумма перевода" TextWrapping="Wrap"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Сумма перевода" TextWrapping="Wrap"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                        <TextBox x:Name="amountToPay" Grid.Column="0" PlaceholderText="Введите сумму" HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum1Pre3" Grid.Column="1" Width="40" Height="40" Fill="Red" RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
+                            <TextBox x:Name="amountToPay" Grid.Column="0" PlaceholderText="Введите сумму" HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum1Pre3" Grid.Column="1" Width="40" Height="40" Fill="Red" RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
 
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <Button Content="Попрощаться со своими деньгами" Grid.Column="0" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum1Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" RadiusY="10" RadiusX="10" Margin="5" HorizontalAlignment="Right"/>
-                    </Grid>
-                    <StackPanel Orientation="Horizontal">
-                        
+                            <Button Content="Попрощаться со своими деньгами" Grid.Column="0" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum1Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" RadiusY="10" RadiusX="10" Margin="5" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal">
+
+                        </StackPanel>
+
+                        <Button x:Name="cotract1" Content="Показать контракт (не СВО)" HorizontalAlignment="Left" Click="contract1_Click" CornerRadius="10"/>
                     </StackPanel>
-
-                    <Button x:Name="cotract1" Content="Показать контракт (не СВО)" HorizontalAlignment="Left" Click="contract1_Click" CornerRadius="10"/>
-                </StackPanel>
+                </ScrollViewer>
 
                 <!--панель2-->
-                <StackPanel x:Name="Panel2" Spacing="12" Visibility="Collapsed">
-                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="accountExchange" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum2Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red"  RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
+                <ScrollViewer x:Name="PanelV2" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="Panel2" Spacing="12" Visibility="Collapsed">
+                        <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="accountExchange" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum2Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red"  RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
 
-                    
-                    <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="0" CornerRadius="10">
-                        <ComboBox.ItemContainerStyle>
-                            <Style TargetType="ComboBoxItem">
-                                <!-- Указываем радиус скругления -->
-                                <Setter Property="CornerRadius" Value="10"/>
-                            </Style>
-                        </ComboBox.ItemContainerStyle>
-                        <ComboBoxItem Content="Российский рубль"/>
-                        <ComboBoxItem Content="Евро"/>
-                        <ComboBoxItem Content="Доллар"/>
-                        <ComboBoxItem Content="Юань" />
-                        <ComboBoxItem Content="ъ"/> 
-                        <!-- Не учитывал последнюю строку при разработке библеотеки классов - Коля -->
-                    </ComboBox>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Grid.Column="1" x:Name="Colum2Post1"  Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                        <Button Grid.Column="0" Content="конвертировать" HorizontalAlignment="Left" CornerRadius="10"/>
-                    </Grid>
+                        <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="0" CornerRadius="10">
+                            <ComboBox.ItemContainerStyle>
+                                <Style TargetType="ComboBoxItem">
+                                    <!-- Указываем радиус скругления -->
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </ComboBox.ItemContainerStyle>
+                            <ComboBoxItem Content="Российский рубль"/>
+                            <ComboBoxItem Content="Евро"/>
+                            <ComboBoxItem Content="Доллар"/>
+                            <ComboBoxItem Content="Юань" />
+                            <ComboBoxItem Content="ъ"/>
+                            <!-- Не учитывал последнюю строку при разработке библеотеки классов - Коля -->
+                        </ComboBox>
 
-                    <Button x:Name="cotract2" Content="Контракт (не Штурм)" HorizontalAlignment="Left" Click="contract2_Click" CornerRadius="10"/>
-                </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle Grid.Column="1" x:Name="Colum2Post1"  Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                            <Button Grid.Column="0" Content="конвертировать" HorizontalAlignment="Left" CornerRadius="10"/>
+                        </Grid>
+
+                        <Button x:Name="cotract2" Content="Контракт (не Штурм)" HorizontalAlignment="Left" Click="contract2_Click" CornerRadius="10"/>
+                    </StackPanel>
+                </ScrollViewer>
 
                 <!-- панель3 -->
-                <StackPanel x:Name="Panel3" Spacing="12" Visibility="Collapsed">
-                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="accountBalance" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum3Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
-                    <TextBlock Text="Сумма"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="balance" Grid.Column="0"  PlaceholderText="Введите значение" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum2Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Разбогатеть" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum3Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
+                <ScrollViewer x:Name="PanelV3" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="Panel3" Spacing="12" Visibility="Collapsed">
+                        <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="accountBalance" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum3Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
+                        <TextBlock Text="Сумма"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="balance" Grid.Column="0"  PlaceholderText="Введите значение" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum2Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Разбогатеть" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum3Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
 
-                    <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click" CornerRadius="10"/>
-                </StackPanel>
+                        <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click" CornerRadius="10"/>
+                    </StackPanel>
+                </ScrollViewer>
 
                 <!--панель4-->
-                <StackPanel x:Name="Panel4" Spacing="12" Visibility="Collapsed">
-                    <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="withDrawAccount" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum4Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
-                    <TextBlock Text="Сумма"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="withDrawMoney" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum4Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Снять" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
-                        <Rectangle x:Name="Colum4Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                    </Grid>
+                <ScrollViewer x:Name="PanelV4" VerticalScrollBarVisibility="Auto"
+HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel x:Name="Panel4" Spacing="12" Visibility="Collapsed">
+                        <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="withDrawAccount" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum4Pre1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
+                        <TextBlock Text="Сумма"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="withDrawMoney" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum4Pre2" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Снять" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
+                            <Rectangle x:Name="Colum4Post1" Grid.Column="1" Width="40" Height="40" Fill="Red" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                        </Grid>
 
-                    <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click" CornerRadius="10"/>
-                </StackPanel>
-
+                        <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click" CornerRadius="10"/>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
 
             <!--Панель для показа контракта-->

@@ -47,7 +47,12 @@ namespace PaymentModule
             contractV3.Visibility = Visibility.Collapsed;
             contractV4.Visibility = Visibility.Collapsed;
 
-            
+            PanelV1.Visibility = Visibility.Collapsed;
+            PanelV2.Visibility = Visibility.Collapsed;
+            PanelV3.Visibility = Visibility.Collapsed;
+            PanelV4.Visibility = Visibility.Collapsed;
+
+
 
             panelContract.Width = new GridLength(0, GridUnitType.Pixel);
             contractIsOpen = false;
@@ -55,10 +60,22 @@ namespace PaymentModule
             //показываем
             switch (NavList.SelectedIndex)
             {
-                case 0: Panel1.Visibility = Visibility.Visible; break;
-                case 1: Panel2.Visibility = Visibility.Visible; break;
-                case 2: Panel3.Visibility = Visibility.Visible; break;
-                case 3: Panel4.Visibility = Visibility.Visible; break;
+                case 0: 
+                    Panel1.Visibility = Visibility.Visible;
+                    PanelV1.Visibility = Visibility.Visible;
+                    break;
+                case 1: 
+                    Panel2.Visibility = Visibility.Visible;
+                    PanelV2.Visibility = Visibility.Visible;
+                    break;
+                case 2: 
+                    Panel3.Visibility = Visibility.Visible;
+                    PanelV3.Visibility = Visibility.Visible;
+                    break;
+                case 3: 
+                    Panel4.Visibility = Visibility.Visible;
+                    PanelV4.Visibility = Visibility.Visible; 
+                    break;
             }
         }
 
