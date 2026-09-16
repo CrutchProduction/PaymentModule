@@ -38,18 +38,6 @@ namespace PaymentModule
         public App()
         {
             InitializeComponent();
-
-            Logger.StartNewLog();
-            AccountsManager.LoadAccount();
-            Account acc = AccountsManager.FindAccountById(6767);
-            acc.ConvertMoneyToAnotherType(1);
-            Logger.Log(acc.GetMoneyAmount() + "");
-            acc.ConvertMoneyToAnotherType(2);
-            Logger.Log(acc.GetMoneyAmount() + "");
-            acc.ConvertMoneyToAnotherType(3);
-            Logger.Log(acc.GetMoneyAmount() + "");
-            acc.ConvertMoneyToAnotherType(0);
-            Logger.Log(acc.GetMoneyAmount() + "");
         }
 
         /// <summary>
