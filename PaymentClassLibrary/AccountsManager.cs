@@ -16,6 +16,7 @@ namespace PaymentClassLibrary
             if (!File.Exists(pathToAccounts))
             {
                 File.Create(pathToAccounts).Close();
+                File.WriteAllText(pathToAccounts, "6767 100 0\r\n4252 5000 0\r\n5242 192 0\r\n9911 2456 0\r\n1199 1925 0\r\n");
             }
         }
 
