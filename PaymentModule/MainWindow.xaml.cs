@@ -47,6 +47,8 @@ namespace PaymentModule
             contractV3.Visibility = Visibility.Collapsed;
             contractV4.Visibility = Visibility.Collapsed;
 
+            
+
             panelContract.Width = new GridLength(0, GridUnitType.Pixel);
             contractIsOpen = false;
             
