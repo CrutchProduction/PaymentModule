@@ -31,11 +31,11 @@ namespace PaymentClassLibrary
                 string[] dataSplitted = line.Split(' ');
 
                 int accountId;
-                int moneyAmount;
+                float moneyAmount;
                 int moneyType;
                 
                 if (!int.TryParse(dataSplitted[0], out accountId)) { break; }
-                if (!int.TryParse(dataSplitted[1], out moneyAmount)) { break; }
+                if (!float.TryParse(dataSplitted[1], out moneyAmount)) { break; }
                 if (!int.TryParse(dataSplitted[2], out moneyType)) { break; }
 
                 accounts.Add(new Account(accountId, moneyAmount, moneyType));
