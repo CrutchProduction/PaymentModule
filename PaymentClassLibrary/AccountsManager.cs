@@ -1,76 +1,80 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
-using System.Reflection.Metadata;
 
 namespace PaymentClassLibrary
 {
     public partial class AccountsManager
     {
         private static ArrayList accounts = new ArrayList();
-        // Путь до папки с данными от аккаунтов базово сохраняет в .\PaymentModule\PaymentModule\bin\x64\Debug\net8.0-windows10.0.19041.0\AppX
         private static string pathToAccounts = Path.Combine(AppContext.BaseDirectory, "accounts.dat");
 
+        /// <summary>Создаёт файл с учебными счетами при первом запуске.</summary>
         private static void CheckFileExistance()
         {
             if (!File.Exists(pathToAccounts))
             {
-                File.Create(pathToAccounts).Close();
                 File.WriteAllText(pathToAccounts, "6767 100 0\r\n4252 5000 0\r\n5242 192 0\r\n9911 2456 0\r\n1199 1925 0\r\n");
             }
         }
 
-        /// <summary>
-        ///     Считать из файла данные всех аккаунтов
-        /// </summary>
+        /// <summary>Считывает счета из файла без повторного добавления.</summary>
         public static void LoadAccount()
         {
             CheckFileExistance();
-
+            ArrayList loadedAccounts = new ArrayList();
             foreach (string line in File.ReadLines(pathToAccounts))
             {
-                string[] dataSplitted = line.Split(' ');
-
+                if (string.IsNullOrWhiteSpace(line)) { continue; }
+                string[] data = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 int accountId;
                 float moneyAmount;
                 int moneyType;
-                
-                if (!int.TryParse(dataSplitted[0], out accountId)) { break; }
-                if (!float.TryParse(dataSplitted[1], out moneyAmount)) { break; }
-                if (!int.TryParse(dataSplitted[2], out moneyType)) { break; }
-
-                accounts.Add(new Account(accountId, moneyAmount, moneyType));
+                if (data.Length != 3
+                    || !int.TryParse(data[0], out accountId)
+                    || !float.TryParse(data[1].Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out moneyAmount)
+                    || !int.TryParse(data[2], out moneyType)
+                    || accountId <= 0 || !float.IsFinite(moneyAmount) || moneyAmount < 0
+                    || moneyType < 0 || moneyType > 3)
+                {
+                    throw new InvalidDataException("Некорректные данные в accounts.dat.");
+                }
+                foreach (Account existing in loadedAccounts)
+                {
+                    if (existing.GetAccountId() == accountId)
+                    {
+                        throw new InvalidDataException("Повторяющийся номер счёта в accounts.dat.");
+                    }
+                }
+                loadedAccounts.Add(new Account(accountId, moneyAmount, moneyType));
             }
+            // Меняем список только после чтения всего файла.
+            accounts = loadedAccounts;
         }
 
-        /// <summary>
-        ///     Перезаписать данные от аккаунтов
-        /// </summary>
+        /// <summary>Сохраняет балансы и валюты всех счетов.</summary>
         public static void SaveAccounts()
         {
-            CheckFileExistance();
-
             string newData = "";
             foreach (Account account in accounts)
             {
-                newData += $"{account.GetAccountId()} {account.GetMoneyAmount()} {account.GetMoneyTypeId()}\n";
+                newData += account.GetAccountId() + " "
+                    + account.GetMoneyAmount().ToString(CultureInfo.InvariantCulture) + " "
+                    + account.GetMoneyTypeId() + "\n";
             }
-            File.WriteAllText(pathToAccounts, newData);
+            // Сначала готовим новый файл, затем заменяем исходный.
+            string temporaryPath = pathToAccounts + ".tmp";
+            File.WriteAllText(temporaryPath, newData);
+            File.Move(temporaryPath, pathToAccounts, true);
         }
 
-        /// <summary>
-        ///     Найти аккаунт по его айди
-        /// </summary>
-        /// <param name="accountId"> Айди аккаунта </param>
-        /// <returns> Класс Account, если есть, иначе null </returns>
+        /// <summary>Находит счёт по номеру, иначе возвращает null.</summary>
         public static Account FindAccountById(int accountId)
         {
             foreach (Account account in accounts)
             {
-                if (account.GetAccountId() == accountId)
-                {
-                    return account;
-                }
+                if (account.GetAccountId() == accountId) { return account; }
             }
             return null;
         }

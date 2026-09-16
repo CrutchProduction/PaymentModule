@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PaymentClassLibrary
 {
     public class Logger
     {
-        // Путь до папки с логами базово сохраняет в .\PaymentModule\PaymentModule\bin\x64\Debug\net8.0-windows10.0.19041.0\AppX\logs
         private static string pathToLogs = Path.Combine(AppContext.BaseDirectory, "logs");
 
+        /// <summary>Создаёт папку журнала при необходимости.</summary>
         private static void CheckFileExistance()
         {
             if (!Directory.Exists(pathToLogs))
@@ -20,35 +16,25 @@ namespace PaymentClassLibrary
             }
         }
 
-        /// <summary>
-        ///     Начать записывать всё в новый файл логов
-        /// </summary>
+        /// <summary>Сохраняет старый журнал и начинает новый.</summary>
         public static void StartNewLog()
         {
             CheckFileExistance();
-
-            if (File.Exists($"{pathToLogs}/latest.log"))
+            string latest = Path.Combine(pathToLogs, "latest.log");
+            if (File.Exists(latest))
             {
-                string lastLogName = File.ReadLines($"{pathToLogs}/latest.log").First().Replace(' ', '_').Replace(':', '_') + ".log";
-                File.Create($"{pathToLogs}/{lastLogName}").Close();
-                File.WriteAllText($"{pathToLogs}/{lastLogName}", File.ReadAllText($"{pathToLogs}/latest.log"));
-                File.WriteAllText($"{pathToLogs}/latest.log", "");
-            } else
-            {
-                File.Create($"{pathToLogs}/latest.log").Close();
+                // Имя файла не зависит от языка Windows и содержимого журнала.
+                string archive = Path.Combine(pathToLogs, DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fffffff") + ".log");
+                File.Copy(latest, archive);
             }
-
-            File.WriteAllText($"{pathToLogs}/latest.log", DateTime.Now.ToString() + "\n");
+            File.WriteAllText(latest, DateTime.Now + "\n");
         }
 
-        /// <summary>
-        ///     Записать сообщение в последний лог
-        /// </summary>
-        /// <param name="message"> Сообщение которое надо записать </param>
+        /// <summary>Добавляет выполненную операцию в журнал.</summary>
         public static void Log(string message)
         {
             CheckFileExistance();
-            File.AppendAllText($"{pathToLogs}/latest.log", $"[{DateTime.Now}] - {message}\n");
+            File.AppendAllText(Path.Combine(pathToLogs, "latest.log"), $"[{DateTime.Now}] - {message}\n");
         }
     }
 }

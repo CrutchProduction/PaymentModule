@@ -1,3 +1,5 @@
+using PaymentClassLibrary;
+using PaymentModule.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -24,11 +26,52 @@ namespace PaymentModule
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        /// <summary>Подключает модели операций и выбирает первую панель.</summary>
         public MainWindow()
         {
             InitializeComponent();
+            // Поля счета заполняются один раз и недоступны для редактирования.
+            RootGrid.Loaded += RootGrid_Loaded;
+            NavList.SelectedIndex = 0;
         }
-        public static bool contractIsOpen = false;
+        private bool contractIsOpen = false;
+        private bool initialized;
+
+        /// <summary>Загружает счета после создания окна.</summary>
+        private async void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (initialized) { return; }
+            initialized = true;
+            try
+            {
+                AccountsManager.LoadAccount();
+                MainViewModel viewModel = new MainViewModel(AccountsManager.FindAccountById(MainViewModel.CurrentAccountId));
+                viewModel.ErrorOccurred += ShowError;
+                RootGrid.DataContext = viewModel;
+                Logger.StartNewLog();
+            }
+            catch (Exception error)
+            {
+                ContentDialog dialog = new ContentDialog();
+                dialog.XamlRoot = RootGrid.XamlRoot;
+                dialog.Title = "Ошибка";
+                dialog.Content = error.Message;
+                dialog.CloseButtonText = "ОК";
+                await dialog.ShowAsync();
+            }
+        }
+
+        /// <summary>Показывает сообщение об ошибке операции.</summary>
+        private async void ShowError(string message)
+        {
+            ContentDialog dialog = new ContentDialog();
+            dialog.XamlRoot = RootGrid.XamlRoot;
+            dialog.Title = "Ошибка";
+            dialog.Content = message;
+            dialog.CloseButtonText = "ОК";
+            await dialog.ShowAsync();
+        }
+        /// <summary>Переключает видимую панель операции.</summary>
         private void NavList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //скрыть панели
@@ -79,6 +122,7 @@ namespace PaymentModule
             }
         }
 
+        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract1_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
@@ -97,6 +141,7 @@ namespace PaymentModule
             contractIsOpen = contractIsOpen == false;
         }
 
+        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract2_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
@@ -117,6 +162,7 @@ namespace PaymentModule
         }
 
 
+        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract3_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
@@ -137,6 +183,7 @@ namespace PaymentModule
         }
 
 
+        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract4_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
@@ -158,3 +205,4 @@ namespace PaymentModule
 
     }
 }
+
