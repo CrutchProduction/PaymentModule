@@ -16,7 +16,7 @@
       * [Индикаторы валидации](#индикаторы-валидации)
 
 ## Установка
-Данный проект использует [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) и предназначен для запуска на Windows.
+Данный проект использует [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) и предназначен для запуска на Windows 11.
 ```
 git clone https://github.com/CrutchProduction/PaymentModule.git
 ```
