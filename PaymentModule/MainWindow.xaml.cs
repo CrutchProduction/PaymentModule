@@ -203,6 +203,32 @@ namespace PaymentModule
             contractIsOpen = contractIsOpen == false;
         }
 
+        private async void AboutApp_Click(object sender, RoutedEventArgs e)
+        {
+            TextBlock messageText = new TextBlock
+            {
+                Text = "-#-..=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#\r\n#=...#@%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%\r\n....=%%@@@@@@@@@%@@@@@@@@@@@@@@@@@@@@@@@\r\n....*%@@@@@@@@%**%@@@@@@@@@@@@@@@@@@@@@@\r\n...-#%@@@@@@@@#@%%@@@@@@@%%@@@@@@@%@@@@@\r\n...=#%@@@@@@%#@@@@@@@@@@@@#%#+%@@@@@@@@@\r\n:..+%@@@@@@@#%%##%@@@@@@@@@@**%@@@@@@@@@\r\n..:*%#%@@@%#@@@@@%@@@@@@@@@%*%**%@%@@@@@\r\n..=%##%@@%**+++%%##@@@@@@@#@*@@@*%@@@@@@\r\n..*%%%*@@%=-*...:=+*@@@@@##+++-::==@@@@#\r\n.-%%+%*#@@##@==%+-*##%**#*+-*+:#%:+%@@**\r\n.+%+=%#*%%#*%@#=+%@@@@@@@%@---*@%#@@%++#\r\n:*+==%%%##==#@@@@@@@@@@@@@@@%%@%%%#*%==#\r\n:+-+-%%%@@+:%@@@@@@@@@@@@@@@@@%%+:@@%-#@\r\n::=+:*#@@%*:.#@@@@@@@@@@@@@@@@@*.*@@#:#@\r\n:.==.+%@@%#-..:*@@@@@%@@@@@@@%-..@@@*-#@\r\n:.::.=%@@@#:...-:-#@@@@@@@*:....-@@@###@\r\n:..==-%@@@@+:....*#:.+==#@+..-::*@@%%#%@\r\n::....%@@@%+.....:#@@%@@@%:....:#@%@%*%@\r\n......%@@@+-:..................-@%@@#=:%\r\n..:-..@@@@#:-.................:*%@@@+..:\r\n:..:-.@@@#+-..................=#@@@+-...",
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 22,                           
+                FontWeight = Microsoft.UI.Text.FontWeights.Light, 
+                TextWrapping = TextWrapping.Wrap         
+            };
+
+
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "хз еще не придумал",
+                Content = messageText, 
+                CloseButtonText = "ОК",
+                XamlRoot = this.Content.XamlRoot,
+
+
+                FontFamily = new FontFamily("Segoe UI Semibold"),
+                FontSize = 26 
+            };
+
+            await dialog.ShowAsync();
+        }
     }
 }
 
