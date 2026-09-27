@@ -106,18 +106,34 @@ namespace PaymentModule
                 case 0: 
                     Panel1.Visibility = Visibility.Visible;
                     PanelV1.Visibility = Visibility.Visible;
+                    listboxitem1.IsEnabled = false;
+                    listboxitem2.IsEnabled = true;
+                    listboxitem3.IsEnabled = true;
+                    listboxitem4.IsEnabled = true;
                     break;
                 case 1: 
                     Panel2.Visibility = Visibility.Visible;
                     PanelV2.Visibility = Visibility.Visible;
+                    listboxitem1.IsEnabled = true;
+                    listboxitem2.IsEnabled = false;
+                    listboxitem3.IsEnabled = true;
+                    listboxitem4.IsEnabled = true;
                     break;
                 case 2: 
                     Panel3.Visibility = Visibility.Visible;
                     PanelV3.Visibility = Visibility.Visible;
+                    listboxitem1.IsEnabled = true;
+                    listboxitem2.IsEnabled = true;
+                    listboxitem3.IsEnabled = false;
+                    listboxitem4.IsEnabled = true;
                     break;
                 case 3: 
                     Panel4.Visibility = Visibility.Visible;
-                    PanelV4.Visibility = Visibility.Visible; 
+                    PanelV4.Visibility = Visibility.Visible;
+                    listboxitem1.IsEnabled = true;
+                    listboxitem2.IsEnabled = true;
+                    listboxitem3.IsEnabled = true;
+                    listboxitem4.IsEnabled = false;
                     break;
             }
         }

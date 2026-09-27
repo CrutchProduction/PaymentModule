@@ -53,10 +53,10 @@
             <!--listbox-->
 
             <!--контейнер для закругления обводки -->
-            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="0">
+            <Border x:Name="BorderListBox" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="0">
                 <!-- Перенесли Grid.Column сюда -->
 
-                <ListBox x:Name="NavList" SelectionChanged="NavList_SelectionChanged" Background="Transparent"  BorderThickness="0">
+                <ListBox x:Name="NavList" SelectionChanged="NavList_SelectionChanged" Background="Transparent"  BorderThickness="0" SingleSelectionFollowsFocus="False" Padding="5">
 
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -67,43 +67,45 @@
                                     <ControlTemplate TargetType="ListBoxItem">
                                         <!-- шаблон для анимаций -->
                                         <Border x:Name="RootBorder" Background="{ThemeResource SystemControlHighlightListLowRevealBackgroundBrush}" CornerRadius="10" RenderTransformOrigin="0.5,0.5" BorderThickness="2" BorderBrush="Transparent">
-                                            <!--изначально размер элемнтов listbox = 0.9 от начального-->
+                                            <!--изначально размер элемнтов listbox = 0.95 от начального-->
                                             <Border.RenderTransform>
-                                                <ScaleTransform x:Name="ItemScale" ScaleX="0.9" ScaleY="0.9"/>
+                                                <ScaleTransform x:Name="ItemScale" ScaleX="0.95" ScaleY="0.95"/>
                                             </Border.RenderTransform>
 
                                             <ContentPresenter Content="{TemplateBinding Content}" Margin="0, 15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            <!--Анимация если курсор будет на кнопках-->
+                                            
                                             <VisualStateManager.VisualStateGroups>
+
                                                 <VisualStateGroup x:Name="CommonStates">
+                                                    
                                                     <VisualState x:Name="Normal"/>
+                                                    <!--Анимация если кнопка будет нажата-->
+                                                    <VisualState x:Name="Disabled">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootBorder" Storyboard.TargetProperty="Background">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAccent3RevealBackgroundBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <!--Анимация если курсор будет на кнопках-->
                                                     <VisualState x:Name="PointerOver">
                                                         <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.2"/>
                                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootBorder" Storyboard.TargetProperty="Background">
                                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" />
                                                             </ObjectAnimationUsingKeyFrames>
                                                         </Storyboard>
                                                     </VisualState>
-                                                    <VisualState x:Name="Pressed"/>
-                                                    <VisualState x:Name="Disabled"/>
-                                                </VisualStateGroup>
 
-                                                <!--Анимация для перехода табуляцией-->
-                                                <VisualStateGroup x:Name="FocusStates">
-                                                    <VisualState x:Name="Unfocused"/>
-                                                    <VisualState x:Name="Focused">
-                                                        <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootBorder" Storyboard.TargetProperty="Background">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
                                                 </VisualStateGroup>
+                                                
+
+
                                             </VisualStateManager.VisualStateGroups>
+                                            
                                         </Border>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -111,10 +113,10 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
 
-                    <ListBoxItem Content="Перевод на другой счёт"/>
-                    <ListBoxItem Content="Перевод в другую валюту"/>
-                    <ListBoxItem Content="Пополнение"/>
-                    <ListBoxItem Content="Снятие"/>
+                    <ListBoxItem x:Name="listboxitem1" Content="Перевод на другой счёт"/>
+                    <ListBoxItem  x:Name="listboxitem2" Content="Перевод в другую валюту"/>
+                    <ListBoxItem  x:Name="listboxitem3" Content="Пополнение"/>
+                    <ListBoxItem  x:Name="listboxitem4" Content="Снятие"/>
                 </ListBox>
             </Border>
 
