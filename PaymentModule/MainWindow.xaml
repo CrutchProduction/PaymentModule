@@ -26,21 +26,42 @@
 
         <!--надписи-->
 
-        <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Row="0"  Padding="20" >
+        
+
             <!--потом поменять расположение этих надписей-->
-            <StackPanel Grid.Row="0" Spacing="4">
-                <TextBlock Text="Платежный модуль" FontSize="28" FontWeight="Bold" />
-                <StackPanel Spacing="10" Orientation="Horizontal">
-                    <TextBlock x:Name="number"  Text="Ваш номер счёта: 4252" />
-                    <TextBlock Text="Ваш счёт:" Padding="240, 0, 0, 0" FontSize="30"/>
-                    <TextBlock x:Name="amount" Text="{Binding Balance}" FontSize="30"/>
-                    <TextBlock x:Name="exchange" Text="{Binding Currency}" FontSize="30"/>
-                    <Button x:Name="AboutApp" Content="?" Click="AboutApp_Click"/>
+
+        <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Row="0"  Padding="11" >
+
+            <ScrollView HorizontalScrollBarVisibility="Auto">
+            <StackPanel  Spacing="10"  Orientation="Horizontal" >
+                <StackPanel  Spacing="10">
+                    <TextBlock Text="Платежный модуль" FontSize="28" />
+                    <StackPanel Orientation="Horizontal" Spacing="12" >
+                        <Button x:Name="Import" Content="Импорт" Click="Import_Click" FontWeight="Bold" FontSize="20"/>
+                            <Button x:Name="Export" Content="Экспорт" Click="Export_Click" FontWeight="Bold" FontSize="20"/>
+                            <Button x:Name="AboutApp" Content="?" Click="AboutApp_Click" FontWeight="Bold" FontSize="20"/>
+                    </StackPanel>
+                </StackPanel>
+                <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Ваш номер счёта" FontSize="28" FontWeight="Light"/>
+                    <TextBlock  x:Name="number" Text="4252" FontSize="28"/>
+                </StackPanel>
+                    <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Ваш счёт" FontSize="28" FontWeight="Light"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="amount" Text="{Binding Balance}" FontSize="30" Foreground="#4ADE80"/>
+                        <TextBlock x:Name="exchange" Text="{Binding Currency}" FontSize="30" Foreground="#4ADE80"/>
+                    </StackPanel>
+
                 </StackPanel>
             </StackPanel>
+            </ScrollView>
         </Border>
 
-        <Grid Grid.Row="1" ColumnSpacing="16">
+
+        <Grid Grid.Row="1" ColumnSpacing="16" x:Name="General">
             <Grid.ColumnDefinitions>
                 <!--список-->
                 <ColumnDefinition Width="300"/>
@@ -121,7 +142,7 @@
             </Border>
 
 
-            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="1" Padding="20">
+            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="1" Padding="20" Margin="0, 0, -16, 0">
                 <Grid>
 
                     <Grid.Resources>
@@ -312,7 +333,7 @@ HorizontalScrollBarVisibility="Disabled">
             </Border>
 
             <!--Панель для показа контракта-->
-            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="2"  Padding="20" >
+            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="2"  Padding="20" Margin="16, 0, 0, 0">
                 <Grid>
                     <Grid.Resources>
                         <Style TargetType="TextBlock">
@@ -460,6 +481,14 @@ HorizontalScrollBarVisibility="Disabled">
                 </Grid>
             </Border>
         </Grid>
+
+        <Border x:Name="About" Grid.Row="1" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="2"  Padding="20" Visibility="Collapsed">
+            <Grid>
+                <TextBlock Text="хз ещё не придумал"/>
+            </Grid>
+            
+        </Border>
+
     </Grid>
 </Window>
 

@@ -35,6 +35,7 @@ namespace PaymentModule
             NavList.SelectedIndex = 0;
         }
         private bool contractIsOpen = false;
+        private bool aboutAppIsOpen = true;
         private bool initialized;
 
         /// <summary>Загружает счета после создания окна.</summary>
@@ -221,30 +222,30 @@ namespace PaymentModule
 
         private async void AboutApp_Click(object sender, RoutedEventArgs e)
         {
-            TextBlock messageText = new TextBlock
+            if (aboutAppIsOpen)
             {
-                Text = "-#-..=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#\r\n#=...#@%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%\r\n....=%%@@@@@@@@@%@@@@@@@@@@@@@@@@@@@@@@@\r\n....*%@@@@@@@@%**%@@@@@@@@@@@@@@@@@@@@@@\r\n...-#%@@@@@@@@#@%%@@@@@@@%%@@@@@@@%@@@@@\r\n...=#%@@@@@@%#@@@@@@@@@@@@#%#+%@@@@@@@@@\r\n:..+%@@@@@@@#%%##%@@@@@@@@@@**%@@@@@@@@@\r\n..:*%#%@@@%#@@@@@%@@@@@@@@@%*%**%@%@@@@@\r\n..=%##%@@%**+++%%##@@@@@@@#@*@@@*%@@@@@@\r\n..*%%%*@@%=-*...:=+*@@@@@##+++-::==@@@@#\r\n.-%%+%*#@@##@==%+-*##%**#*+-*+:#%:+%@@**\r\n.+%+=%#*%%#*%@#=+%@@@@@@@%@---*@%#@@%++#\r\n:*+==%%%##==#@@@@@@@@@@@@@@@%%@%%%#*%==#\r\n:+-+-%%%@@+:%@@@@@@@@@@@@@@@@@%%+:@@%-#@\r\n::=+:*#@@%*:.#@@@@@@@@@@@@@@@@@*.*@@#:#@\r\n:.==.+%@@%#-..:*@@@@@%@@@@@@@%-..@@@*-#@\r\n:.::.=%@@@#:...-:-#@@@@@@@*:....-@@@###@\r\n:..==-%@@@@+:....*#:.+==#@+..-::*@@%%#%@\r\n::....%@@@%+.....:#@@%@@@%:....:#@%@%*%@\r\n......%@@@+-:..................-@%@@#=:%\r\n..:-..@@@@#:-.................:*%@@@+..:\r\n:..:-.@@@#+-..................=#@@@+-...",
-                FontFamily = new FontFamily("Consolas"),
-                FontSize = 22,                           
-                FontWeight = Microsoft.UI.Text.FontWeights.Light, 
-                TextWrapping = TextWrapping.Wrap         
-            };
-
-
-            ContentDialog dialog = new ContentDialog
+                General.Visibility = Visibility.Collapsed;
+                About.Visibility = Visibility.Visible;
+                aboutAppIsOpen = false;
+            } else
             {
-                Title = "хз еще не придумал",
-                Content = messageText, 
-                CloseButtonText = "ОК",
-                XamlRoot = this.Content.XamlRoot,
-
-
-                FontFamily = new FontFamily("Segoe UI Semibold"),
-                FontSize = 26 
-            };
-
-            await dialog.ShowAsync();
+                About.Visibility = Visibility.Collapsed;
+                General.Visibility = Visibility.Visible;
+                aboutAppIsOpen = true;
+            }
         }
+
+        private void Import_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
     }
 }
 
