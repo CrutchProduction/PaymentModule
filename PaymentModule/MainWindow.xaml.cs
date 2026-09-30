@@ -46,10 +46,17 @@ namespace PaymentModule
             try
             {
                 AccountsManager.LoadAccount();
+                MoneyManager.LoadMoneyScales();
+                currency.Items.Clear();
+                foreach (string moneyName in MoneyManager.GetMoneyNames())
+                {
+                    currency.Items.Add(moneyName);
+                }
                 MainViewModel viewModel = new MainViewModel(AccountsManager.FindAccountById(MainViewModel.CurrentAccountId));
                 viewModel.ErrorOccurred += ShowError;
                 RootGrid.DataContext = viewModel;
                 Logger.StartNewLog();
+
             }
             catch (Exception error)
             {
@@ -237,12 +244,12 @@ namespace PaymentModule
 
         private void Import_Click(object sender, RoutedEventArgs e)
         {
-
+            AccountsManager.ImportData();
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-
+            AccountsManager.ExportData();
         }
 
 

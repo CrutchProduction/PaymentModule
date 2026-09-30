@@ -4,10 +4,14 @@ namespace PaymentClassLibrary
 {
     public static class Guard
     {
-        /// <summary>Проверяет предусловие операции.</summary>
+        /// <summary>
+        ///     Проверка условия
+        /// </summary>
+        /// <param name="condition"> Условие </param>
+        /// <param name="message"> Выводимое сообщение </param>
+        /// <exception cref="InvalidOperationException"> В случае condition == false </exception>
         public static void Requires(bool condition, string message)
         {
-            // Неверные данные не должны изменять баланс.
             if (!condition)
             {
                 throw new InvalidOperationException(message);

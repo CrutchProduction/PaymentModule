@@ -4,13 +4,16 @@ namespace PaymentClassLibrary
 {
     public class Account
     {
-        private static readonly string[] moneyTypes = ["₽", "€", "$", "¥"];
-        private static readonly float[] moneyScales = [1, 97, 84.05f, 12.52f];
         private readonly int accountId;
         private float moneyAmount;
         private int moneyType;
 
-        /// <summary>Создаёт счёт с начальным балансом и валютой.</summary>
+        /// <summary>
+        ///     Конструктор счёта
+        /// </summary>
+        /// <param name="accountId"> Айди аккаунта </param>
+        /// <param name="moneyAmount"> Количество денег на аккаунте </param>
+        /// <param name="moneyType"> Айди типа валюты аккаунта </param>
         public Account(int accountId, float moneyAmount, int moneyType)
         {
             this.accountId = accountId;
@@ -18,37 +21,46 @@ namespace PaymentClassLibrary
             this.moneyType = moneyType;
         }
 
-        /// <summary>Переводит весь баланс в выбранную валюту.</summary>
-        public void ConvertMoneyToAnotherType(int newMoneyType)
-        {
-            // Сначала переводим сумму в рубли, затем в новую валюту.
-            float moneyInRubble = moneyAmount * moneyScales[moneyType];
-            moneyAmount = (float)Math.Round(moneyInRubble / moneyScales[newMoneyType], 2);
-            moneyType = newMoneyType;
-        }
-
-        /// <summary>Возвращает учебный курс валюты в рублях.</summary>
-        public static float GetMoneyScale(int moneyType) { return moneyScales[moneyType]; }
-
-        /// <summary>Добавляет указанную сумму к балансу.</summary>
+        /// <summary>
+        ///     Добавление денег на счёт
+        /// </summary>
+        /// <param name="money"> Количество денег для добавления </param>
         public void AddMoney(float money) { moneyAmount += money; }
 
-        /// <summary>Вычитает указанную сумму из баланса.</summary>
+        /// <summary>
+        ///     Вычитание денег со счёта
+        /// </summary>
+        /// <param name="money"> Количество денег для снятия </param>
         public void RemoveMoney(float money) { moneyAmount -= money; }
 
-        /// <summary>Устанавливает валюту без пересчёта суммы.</summary>
+        /// <summary>
+        ///     Установка определённого количества денег
+        /// </summary>
+        /// <param name="newMoneyAmount"> Новое количество денег </param>
+        public void SetMoney(float newMoneyAmount) { moneyAmount = newMoneyAmount; }
+
+        /// <summary>
+        ///     Установка определённого типа валюты
+        /// </summary>
+        /// <param name="newMoneyType"> Новый тип валюты </param>
         public void SetMoneyType(int newMoneyType) { moneyType = newMoneyType; }
 
-        /// <summary>Возвращает неизменяемый номер счёта.</summary>
+        /// <summary>
+        ///     Получение номера счёта
+        /// </summary>
+        /// <returns> Номер счёта </returns>
         public int GetAccountId() { return accountId; }
 
-        /// <summary>Возвращает текущий баланс.</summary>
+        /// <summary>
+        ///     Получение текущего баланса
+        /// </summary>
+        /// <returns> Количество денег на аккаунте </returns>
         public float GetMoneyAmount() { return moneyAmount; }
 
-        /// <summary>Возвращает символ валюты.</summary>
-        public string GetMoneyType() { return moneyTypes[moneyType]; }
-
-        /// <summary>Возвращает номер валюты в списке.</summary>
+        /// <summary>
+        ///     Получить айди типа данных валюты
+        /// </summary>
+        /// <returns> Айди типа данных валюты </returns>
         public int GetMoneyTypeId() { return moneyType; }
     }
 }

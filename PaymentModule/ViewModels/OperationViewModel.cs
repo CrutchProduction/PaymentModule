@@ -106,7 +106,7 @@ namespace PaymentModule.ViewModels
             OnPropertyChanged(nameof(Postcondition));
             try
             {
-                Logger.Log($"{GetType().Name}: счёт {AccountId}, баланс {oldBalance} -> {current.GetMoneyAmount()} {current.GetMoneyType()}");
+                Logger.Log($"{GetType().Name}: счёт {AccountId}, баланс {oldBalance} -> {current.GetMoneyAmount()} {MoneyManager.GetMoneyChar(current.GetMoneyTypeId())}");
             }
             catch (Exception error)
             {

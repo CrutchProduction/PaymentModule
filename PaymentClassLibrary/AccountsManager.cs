@@ -1,7 +1,13 @@
+using Microsoft.UI;
+using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.UI.Popups;
 
 namespace PaymentClassLibrary
 {
@@ -10,7 +16,9 @@ namespace PaymentClassLibrary
         private static ArrayList accounts = new ArrayList();
         private static string pathToAccounts = Path.Combine(AppContext.BaseDirectory, "accounts.dat");
 
-        /// <summary>Создаёт файл с учебными счетами при первом запуске.</summary>
+        /// <summary>
+        ///     Проверка на существование файла пользователей
+        /// </summary>
         private static void CheckFileExistance()
         {
             if (!File.Exists(pathToAccounts))
@@ -19,7 +27,10 @@ namespace PaymentClassLibrary
             }
         }
 
-        /// <summary>Считывает счета из файла без повторного добавления.</summary>
+        /// <summary>
+        ///     Загружает из файла все счета
+        /// </summary>
+        /// <exception cref="InvalidDataException"> При некорректных данных в файле </exception>
         public static void LoadAccount()
         {
             CheckFileExistance();
@@ -49,11 +60,12 @@ namespace PaymentClassLibrary
                 }
                 loadedAccounts.Add(new Account(accountId, moneyAmount, moneyType));
             }
-            // Меняем список только после чтения всего файла.
             accounts = loadedAccounts;
         }
 
-        /// <summary>Сохраняет балансы и валюты всех счетов.</summary>
+        /// <summary>
+        ///     Сохраняет данные всех счетов
+        /// </summary>
         public static void SaveAccounts()
         {
             string newData = "";
@@ -63,13 +75,16 @@ namespace PaymentClassLibrary
                     + account.GetMoneyAmount().ToString(CultureInfo.InvariantCulture) + " "
                     + account.GetMoneyTypeId() + "\n";
             }
-            // Сначала готовим новый файл, затем заменяем исходный.
             string temporaryPath = pathToAccounts + ".tmp";
             File.WriteAllText(temporaryPath, newData);
             File.Move(temporaryPath, pathToAccounts, true);
         }
-
-        /// <summary>Находит счёт по номеру, иначе возвращает null.</summary>
+        
+        /// <summary>
+        ///     Поиск счёта по номеру
+        /// </summary>
+        /// <param name="accountId"> Айди счёта </param>
+        /// <returns> Счёт если существует, иначе null </returns>
         public static Account FindAccountById(int accountId)
         {
             foreach (Account account in accounts)
@@ -77,6 +92,44 @@ namespace PaymentClassLibrary
                 if (account.GetAccountId() == accountId) { return account; }
             }
             return null;
+        }
+
+        /// <summary>
+        ///     Экспорт данных пользователей
+        /// </summary>
+        public static async void ImportData()
+        {
+            FileOpenPicker picker = new FileOpenPicker(new WindowId(0));
+            picker.FileTypeFilter.Add(".dat");
+            PickFileResult result = await picker.PickSingleFileAsync();
+            
+            if (result != null)
+            {
+                string path = result.Path;
+                File.Copy(path, pathToAccounts + ".tmp");
+                File.Move(pathToAccounts + ".tmp", pathToAccounts, true);
+                LoadAccount();
+                Logger.Log($"Успешно импортированны данные из {path}");
+            }
+        }
+
+        /// <summary>
+        ///     Экспорт данных пользователей
+        /// </summary>
+        public static async void ExportData()
+        {
+            FileSavePicker picker = new FileSavePicker(new WindowId(0));
+            picker.FileTypeChoices.Add(".dat", new List<string>() { ".dat" });
+            picker.SuggestedFileName = "accounts";
+            PickFileResult result = await picker.PickSaveFileAsync();
+
+            if (result != null)
+            {
+                string path = result.Path;
+                File.Copy(pathToAccounts, path + ".tmp");
+                File.Move(path + ".tmp", path, true);
+                Logger.Log($"Файл данных был экспортирован в {path}");
+            }
         }
     }
 }

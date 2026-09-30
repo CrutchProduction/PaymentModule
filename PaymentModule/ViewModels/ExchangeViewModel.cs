@@ -14,7 +14,7 @@ namespace PaymentModule.ViewModels
         public override bool AccountValid { get { return main.CurrentAccount.GetMoneyAmount() > 0; } }
         public override bool Precondition
         {
-            get { return AccountValid && selectedCurrency >= 0 && selectedCurrency < 4 && selectedCurrency != main.CurrentAccount.GetMoneyTypeId(); }
+            get { return AccountValid && selectedCurrency >= 0 && selectedCurrency < MoneyManager.GetMoneyNames().Length && selectedCurrency != main.CurrentAccount.GetMoneyTypeId(); }
         }
 
         /// <summary>Создаёт модель обмена валюты.</summary>
@@ -25,8 +25,8 @@ namespace PaymentModule.ViewModels
         {
             Account account = main.CurrentAccount;
             // Получаем ожидаемый баланс из исходной суммы и курса.
-            float expected = (float)Math.Round(account.GetMoneyAmount() * Account.GetMoneyScale(account.GetMoneyTypeId()) / Account.GetMoneyScale(selectedCurrency), 2);
-            account.ConvertMoneyToAnotherType(selectedCurrency);
+            float expected = (float)Math.Round(account.GetMoneyAmount() * MoneyManager.GetMoneyScale(account.GetMoneyTypeId()) / MoneyManager.GetMoneyScale(selectedCurrency), 2);
+            MoneyManager.ConvertAccountMoney(account, selectedCurrency);
             return account.GetMoneyTypeId() == selectedCurrency && account.GetMoneyAmount() == expected && float.IsFinite(expected);
         }
     }

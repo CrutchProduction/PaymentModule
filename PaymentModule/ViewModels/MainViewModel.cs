@@ -14,7 +14,7 @@ namespace PaymentModule.ViewModels
         public WithdrawViewModel Withdraw { get; }
         public event Action<string> ErrorOccurred = delegate { };
         public string Balance { get { return CurrentAccount.GetMoneyAmount().ToString("0.00"); } }
-        public string Currency { get { return CurrentAccount.GetMoneyType(); } }
+        public string Currency { get { return MoneyManager.GetMoneyChar(CurrentAccount.GetMoneyTypeId()); } }
 
         /// <summary>Подключает фиксированный счёт к четырём операциям.</summary>
         public MainViewModel(Account currentAccount)
