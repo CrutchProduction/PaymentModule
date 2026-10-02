@@ -1,6 +1,5 @@
 using Microsoft.UI;
 using Microsoft.Windows.Storage.Pickers;
-using PaymentClassLibrary.Logs;
 using PaymentClassLibrary.Models;
 using System;
 using System.Collections;
