@@ -45,8 +45,8 @@
                 <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                 <StackPanel Spacing="10">
                     <TextBlock Text="Ваш номер счёта" FontSize="28" FontWeight="Light"/>
-                    <TextBlock  x:Name="number" Text="4252" FontSize="28" IsTextSelectionEnabled="true"/>
-                </StackPanel>
+                        <TextBlock x:Name="number" Text="{Binding AccountId, Mode=OneWay}" FontSize="28"/>
+                    </StackPanel>
                     <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                 <StackPanel Spacing="10">
                     <TextBlock Text="Ваш счёт" FontSize="28" FontWeight="Light"/>

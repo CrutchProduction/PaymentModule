@@ -1,6 +1,6 @@
 using System;
 
-namespace PaymentClassLibrary
+namespace PaymentClassLibrary.Models
 {
     public class Account
     {

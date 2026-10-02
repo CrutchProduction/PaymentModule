@@ -1,4 +1,6 @@
-using PaymentClassLibrary;
+using PaymentClassLibrary.Managers;
+using PaymentClassLibrary.Models;
+using PaymentClassLibrary.Validations;
 using System;
 
 namespace PaymentModule.ViewModels
@@ -6,7 +8,7 @@ namespace PaymentModule.ViewModels
     public class MainViewModel : ViewModelBase
     {
         //Счёт(пользователь) при запуске
-        public const int CurrentAccountId = 4252;
+        public const int CurrentAccountId = 6767;
         public Account CurrentAccount { get; }
         public TransferViewModel Transfer { get; }
         public ExchangeViewModel Exchange { get; }
@@ -15,6 +17,7 @@ namespace PaymentModule.ViewModels
         public event Action<string> ErrorOccurred = delegate { };
         public string Balance { get { return CurrentAccount.GetMoneyAmount().ToString("0.00"); } }
         public string Currency { get { return MoneyManager.GetMoneyChar(CurrentAccount.GetMoneyTypeId()); } }
+        public string AccountId { get { return CurrentAccount.GetAccountId().ToString(); } }
 
         /// <summary>Подключает фиксированный счёт к четырём операциям.</summary>
         public MainViewModel(Account currentAccount)

@@ -1,7 +1,10 @@
-using PaymentClassLibrary;
+using PaymentClassLibrary.Managers;
+using PaymentClassLibrary.Models;
+using PaymentClassLibrary.Validations;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using PaymentClassLibrary;
 
 namespace PaymentModule.ViewModels
 {

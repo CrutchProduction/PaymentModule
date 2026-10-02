@@ -1,5 +1,6 @@
 using Microsoft.UI;
 using Microsoft.Windows.Storage.Pickers;
+using PaymentClassLibrary.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,8 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Popups;
 
-namespace PaymentClassLibrary
+
+namespace PaymentClassLibrary.Managers
 {
     public partial class AccountsManager
     {

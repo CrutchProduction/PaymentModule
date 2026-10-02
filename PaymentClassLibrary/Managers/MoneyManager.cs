@@ -1,8 +1,9 @@
-﻿using System;
+﻿using PaymentClassLibrary.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PaymentClassLibrary
+namespace PaymentClassLibrary.Managers
 {
     public class MoneyManager
     {
