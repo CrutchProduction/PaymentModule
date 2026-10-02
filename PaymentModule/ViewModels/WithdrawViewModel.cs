@@ -10,7 +10,7 @@ namespace PaymentModule.ViewModels
                 float amount;
                 if (!TryGetAmount(out amount)) { return false; }
                 float balance = main.CurrentAccount.GetMoneyAmount();
-                return balance > amount && balance - amount < balance;
+                return balance >= amount && balance - amount <= balance;
             }
         }
         public override bool Precondition { get { return AccountValid && AmountValid; } }

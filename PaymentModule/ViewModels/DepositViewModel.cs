@@ -3,7 +3,7 @@ namespace PaymentModule.ViewModels
     public class DepositViewModel : OperationViewModel
     {
         //лимит на одно пополнение в валюте счёта
-        public const float DepositLimit = 1000000;
+        public const float DepositLimit = 2000000;
         public bool AmountValid
         {
             get
@@ -11,7 +11,7 @@ namespace PaymentModule.ViewModels
                 float amount;
                 if (!TryGetAmount(out amount)) { return false; }
                 float balance = main.CurrentAccount.GetMoneyAmount();
-                return amount < DepositLimit && float.IsFinite(balance + amount) && balance + amount > balance;
+                return amount <= DepositLimit && float.IsFinite(balance + amount) && balance + amount > balance;
             }
         }
         public override bool Precondition { get { return AccountValid && AmountValid; } }

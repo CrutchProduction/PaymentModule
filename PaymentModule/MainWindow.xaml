@@ -39,19 +39,19 @@
                     <StackPanel Orientation="Horizontal" Spacing="12" >
                         <Button x:Name="Import" Content="Импорт" Click="Import_Click" FontWeight="Bold" FontSize="20"/>
                             <Button x:Name="Export" Content="Экспорт" Click="Export_Click" FontWeight="Bold" FontSize="20"/>
-                            <Button x:Name="AboutApp" Content="?" Click="AboutApp_Click" FontWeight="Bold" FontSize="20"/>
+                            <Button x:Name="AboutApp" Content="?" Click="AboutApp_Click" FontWeight="Bold" FontSize="20" ToolTipService.ToolTip="О приложении"/>
                     </StackPanel>
                 </StackPanel>
                 <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                 <StackPanel Spacing="10">
                     <TextBlock Text="Ваш номер счёта" FontSize="28" FontWeight="Light"/>
-                    <TextBlock  x:Name="number" Text="4252" FontSize="28"/>
+                    <TextBlock  x:Name="number" Text="4252" FontSize="28" IsTextSelectionEnabled="true"/>
                 </StackPanel>
                     <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                 <StackPanel Spacing="10">
                     <TextBlock Text="Ваш счёт" FontSize="28" FontWeight="Light"/>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="amount" Text="{Binding Balance}" FontSize="30" Foreground="#4ADE80"/>
+                            <TextBlock x:Name="amount" Text="{Binding Balance}" FontSize="30" Foreground="#4ADE80" IsTextSelectionEnabled="true"/>
                         <TextBlock x:Name="exchange" Text="{Binding Currency}" FontSize="30" Foreground="#4ADE80"/>
                     </StackPanel>
 
@@ -64,7 +64,7 @@
         <Grid Grid.Row="1" ColumnSpacing="16" x:Name="General">
             <Grid.ColumnDefinitions>
                 <!--список-->
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="400"/>
                 <!--панель-->
                 <ColumnDefinition Width="*"/>
                 <!--контракт-->
@@ -77,7 +77,7 @@
             <Border x:Name="BorderListBox" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="0">
                 <!-- Перенесли Grid.Column сюда -->
 
-                <ListBox x:Name="NavList" SelectionChanged="NavList_SelectionChanged" Background="Transparent"  BorderThickness="0" SingleSelectionFollowsFocus="False" Padding="5">
+                <ListBox x:Name="NavList" SelectionChanged="NavList_SelectionChanged" Background="Transparent"  BorderThickness="0" SingleSelectionFollowsFocus="False" Padding="10">
 
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -87,10 +87,10 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
                                         <!-- шаблон для анимаций -->
-                                        <Border x:Name="RootBorder" Background="{ThemeResource SystemControlHighlightListLowRevealBackgroundBrush}" CornerRadius="10" RenderTransformOrigin="0.5,0.5" BorderThickness="2" BorderBrush="Transparent">
+                                        <Border x:Name="RootBorder" Background="{ThemeResource SystemControlHighlightListLowRevealBackgroundBrush}" CornerRadius="10" RenderTransformOrigin="0.5,0.5">
                                             <!--изначально размер элемнтов listbox = 0.95 от начального-->
                                             <Border.RenderTransform>
-                                                <ScaleTransform x:Name="ItemScale" ScaleX="0.95" ScaleY="0.95"/>
+                                                <ScaleTransform x:Name="ItemScale" ScaleX="0.9" ScaleY="0.95"/>
                                             </Border.RenderTransform>
 
                                             <ContentPresenter Content="{TemplateBinding Content}" Margin="0, 15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -103,8 +103,8 @@
                                                     <!--Анимация если кнопка будет нажата-->
                                                     <VisualState x:Name="Disabled">
                                                         <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="0.95" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="0.95" Duration="0:0:0.2"/>
                                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootBorder" Storyboard.TargetProperty="Background">
                                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAccent3RevealBackgroundBrush}" />
                                                             </ObjectAnimationUsingKeyFrames>
@@ -113,8 +113,23 @@
                                                     <!--Анимация если курсор будет на кнопках-->
                                                     <VisualState x:Name="PointerOver">
                                                         <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.2"/>
-                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootBorder" Storyboard.TargetProperty="Background">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    
+                                                </VisualStateGroup>
+                                                <VisualStateGroup x:Name="FocusStates">
+
+                                                    <VisualState x:Name="Unfocused"/>
+                                                    <!--Анимация если фокус будет на кнопках-->
+                                                    <VisualState x:Name="Focused">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                                            <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
                                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootBorder" Storyboard.TargetProperty="Background">
                                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" />
                                                             </ObjectAnimationUsingKeyFrames>
@@ -122,7 +137,6 @@
                                                     </VisualState>
 
                                                 </VisualStateGroup>
-                                                
 
 
                                             </VisualStateManager.VisualStateGroups>
@@ -142,7 +156,7 @@
             </Border>
 
 
-            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="1" Padding="20" Margin="0, 0, -16, 0">
+            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="1" Padding="40, 20" Margin="0, 0, -16, 0">
                 <Grid>
 
                     <Grid.Resources>
@@ -163,171 +177,355 @@
                     <!--панель1-->
                     <ScrollViewer x:Name="PanelV1" VerticalScrollBarVisibility="Auto"
 HorizontalScrollBarVisibility="Disabled" >
-                        <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed">
-                            <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0" TextWrapping="Wrap"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed">
+                                <TextBlock Text="Номер счёта откуда переводить" Padding="0, 40, 0, 0" TextWrapping="Wrap" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="accountFromCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="CornerRadius" Value="10"/>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                        <ComboBox.Resources>
+                                            <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
+                                        </ComboBox.Resources>
+                                        <ComboBoxItem Content="4252"/>
+                                        <ComboBoxItem Content="6767"/>
+                                        <ComboBoxItem Content="5242"/>
+                                        <ComboBoxItem Content="1199"/>
+                                        <ComboBoxItem Content="9911"/>
+                                    </ComboBox>
 
-                                <TextBox x:Name="accountFrom" IsReadOnly="True" Text="{Binding Transfer.AccountId, Mode=OneWay}" Grid.Column="0"
-                             PlaceholderText="Введите значение"
-                             HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum1Pre1" Grid.Column="1"
-                           Width="40" Height="40" Fill="{Binding Transfer.AccountValid, Converter={StaticResource ConditionBrush}}"
-                           RadiusY="10" RadiusX="10" Margin="5"/>
-
-                            </Grid>
-                            <TextBlock Text="Номер счёта куда перевести" TextWrapping="Wrap"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="accountTo" Text="{Binding Transfer.RecipientText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" PlaceholderText="Введите значение" TextWrapping="Wrap" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum1Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.RecipientValid, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
-
-                            <TextBlock Text="Сумма перевода" TextWrapping="Wrap"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBox x:Name="amountToPay" Text="{Binding Transfer.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" PlaceholderText="Введите сумму" HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum1Pre3" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.AmountValid, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
+                                    <TextBox x:Name="accountFrom" IsReadOnly="True" Text="{Binding Transfer.AccountId, Mode=OneWay}" Grid.Column="1"
+     PlaceholderText="Введите значение"
+     HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum1Pre1" Grid.Column="2"
+   Width="40" Height="40" Fill="{Binding Transfer.AccountValid, Converter={StaticResource ConditionBrush}}"
+   RadiusY="10" RadiusX="10" Margin="5"/>
 
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                                </Grid>
+                                <TextBlock Text="Номер счёта куда перевести" TextWrapping="Wrap"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="accountToCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="CornerRadius" Value="10"/>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                        <ComboBox.Resources>
+                                            <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
+                                        </ComboBox.Resources>
+                                        <ComboBoxItem Content="4252"/>
+                                        <ComboBoxItem Content="6767"/>
+                                        <ComboBoxItem Content="5242"/>
+                                        <ComboBoxItem Content="1199"/>
+                                        <ComboBoxItem Content="9911"/>
+                                    </ComboBox>
+                                    <TextBox x:Name="accountTo" Text="{Binding Transfer.RecipientText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" PlaceholderText="Введите значение" TextWrapping="Wrap" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum1Pre2" Grid.Column="2" Width="40" Height="40" Fill="{Binding Transfer.RecipientValid, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
 
-                                <Button Content="Перевести" Command="{Binding Transfer.ExecuteCommand}" Grid.Column="0" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum1Post1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.Postcondition, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5" HorizontalAlignment="Right"/>
-                            </Grid>
-                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Сумма перевода" TextWrapping="Wrap"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
+                                    <TextBox x:Name="amountToPay" Text="{Binding Transfer.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" PlaceholderText="Введите сумму" HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum1Pre3" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.AmountValid, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
+
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Content="Перевести" Command="{Binding Transfer.ExecuteCommand}" Grid.Column="0" CornerRadius="10" />
+                                    <Rectangle x:Name="Colum1Post1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.Postcondition, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5" HorizontalAlignment="Right"/>
+                                </Grid>
+
+                                <Button x:Name="cotract1" Content="Показать контракт" HorizontalAlignment="Left" Click="contract1_Click" CornerRadius="10"/>
                             </StackPanel>
+                            <StackPanel Margin="50" Spacing="12">
+                                <TextBlock Text="Перед переводом проверьте:" Margin="-20, 0, 0, 0" FontSize="30" FontWeight="Bold"/>
+                                <TextBlock Text="Имя получателя - совпадает с тем, кому переводите"/>
+                                <TextBlock Text="Номер счёта"/>
 
-                            <Button x:Name="cotract1" Content="Показать контракт" HorizontalAlignment="Left" Click="contract1_Click" CornerRadius="10"/>
+                                <TextBlock Text="Сумма - перечитайте, нет ли лишнего нуля"/>
+                                <TextBlock Text="Банк получателя"/>
+                                <TextBlock Text="Вас не торопят - мошенники всегда создают срочность"/>
+                                <TextBlock Text=""/>
+                            </StackPanel>
                         </StackPanel>
+                        
                     </ScrollViewer>
 
                     <!--панель2-->
                     <ScrollViewer x:Name="PanelV2" VerticalScrollBarVisibility="Auto"
 HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel x:Name="Panel2" Spacing="12" Visibility="Collapsed">
-                            <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="accountExchange" IsReadOnly="True" Text="{Binding Exchange.AccountId, Mode=OneWay}" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum2Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Exchange.Precondition, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel x:Name="Panel2" Spacing="12" Visibility="Collapsed">
+                                <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="accountExchangeCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="CornerRadius" Value="10"/>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                        <ComboBox.Resources>
+                                            <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
+                                        </ComboBox.Resources>
+                                        <ComboBoxItem Content="4252"/>
+                                        <ComboBoxItem Content="6767"/>
+                                        <ComboBoxItem Content="5242"/>
+                                        <ComboBoxItem Content="1199"/>
+                                        <ComboBoxItem Content="9911"/>
+                                    </ComboBox>
+                                    <TextBox x:Name="accountExchange" IsReadOnly="True" Text="{Binding Exchange.AccountId, Mode=OneWay}" Grid.Column="1" PlaceholderText="Введите значение" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum2Pre1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Exchange.Precondition, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
 
 
-                            <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
-                                <ComboBox.ItemContainerStyle>
-                                    <Style TargetType="ComboBoxItem">
-                                        <Setter Property="CornerRadius" Value="10"/>
-                                    </Style>
-                                </ComboBox.ItemContainerStyle>
-                                <ComboBoxItem Content="Российский рубль ₽"/>
-                                <ComboBoxItem Content="Евро €"/>
-                                <ComboBoxItem Content="Доллар $"/>
-                                <ComboBoxItem Content="Юань ¥" />
+                                <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                    <ComboBox.ItemContainerStyle>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="CornerRadius" Value="10"/>
+                                        </Style>
+                                    </ComboBox.ItemContainerStyle>
+                                    <ComboBoxItem Content="Российский рубль ₽"/>
+                                    <ComboBoxItem Content="Евро €"/>
+                                    <ComboBoxItem Content="Доллар $"/>
+                                    <ComboBoxItem Content="Юань ¥" />
 
 
-                            </ComboBox>
+                                </ComboBox>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Rectangle Grid.Column="1" x:Name="Colum2Post1"  Width="40" Height="40" Fill="{Binding Exchange.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                                <Button Grid.Column="0" Content="конвертировать" Command="{Binding Exchange.ExecuteCommand}" HorizontalAlignment="Left" CornerRadius="10"/>
-                            </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Rectangle Grid.Column="1" x:Name="Colum2Post1"  Width="40" Height="40" Fill="{Binding Exchange.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Button Grid.Column="0" Content="конвертировать" Command="{Binding Exchange.ExecuteCommand}" HorizontalAlignment="Left" CornerRadius="10"/>
+                                </Grid>
 
-                            <Button x:Name="cotract2" Content="Показать контракт" HorizontalAlignment="Left" Click="contract2_Click" CornerRadius="10"/>
+                                <Button x:Name="cotract2" Content="Показать контракт" HorizontalAlignment="Left" Click="contract2_Click" CornerRadius="10"/>
+                            </StackPanel>
+                            <StackPanel Spacing="12" Margin="50">
+                                <TextBlock Text="Курсы валют относительно Рубля" Margin="-20, 0, 0, 0" FontSize="30" FontWeight="Bold"/>
+                                <TextBlock Text="Российский рубль  ₽  1"/>
+                                <TextBlock Text="Евро  €  94,32"/>
+                                <TextBlock Text="Доллар США  $  83,08"/>
+                                <TextBlock Text="Юань  ¥  12,39"/>
+                                <TextBlock Text="Белорусский рубль  BYN  27,62"/>
+                                <TextBlock Text="Фунт стерлингов  £  110,26"/>
+                                <TextBlock Text="Австралийский доллар  A$  57,76"/>
+                                <TextBlock Text="Франк  ₣  99,51"/>
+                                <TextBlock Text="Новозеландский доллар  NZ$  46,86"/>
+                            </StackPanel>
                         </StackPanel>
+                        
                     </ScrollViewer>
 
                     <!-- панель3 -->
                     <ScrollViewer x:Name="PanelV3" VerticalScrollBarVisibility="Auto"
 HorizontalScrollBarVisibility="Disabled" >
-                        <StackPanel x:Name="Panel3" Spacing="12" Visibility="Collapsed">
-                            <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="accountBalance" IsReadOnly="True" Text="{Binding Deposit.AccountId, Mode=OneWay}" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum3Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
-                            <TextBlock Text="Сумма"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="balance" Text="{Binding Deposit.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"  PlaceholderText="Введите значение" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum2Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.AmountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button Content="Пополнить счёт" Command="{Binding Deposit.ExecuteCommand}" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum3Post1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel x:Name="Panel3" Spacing="12" Visibility="Collapsed">
+                                <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="accountBalanceCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="CornerRadius" Value="10"/>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                        <ComboBox.Resources>
+                                            <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
+                                        </ComboBox.Resources>
+                                        <ComboBoxItem Content="4252"/>
+                                        <ComboBoxItem Content="6767"/>
+                                        <ComboBoxItem Content="5242"/>
+                                        <ComboBoxItem Content="1199"/>
+                                        <ComboBoxItem Content="9911"/>
+                                    </ComboBox>
+                                    <TextBox x:Name="accountBalance" IsReadOnly="True" Text="{Binding Deposit.AccountId, Mode=OneWay}" Grid.Column="1" PlaceholderText="Введите значение" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum3Pre1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Deposit.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
+                                <TextBlock Text="Сумма"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="balance" Text="{Binding Deposit.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"  PlaceholderText="Введите значение" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum2Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.AmountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="Пополнить счёт" Command="{Binding Deposit.ExecuteCommand}" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum3Post1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
 
-                            <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click" CornerRadius="10"/>
+                                <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click" CornerRadius="10"/>
+                            </StackPanel>
+                            <StackPanel Spacing="12" Margin="50">
+                                <TextBlock Text="Суммы пополнения" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button x:Name="Button100" Content="100"  Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button200" Content="200" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button300" Content="500" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button x:Name="Button1000" Content="1 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button2000" Content="2 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button5000" Content="5 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button x:Name="Button10000" Content="10 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button15000" Content="15 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button20000" Content="20 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button x:Name="Button30000" Content="30 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button50000" Content="50 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button100000" Content="100 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button x:Name="Button200000" Content="200 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button300000" Content="300 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button500000" Content="500 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button x:Name="Button1l" Content="1 000 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button15l" Content="1 500 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button2l" Content="2 000 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                </StackPanel>
+                            </StackPanel> 
                         </StackPanel>
+                        
                     </ScrollViewer>
 
                     <!--панель4-->
                     <ScrollViewer x:Name="PanelV4" VerticalScrollBarVisibility="Auto"
 HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel x:Name="Panel4" Spacing="12" Visibility="Collapsed">
-                            <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="withDrawAccount" IsReadOnly="True" Text="{Binding Withdraw.AccountId, Mode=OneWay}" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum4Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Withdraw.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
-                            <TextBlock Text="Сумма"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="withDrawMoney" Text="{Binding Withdraw.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum4Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Withdraw.AmountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button Content="Снять" Command="{Binding Withdraw.ExecuteCommand}" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
-                                <Rectangle x:Name="Colum4Post1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Withdraw.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
-                            </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel x:Name="Panel4" Spacing="12" Visibility="Collapsed">
+                                <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="withDrawAccountCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="CornerRadius" Value="10"/>
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+                                        <ComboBox.Resources>
+                                            <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
+                                        </ComboBox.Resources>
+                                        <ComboBoxItem Content="4252"/>
+                                        <ComboBoxItem Content="6767"/>
+                                        <ComboBoxItem Content="5242"/>
+                                        <ComboBoxItem Content="1199"/>
+                                        <ComboBoxItem Content="9911"/>
+                                    </ComboBox>
+                                    <TextBox x:Name="withDrawAccount" IsReadOnly="True" Text="{Binding Withdraw.AccountId, Mode=OneWay}" Grid.Column="1" PlaceholderText="Введите значение" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum4Pre1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Withdraw.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
+                                <TextBlock Text="Сумма"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="withDrawMoney" Text="{Binding Withdraw.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
+                                    <Rectangle x:Name="Colum4Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Withdraw.AmountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="Снять" Command="{Binding Withdraw.ExecuteCommand}" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10" Margin="0, 0, 5, 0"/>
+                                    <Button Content="Снять всё" Grid.Column="1" HorizontalAlignment="Left" CornerRadius="10" Click="withdrawMoney_Clik"/>
+                                    <Rectangle x:Name="Colum4Post1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Withdraw.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                </Grid>
 
-                            <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click" CornerRadius="10"/>
+                                <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click" CornerRadius="10"/>
+                            </StackPanel>
+                            <StackPanel Spacing="12" Margin="50">
+                                <TextBlock Text="Суммы снятия" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button Content="100"  Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="200" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="500" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button Content="1 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="2 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="5 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button Content="10 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="15 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="20 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button Content="30 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="50 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="100 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button Content="200 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="300 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="500 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="40">
+                                    <Button Content="1 000 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="1 500 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="2 000 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
+                        
+                        
                     </ScrollViewer>
                 </Grid>
             </Border>

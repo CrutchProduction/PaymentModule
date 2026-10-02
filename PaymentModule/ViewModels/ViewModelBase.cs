@@ -8,6 +8,7 @@ namespace PaymentModule.ViewModels
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         /// <summary>Сообщает интерфейсу об изменении свойства.</summary>
+        
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             // Пустое имя обновляет все свойства этой модели.

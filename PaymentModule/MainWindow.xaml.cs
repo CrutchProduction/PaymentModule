@@ -251,8 +251,19 @@ namespace PaymentModule
         {
             AccountsManager.ExportData();
         }
+        private void Button_ClickPanel3(object sender, RoutedEventArgs e)
+        {
+            balance.Text = ((Button)sender).Content.ToString().Replace(" ", "");
+        }
 
-
+        private void Button_ClickPanel4(object sender, RoutedEventArgs e)
+        {
+            withDrawMoney.Text = ((Button)sender).Content.ToString().Replace(" ", "");
+        }
+        private void withdrawMoney_Clik(object sender, RoutedEventArgs e)
+        {
+            withDrawMoney.Text = amount.Text;
+        }
     }
 }
 
