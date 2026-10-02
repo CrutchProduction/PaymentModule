@@ -183,11 +183,11 @@ HorizontalScrollBarVisibility="Disabled" >
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="300"/>
-                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox x:Name="accountFromCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                    <ComboBox x:Name="accountFrom" SelectedIndex="0" Text="{Binding Transfer.AccountId, Mode=OneWay}" Grid.Column="0" IsEditable="False" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" CornerRadius="10">
                                         <ComboBox.ItemContainerStyle>
                                             <Style TargetType="ComboBoxItem">
                                                 <Setter Property="CornerRadius" Value="10"/>
@@ -196,17 +196,10 @@ HorizontalScrollBarVisibility="Disabled" >
                                         <ComboBox.Resources>
                                             <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
                                         </ComboBox.Resources>
-                                        <ComboBoxItem Content="4252"/>
                                         <ComboBoxItem Content="6767"/>
-                                        <ComboBoxItem Content="5242"/>
-                                        <ComboBoxItem Content="1199"/>
-                                        <ComboBoxItem Content="9911"/>
                                     </ComboBox>
 
-                                    <TextBox x:Name="accountFrom" IsReadOnly="True" Text="{Binding Transfer.AccountId, Mode=OneWay}" Grid.Column="1"
-     PlaceholderText="Введите значение"
-     HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
-                                    <Rectangle x:Name="Colum1Pre1" Grid.Column="2"
+                                    <Rectangle x:Name="Colum1Pre1" Grid.Column="1"
    Width="40" Height="40" Fill="{Binding Transfer.AccountValid, Converter={StaticResource ConditionBrush}}"
    RadiusY="10" RadiusX="10" Margin="5"/>
 
@@ -216,26 +209,19 @@ HorizontalScrollBarVisibility="Disabled" >
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300"/>
+                                        <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="300"/>
-                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox x:Name="accountToCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
-                                        <ComboBox.ItemContainerStyle>
-                                            <Style TargetType="ComboBoxItem">
-                                                <Setter Property="CornerRadius" Value="10"/>
-                                            </Style>
-                                        </ComboBox.ItemContainerStyle>
+                                    <ComboBox x:Name="accountTo" Text="{Binding Transfer.RecipientText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" CornerRadius="10">
                                         <ComboBox.Resources>
                                             <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
                                         </ComboBox.Resources>
-                                        <ComboBoxItem Content="4252"/>
                                         <ComboBoxItem Content="6767"/>
                                         <ComboBoxItem Content="5242"/>
                                         <ComboBoxItem Content="1199"/>
                                         <ComboBoxItem Content="9911"/>
                                     </ComboBox>
-                                    <TextBox x:Name="accountTo" Text="{Binding Transfer.RecipientText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" PlaceholderText="Введите значение" TextWrapping="Wrap" CornerRadius="10"/>
-                                    <Rectangle x:Name="Colum1Pre2" Grid.Column="2" Width="40" Height="40" Fill="{Binding Transfer.RecipientValid, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Rectangle x:Name="Colum1Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.RecipientValid, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
 
                                 <TextBlock Text="Сумма перевода" TextWrapping="Wrap"/>
@@ -285,10 +271,10 @@ HorizontalScrollBarVisibility="Disabled">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300"/>
-                                        <ColumnDefinition Width="300"/>
                                         <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="300"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox x:Name="accountExchangeCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                    <ComboBox SelectedIndex="0" x:Name="accountExchange" Text="{Binding Exchange.AccountId, Mode=OneWay}" Grid.Column="0" IsEditable="False" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" CornerRadius="10">
                                         <ComboBox.ItemContainerStyle>
                                             <Style TargetType="ComboBoxItem">
                                                 <Setter Property="CornerRadius" Value="10"/>
@@ -297,14 +283,9 @@ HorizontalScrollBarVisibility="Disabled">
                                         <ComboBox.Resources>
                                             <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
                                         </ComboBox.Resources>
-                                        <ComboBoxItem Content="4252"/>
                                         <ComboBoxItem Content="6767"/>
-                                        <ComboBoxItem Content="5242"/>
-                                        <ComboBoxItem Content="1199"/>
-                                        <ComboBoxItem Content="9911"/>
                                     </ComboBox>
-                                    <TextBox x:Name="accountExchange" IsReadOnly="True" Text="{Binding Exchange.AccountId, Mode=OneWay}" Grid.Column="1" PlaceholderText="Введите значение" CornerRadius="10"/>
-                                    <Rectangle x:Name="Colum2Pre1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Exchange.Precondition, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Rectangle x:Name="Colum2Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Exchange.Precondition, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
 
 
@@ -318,8 +299,6 @@ HorizontalScrollBarVisibility="Disabled">
                                     <ComboBoxItem Content="Евро €"/>
                                     <ComboBoxItem Content="Доллар $"/>
                                     <ComboBoxItem Content="Юань ¥" />
-
-
                                 </ComboBox>
 
                                 <Grid>
@@ -358,10 +337,10 @@ HorizontalScrollBarVisibility="Disabled" >
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300"/>
-                                        <ColumnDefinition Width="300"/>
                                         <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="300"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox x:Name="accountBalanceCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                    <ComboBox x:Name="accountBalance" Grid.Column="0" Text="{Binding Deposit.AccountId, Mode=OneWay}" IsEditable="False" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="0" CornerRadius="10">
                                         <ComboBox.ItemContainerStyle>
                                             <Style TargetType="ComboBoxItem">
                                                 <Setter Property="CornerRadius" Value="10"/>
@@ -370,19 +349,14 @@ HorizontalScrollBarVisibility="Disabled" >
                                         <ComboBox.Resources>
                                             <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
                                         </ComboBox.Resources>
-                                        <ComboBoxItem Content="4252"/>
                                         <ComboBoxItem Content="6767"/>
-                                        <ComboBoxItem Content="5242"/>
-                                        <ComboBoxItem Content="1199"/>
-                                        <ComboBoxItem Content="9911"/>
                                     </ComboBox>
-                                    <TextBox x:Name="accountBalance" IsReadOnly="True" Text="{Binding Deposit.AccountId, Mode=OneWay}" Grid.Column="1" PlaceholderText="Введите значение" CornerRadius="10"/>
-                                    <Rectangle x:Name="Colum3Pre1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Deposit.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Rectangle x:Name="Colum3Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
                                 <TextBlock Text="Сумма"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="300"/>
                                         <ColumnDefinition Width="auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="balance" Text="{Binding Deposit.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"  PlaceholderText="Введите значение" CornerRadius="10"/>
@@ -446,10 +420,10 @@ HorizontalScrollBarVisibility="Disabled">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300"/>
-                                        <ColumnDefinition Width="300"/>
                                         <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="300"/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox x:Name="withDrawAccountCombobox" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
+                                    <ComboBox x:Name="withDrawAccount" Grid.Column="0" Text="{Binding Withdraw.AccountId, Mode=OneWay}" IsEditable="False" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" SelectedIndex="0" CornerRadius="10">
                                         <ComboBox.ItemContainerStyle>
                                             <Style TargetType="ComboBoxItem">
                                                 <Setter Property="CornerRadius" Value="10"/>
@@ -458,14 +432,9 @@ HorizontalScrollBarVisibility="Disabled">
                                         <ComboBox.Resources>
                                             <x:Double x:Key="ControlContentThemeFontSize">20</x:Double>
                                         </ComboBox.Resources>
-                                        <ComboBoxItem Content="4252"/>
                                         <ComboBoxItem Content="6767"/>
-                                        <ComboBoxItem Content="5242"/>
-                                        <ComboBoxItem Content="1199"/>
-                                        <ComboBoxItem Content="9911"/>
                                     </ComboBox>
-                                    <TextBox x:Name="withDrawAccount" IsReadOnly="True" Text="{Binding Withdraw.AccountId, Mode=OneWay}" Grid.Column="1" PlaceholderText="Введите значение" CornerRadius="10"/>
-                                    <Rectangle x:Name="Colum4Pre1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Withdraw.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Rectangle x:Name="Colum4Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Withdraw.AccountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
                                 <TextBlock Text="Сумма"/>
                                 <Grid>
