@@ -17,6 +17,7 @@ namespace PaymentModule.ViewModels
         public event Action<string> ErrorOccurred = delegate { };
         public string Balance { get { return CurrentAccount.GetMoneyAmount().ToString("0.00"); } }
         public string Currency { get { return MoneyManager.GetMoneyChar(CurrentAccount.GetMoneyTypeId()); } }
+        public string AccountId { get { return CurrentAccount.GetAccountId().ToString(); } }
 
         /// <summary>Подключает фиксированный счёт к четырём операциям.</summary>
         public MainViewModel(Account currentAccount)
