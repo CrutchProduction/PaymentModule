@@ -1,11 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PaymentClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using PaymentClassLibrary.Models;
+using PaymentClassLibrary.Managers;
 
 namespace PaymentClassLibTest
 {

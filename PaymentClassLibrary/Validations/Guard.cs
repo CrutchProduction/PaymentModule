@@ -1,6 +1,6 @@
 using System;
 
-namespace PaymentClassLibrary
+namespace PaymentClassLibrary.Validations
 {
     public static class Guard
     {

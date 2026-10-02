@@ -1,4 +1,5 @@
-using PaymentClassLibrary;
+using PaymentClassLibrary.Managers;
+using PaymentClassLibrary.Models;
 using System;
 
 namespace PaymentModule.ViewModels

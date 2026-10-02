@@ -1,4 +1,6 @@
-using PaymentClassLibrary;
+using PaymentClassLibrary.Managers;
+using PaymentClassLibrary.Models;
+using PaymentClassLibrary.Validations;
 using System;
 
 namespace PaymentModule.ViewModels
@@ -6,7 +8,7 @@ namespace PaymentModule.ViewModels
     public class MainViewModel : ViewModelBase
     {
         //Счёт(пользователь) при запуске
-        public const int CurrentAccountId = 4252;
+        public const int CurrentAccountId = 6767;
         public Account CurrentAccount { get; }
         public TransferViewModel Transfer { get; }
         public ExchangeViewModel Exchange { get; }
