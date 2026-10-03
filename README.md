@@ -23,7 +23,7 @@ git clone https://github.com/CrutchProduction/PaymentModule.git
 ```
 
 ## Инструменты
-Данный проект использует C# 10.0.17763.0 с .NET 8.0 и WinUI3
+Данный проект использует C# 12 с .NET 8.0 и WinUI3
 
 ## Использование
 
