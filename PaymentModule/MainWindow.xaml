@@ -247,6 +247,8 @@ HorizontalScrollBarVisibility="Disabled" >
 
                                 <Button x:Name="cotract1" Content="Показать контракт" HorizontalAlignment="Left" Click="contract1_Click" CornerRadius="10"/>
                             </StackPanel>
+                            <!--сепаратор-->
+                            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Margin="50" Spacing="12">
                                 <TextBlock Text="Перед переводом проверьте:" Margin="-20, 0, 0, 0" FontSize="30" FontWeight="Bold"/>
                                 <TextBlock Text="Имя получателя - совпадает с тем, кому переводите"/>
@@ -311,6 +313,8 @@ HorizontalScrollBarVisibility="Disabled">
 
                                 <Button x:Name="cotract2" Content="Показать контракт" HorizontalAlignment="Left" Click="contract2_Click" CornerRadius="10"/>
                             </StackPanel>
+                            <!--сепаратор-->
+                            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Spacing="12" Margin="50">
                                 <TextBlock Text="Курсы валют относительно Рубля" Margin="-20, 0, 0, 0" FontSize="30" FontWeight="Bold"/>
                                 <TextBlock Text="Российский рубль  ₽  1"/>
@@ -372,6 +376,8 @@ HorizontalScrollBarVisibility="Disabled" >
 
                                 <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click" CornerRadius="10"/>
                             </StackPanel>
+                            <!--сепаратор-->
+                            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Spacing="12" Margin="50">
                                 <TextBlock Text="Суммы пополнения" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold"/>
                                 <StackPanel Orientation="Horizontal" Spacing="40">
@@ -457,6 +463,8 @@ HorizontalScrollBarVisibility="Disabled">
 
                                 <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click" CornerRadius="10"/>
                             </StackPanel>
+                            <!--сепаратор-->
+                            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Spacing="12" Margin="50">
                                 <TextBlock Text="Суммы снятия" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold"/>
                                 <StackPanel Orientation="Horizontal" Spacing="40">
