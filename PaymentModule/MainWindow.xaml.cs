@@ -88,6 +88,8 @@ namespace PaymentModule
             Panel2.Visibility = Visibility.Collapsed;
             Panel3.Visibility = Visibility.Collapsed;
             Panel4.Visibility = Visibility.Collapsed;
+            CalculatorPanel.Visibility = Visibility.Collapsed;
+            listboxitem5.IsEnabled = true;
             //скрываем контракты
             contract1.Visibility = Visibility.Collapsed;
             contract2.Visibility = Visibility.Collapsed;
@@ -143,6 +145,14 @@ namespace PaymentModule
                     listboxitem2.IsEnabled = true;
                     listboxitem3.IsEnabled = true;
                     listboxitem4.IsEnabled = false;
+                    break;
+                case 4:
+                    CalculatorPanel.Visibility = Visibility.Visible;
+                    listboxitem1.IsEnabled = true;
+                    listboxitem2.IsEnabled = true;
+                    listboxitem3.IsEnabled = true;
+                    listboxitem4.IsEnabled = true;
+                    listboxitem5.IsEnabled = false;
                     break;
             }
         }

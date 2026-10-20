@@ -152,6 +152,7 @@
                     <ListBoxItem  x:Name="listboxitem2" Content="Перевод в другую валюту"/>
                     <ListBoxItem  x:Name="listboxitem3" Content="Пополнение"/>
                     <ListBoxItem  x:Name="listboxitem4" Content="Снятие"/>
+                    <ListBoxItem x:Name="listboxitem5" Content="Калькулятор(beta)"/>
                 </ListBox>
             </Border>
 
@@ -173,6 +174,98 @@
                             <Setter Property="FontSize" Value="20"/>
                         </Style>
                     </Grid.Resources>
+
+                    <ScrollViewer x:Name="CalculatorPanel" Visibility="Collapsed" Margin="0,0,-15,0"
+                                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Spacing="12" HorizontalAlignment="Stretch" Padding="0,20,27,20">
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="20"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                </Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="FontSize" Value="20"/>
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="FontSize" Value="20"/>
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </StackPanel.Resources>
+
+                            <TextBlock Text="Конструктор фрагмента" FontSize="30" FontWeight="Bold"/>
+                            <TextBlock Text="Калькулятор слабейшего предусловия (wp)" FontWeight="Light"/>
+
+                            <TextBlock Text="Примеры фрагментов" Margin="0, 12, 0, 0"/>
+                            <Grid ColumnSpacing="12" RowSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12">
+                                    <TextBlock Text="Max из двух" TextAlignment="Center"/>
+                                </Button>
+                                <Button Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12">
+                                    <TextBlock Text="Квадратное уравнение" TextAlignment="Center"/>
+                                </Button>
+                                <Button Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12">
+                                    <TextBlock Text="Последовательность присваиваний" TextAlignment="Center"/>
+                                </Button>
+                            </Grid>
+
+                            <Grid ColumnSpacing="16" Margin="0, 12, 0, 0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Header="Цель (Post)" PlaceholderText="Краткая запись условия" TextWrapping="Wrap"
+                                         AutomationProperties.Name="Цель Post в краткой записи"/>
+                                <TextBox Grid.Column="1" Header="Цель словами" PlaceholderText="Описание постусловия" TextWrapping="Wrap"
+                                         AutomationProperties.Name="Цель Post словами"/>
+                            </Grid>
+
+                            <TextBox Header="Код фрагмента" PlaceholderText="Введите последовательность присваиваний или if / else"
+                                     AcceptsReturn="True" TextWrapping="Wrap" MinHeight="180" FontFamily="Consolas"
+                                     AutomationProperties.Name="Редактор кода фрагмента"/>
+                            <TextBlock Text="Присваивания, последовательность, if / else · Операции: + − * / abs()" FontWeight="Light"/>
+                            <Button Content="Рассчитать wp" HorizontalAlignment="Left" Margin="0, 4, 0, 8"/>
+
+                            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="20">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Пошаговые преобразования" FontSize="28" FontWeight="Light"/>
+                                    <TextBlock Text="От последнего оператора к первому" FontWeight="Light"/>
+                                    <TextBlock Text="Здесь будут отображаться операторы и промежуточные условия."
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="20">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Итоговое предусловие (wp)" FontSize="28" FontWeight="Light"/>
+                                    <TextBox Header="Краткая запись" PlaceholderText="Предусловие" IsReadOnly="True" TextWrapping="Wrap"/>
+                                    <TextBox Header="Словами" PlaceholderText="Описание предусловия" IsReadOnly="True" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Условия определённости" Margin="0, 4, 0, 0"/>
+                                    <TextBlock Text="Здесь будут отображаться ограничения выражений, например: знаменатель ≠ 0."
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Button Content="Показать триаду" HorizontalAlignment="Left" Margin="0, 4, 0, 0"/>
+                            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="20">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Триада Хоара" FontSize="28" FontWeight="Light"/>
+                                    <TextBlock Text="Предусловие → Фрагмент → Постусловие"/>
+                                    <TextBlock Text="Здесь будет отображаться триада и её описание словами."
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
 
                     <!--панель1-->
                     <ScrollViewer x:Name="PanelV1" VerticalScrollBarVisibility="Auto"
