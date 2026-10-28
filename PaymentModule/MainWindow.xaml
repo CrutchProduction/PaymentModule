@@ -15,70 +15,53 @@
     </Window.SystemBackdrop>
 
     <Grid x:Name="RootGrid" Padding="20" RowSpacing="16">
-        
-        <Grid.Resources><converters:ConditionBrushConverter x:Key="ConditionBrush" />
-        
+
+        <Grid.Resources>
+            <converters:ConditionBrushConverter x:Key="ConditionBrush" />
         </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--надписи-->
-
-        
-
-            <!--потом поменять расположение этих надписей-->
-
-        <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Row="0"  Padding="11" >
-
+        <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Row="0" Padding="11">
             <ScrollView HorizontalScrollBarVisibility="Auto">
-            <StackPanel  Spacing="10"  Orientation="Horizontal" >
-                <StackPanel  Spacing="10">
-                    <TextBlock Text="Платежный модуль" FontSize="28" />
-                    <StackPanel Orientation="Horizontal" Spacing="12" >
-                        <Button x:Name="Import" Content="Импорт" Click="Import_Click" FontWeight="Bold" FontSize="20"/>
+                <StackPanel Spacing="10" Orientation="Horizontal">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Платежный модуль" FontSize="28" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button x:Name="Import" Content="Импорт" Click="Import_Click" FontWeight="Bold" FontSize="20"/>
                             <Button x:Name="Export" Content="Экспорт" Click="Export_Click" FontWeight="Bold" FontSize="20"/>
                             <Button x:Name="AboutApp" Content="?" Click="AboutApp_Click" FontWeight="Bold" FontSize="20" ToolTipService.ToolTip="О приложении"/>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-                <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Ваш номер счёта" FontSize="28" FontWeight="Light"/>
+                    <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Ваш номер счёта" FontSize="28" FontWeight="Light"/>
                         <TextBlock x:Name="number" Text="{Binding AccountId, Mode=OneWay}" FontSize="28"/>
                     </StackPanel>
                     <Border Margin="20, 0, 0, 10" Height="100" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Ваш счёт" FontSize="28" FontWeight="Light"/>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Ваш счёт" FontSize="28" FontWeight="Light"/>
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock x:Name="amount" Text="{Binding Balance}" FontSize="30" Foreground="#4ADE80" IsTextSelectionEnabled="true"/>
-                        <TextBlock x:Name="exchange" Text="{Binding Currency}" FontSize="30" Foreground="#4ADE80"/>
+                            <TextBlock x:Name="exchange" Text="{Binding Currency}" FontSize="30" Foreground="#4ADE80"/>
+                        </StackPanel>
                     </StackPanel>
-
                 </StackPanel>
-            </StackPanel>
             </ScrollView>
         </Border>
 
-
         <Grid Grid.Row="1" ColumnSpacing="16" x:Name="General">
             <Grid.ColumnDefinitions>
-                <!--список-->
                 <ColumnDefinition Width="400"/>
-                <!--панель-->
                 <ColumnDefinition Width="*"/>
-                <!--контракт-->
                 <ColumnDefinition Width="0" x:Name="panelContract"/>
             </Grid.ColumnDefinitions>
 
-            <!--listbox-->
-
-            <!--контейнер для закругления обводки -->
             <Border x:Name="BorderListBox" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="0">
-                <!-- Перенесли Grid.Column сюда -->
-
-                <ListBox x:Name="NavList" SelectionChanged="NavList_SelectionChanged" Background="Transparent"  BorderThickness="0" SingleSelectionFollowsFocus="False" Padding="10">
-
+                <ListBox x:Name="NavList" SelectionChanged="NavList_SelectionChanged" Background="Transparent" BorderThickness="0" SingleSelectionFollowsFocus="False" Padding="10">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Margin" Value="5"/>
@@ -86,21 +69,14 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
-                                        <!-- шаблон для анимаций -->
                                         <Border x:Name="RootBorder" Background="{ThemeResource SystemControlHighlightListLowRevealBackgroundBrush}" CornerRadius="10" RenderTransformOrigin="0.5,0.5">
-                                            <!--изначально размер элемнтов listbox = 0.95 от начального-->
                                             <Border.RenderTransform>
                                                 <ScaleTransform x:Name="ItemScale" ScaleX="0.9" ScaleY="0.95"/>
                                             </Border.RenderTransform>
-
                                             <ContentPresenter Content="{TemplateBinding Content}" Margin="0, 15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            
                                             <VisualStateManager.VisualStateGroups>
-
                                                 <VisualStateGroup x:Name="CommonStates">
-                                                    
                                                     <VisualState x:Name="Normal"/>
-                                                    <!--Анимация если кнопка будет нажата-->
                                                     <VisualState x:Name="Disabled">
                                                         <Storyboard>
                                                             <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="0.95" Duration="0:0:0.2"/>
@@ -110,7 +86,6 @@
                                                             </ObjectAnimationUsingKeyFrames>
                                                         </Storyboard>
                                                     </VisualState>
-                                                    <!--Анимация если курсор будет на кнопках-->
                                                     <VisualState x:Name="PointerOver">
                                                         <Storyboard>
                                                             <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
@@ -120,12 +95,9 @@
                                                             </ObjectAnimationUsingKeyFrames>
                                                         </Storyboard>
                                                     </VisualState>
-                                                    
                                                 </VisualStateGroup>
                                                 <VisualStateGroup x:Name="FocusStates">
-
                                                     <VisualState x:Name="Unfocused"/>
-                                                    <!--Анимация если фокус будет на кнопках-->
                                                     <VisualState x:Name="Focused">
                                                         <Storyboard>
                                                             <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
@@ -135,12 +107,8 @@
                                                             </ObjectAnimationUsingKeyFrames>
                                                         </Storyboard>
                                                     </VisualState>
-
                                                 </VisualStateGroup>
-
-
                                             </VisualStateManager.VisualStateGroups>
-                                            
                                         </Border>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -149,17 +117,15 @@
                     </ListBox.ItemContainerStyle>
 
                     <ListBoxItem x:Name="listboxitem1" Content="Перевод на другой счёт"/>
-                    <ListBoxItem  x:Name="listboxitem2" Content="Перевод в другую валюту"/>
-                    <ListBoxItem  x:Name="listboxitem3" Content="Пополнение"/>
-                    <ListBoxItem  x:Name="listboxitem4" Content="Снятие"/>
+                    <ListBoxItem x:Name="listboxitem2" Content="Перевод в другую валюту"/>
+                    <ListBoxItem x:Name="listboxitem3" Content="Пополнение"/>
+                    <ListBoxItem x:Name="listboxitem4" Content="Снятие"/>
                     <ListBoxItem x:Name="listboxitem5" Content="Калькулятор(beta)"/>
                 </ListBox>
             </Border>
 
-
             <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="1" Padding="40, 20" Margin="0, 0, -16, 0">
                 <Grid>
-
                     <Grid.Resources>
                         <Style TargetType="TextBlock">
                             <Setter Property="FontSize" Value="20"/>
@@ -204,13 +170,13 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12">
+                                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12" Click="MaxBtn_Click">
                                     <TextBlock Text="Max из двух" TextAlignment="Center"/>
                                 </Button>
-                                <Button Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12">
+                                <Button Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12" Click="QuadraticBtn_Click">
                                     <TextBlock Text="Квадратное уравнение" TextAlignment="Center"/>
                                 </Button>
-                                <Button Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12">
+                                <Button Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12" Click="SequenceBtn_Click">
                                     <TextBlock Text="Последовательность присваиваний" TextAlignment="Center"/>
                                 </Button>
                             </Grid>
@@ -220,25 +186,21 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Header="Цель (Post)" PlaceholderText="Краткая запись условия" TextWrapping="Wrap"
-                                         AutomationProperties.Name="Цель Post в краткой записи"/>
-                                <TextBox Grid.Column="1" Header="Цель словами" PlaceholderText="Описание постусловия" TextWrapping="Wrap"
-                                         AutomationProperties.Name="Цель Post словами"/>
+                                <TextBox x:Name="PostBox" Header="Цель (Post)" PlaceholderText="Краткая запись условия" TextWrapping="Wrap"/>
+                                <TextBox Grid.Column="1" Header="Цель словами" PlaceholderText="Описание постусловия" TextWrapping="Wrap"/>
                             </Grid>
 
-                            <TextBox Header="Код фрагмента" PlaceholderText="Введите последовательность присваиваний или if / else"
-                                     AcceptsReturn="True" TextWrapping="Wrap" MinHeight="180" FontFamily="Consolas"
-                                     AutomationProperties.Name="Редактор кода фрагмента"/>
+                            <TextBox x:Name="CodeBox" Header="Код фрагмента" PlaceholderText="Введите последовательность присваиваний или if / else"
+                                     AcceptsReturn="True" TextWrapping="Wrap" MinHeight="180" FontFamily="Consolas"/>
                             <TextBlock Text="Присваивания, последовательность, if / else · Операции: + − * / abs()" FontWeight="Light"/>
-                            <Button Content="Рассчитать wp" HorizontalAlignment="Left" Margin="0, 4, 0, 8"/>
+                            <Button Content="Рассчитать wp" HorizontalAlignment="Left" Margin="0, 4, 0, 8" Click="CalculateBtn_Click"/>
 
                             <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}"
                                     BorderThickness="1" CornerRadius="10" Padding="20">
                                 <StackPanel Spacing="12">
                                     <TextBlock Text="Пошаговые преобразования" FontSize="28" FontWeight="Light"/>
                                     <TextBlock Text="От последнего оператора к первому" FontWeight="Light"/>
-                                    <TextBlock Text="Здесь будут отображаться операторы и промежуточные условия."
-                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="StepsBox" TextWrapping="Wrap" FontFamily="Consolas" IsTextSelectionEnabled="True"/>
                                 </StackPanel>
                             </Border>
 
@@ -246,32 +208,27 @@
                                     BorderThickness="1" CornerRadius="10" Padding="20">
                                 <StackPanel Spacing="12">
                                     <TextBlock Text="Итоговое предусловие (wp)" FontSize="28" FontWeight="Light"/>
-                                    <TextBox Header="Краткая запись" PlaceholderText="Предусловие" IsReadOnly="True" TextWrapping="Wrap"/>
-                                    <TextBox Header="Словами" PlaceholderText="Описание предусловия" IsReadOnly="True" TextWrapping="Wrap"/>
+                                    <TextBox x:Name="WpBox" Header="Краткая запись" PlaceholderText="Предусловие" IsReadOnly="True" TextWrapping="Wrap" FontFamily="Consolas"/>
+                                    <TextBox x:Name="WpWordsBox" Header="Словами" PlaceholderText="Описание предусловия" IsReadOnly="True" TextWrapping="Wrap"/>
                                     <TextBlock Text="Условия определённости" Margin="0, 4, 0, 0"/>
-                                    <TextBlock Text="Здесь будут отображаться ограничения выражений, например: знаменатель ≠ 0."
-                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="DefinedBox" TextWrapping="Wrap" FontFamily="Consolas" IsTextSelectionEnabled="True"/>
                                 </StackPanel>
                             </Border>
 
-                            <Button Content="Показать триаду" HorizontalAlignment="Left" Margin="0, 4, 0, 0"/>
                             <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}"
                                     BorderThickness="1" CornerRadius="10" Padding="20">
                                 <StackPanel Spacing="12">
                                     <TextBlock Text="Триада Хоара" FontSize="28" FontWeight="Light"/>
                                     <TextBlock Text="Предусловие → Фрагмент → Постусловие"/>
-                                    <TextBlock Text="Здесь будет отображаться триада и её описание словами."
-                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="HoareBox" TextWrapping="Wrap" FontFamily="Consolas" IsTextSelectionEnabled="True"/>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
                     </ScrollViewer>
 
-                    <!--панель1-->
-                    <ScrollViewer x:Name="PanelV1" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled" >
+                    <ScrollViewer x:Name="PanelV1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Orientation="Horizontal">
-                            <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed" >
+                            <StackPanel x:Name="Panel1" Spacing="12" Visibility="Collapsed">
                                 <TextBlock Text="Номер счёта откуда переводить" Padding="0, 40, 0, 0" TextWrapping="Wrap" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -289,19 +246,13 @@ HorizontalScrollBarVisibility="Disabled" >
                                         </ComboBox.Resources>
                                         <ComboBoxItem Content="6767"/>
                                     </ComboBox>
-
-                                    <Rectangle x:Name="Colum1Pre1" Grid.Column="1"
-   Width="40" Height="40" Fill="{Binding Transfer.AccountValid, Converter={StaticResource ConditionBrush}}"
-   RadiusY="10" RadiusX="10" Margin="5"/>
-
-
+                                    <Rectangle x:Name="Colum1Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.AccountValid, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
                                 <TextBlock Text="Номер счёта куда перевести" TextWrapping="Wrap"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300"/>
                                         <ColumnDefinition Width="auto"/>
-                                        <!--ширина-->
                                         <ColumnDefinition Width="300"/>
                                     </Grid.ColumnDefinitions>
                                     <ComboBox x:Name="accountTo" Text="{Binding Transfer.RecipientText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" IsEditable="True" FontSize="20" HorizontalAlignment="Stretch" Margin="0, 0, 10, 0" CornerRadius="10">
@@ -313,52 +264,40 @@ HorizontalScrollBarVisibility="Disabled" >
                                         <ComboBoxItem Content="1199"/>
                                         <ComboBoxItem Content="9911"/>
                                     </ComboBox>
-                                    <Rectangle x:Name="Colum1Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.RecipientValid, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Rectangle x:Name="Colum1Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.RecipientValid, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
-
                                 <TextBlock Text="Сумма перевода" TextWrapping="Wrap"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="300"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-
                                     <TextBox x:Name="amountToPay" Text="{Binding Transfer.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" PlaceholderText="Введите сумму" HorizontalAlignment="Stretch" TextWrapping="Wrap" CornerRadius="10"/>
                                     <Rectangle x:Name="Colum1Pre3" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.AmountValid, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
-
-
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-
                                     <Button Content="Перевести" Command="{Binding Transfer.ExecuteCommand}" Grid.Column="0" CornerRadius="10" />
                                     <Rectangle x:Name="Colum1Post1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Transfer.Postcondition, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5" HorizontalAlignment="Right"/>
                                 </Grid>
-
                                 <Button x:Name="cotract1" Content="Показать контракт" HorizontalAlignment="Left" Click="contract1_Click" CornerRadius="10"/>
                             </StackPanel>
-                            <!--сепаратор-->
                             <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Margin="50" Spacing="12">
                                 <TextBlock Text="Перед переводом проверьте:" Margin="-20, 0, 0, 0" FontSize="30" FontWeight="Bold"/>
                                 <TextBlock Text="Имя получателя - совпадает с тем, кому переводите"/>
                                 <TextBlock Text="Номер счёта"/>
-
                                 <TextBlock Text="Сумма - перечитайте, нет ли лишнего нуля"/>
                                 <TextBlock Text="Банк получателя"/>
                                 <TextBlock Text="Вас не торопят - мошенники всегда создают срочность"/>
-                                <TextBlock Text=""/>
                             </StackPanel>
                         </StackPanel>
-                        
                     </ScrollViewer>
 
-                    <!--панель2-->
-                    <ScrollViewer x:Name="PanelV2" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer x:Name="PanelV2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel x:Name="Panel2" Spacing="12" Visibility="Collapsed">
                                 <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
@@ -379,10 +318,8 @@ HorizontalScrollBarVisibility="Disabled">
                                         </ComboBox.Resources>
                                         <ComboBoxItem Content="6767"/>
                                     </ComboBox>
-                                    <Rectangle x:Name="Colum2Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Exchange.Precondition, Converter={StaticResource ConditionBrush}}"  RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Rectangle x:Name="Colum2Pre1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Exchange.Precondition, Converter={StaticResource ConditionBrush}}" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
-
-
                                 <ComboBox x:Name="currency" Header="Валюта" SelectedIndex="{Binding Exchange.SelectedCurrency, Mode=TwoWay}" CornerRadius="10">
                                     <ComboBox.ItemContainerStyle>
                                         <Style TargetType="ComboBoxItem">
@@ -394,19 +331,16 @@ HorizontalScrollBarVisibility="Disabled">
                                     <ComboBoxItem Content="Доллар $"/>
                                     <ComboBoxItem Content="Юань ¥" />
                                 </ComboBox>
-
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Rectangle Grid.Column="1" x:Name="Colum2Post1"  Width="40" Height="40" Fill="{Binding Exchange.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
+                                    <Rectangle Grid.Column="1" x:Name="Colum2Post1" Width="40" Height="40" Fill="{Binding Exchange.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
                                     <Button Grid.Column="0" Content="конвертировать" Command="{Binding Exchange.ExecuteCommand}" HorizontalAlignment="Left" CornerRadius="10"/>
                                 </Grid>
-
                                 <Button x:Name="cotract2" Content="Показать контракт" HorizontalAlignment="Left" Click="contract2_Click" CornerRadius="10"/>
                             </StackPanel>
-                            <!--сепаратор-->
                             <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Spacing="12" Margin="50">
                                 <TextBlock Text="Курсы валют относительно Рубля" Margin="-20, 0, 0, 0" FontSize="30" FontWeight="Bold"/>
@@ -421,12 +355,9 @@ HorizontalScrollBarVisibility="Disabled">
                                 <TextBlock Text="Новозеландский доллар  NZ$  46,86"/>
                             </StackPanel>
                         </StackPanel>
-                        
                     </ScrollViewer>
 
-                    <!-- панель3 -->
-                    <ScrollViewer x:Name="PanelV3" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled" >
+                    <ScrollViewer x:Name="PanelV3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel x:Name="Panel3" Spacing="12" Visibility="Collapsed">
                                 <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
@@ -455,7 +386,7 @@ HorizontalScrollBarVisibility="Disabled" >
                                         <ColumnDefinition Width="300"/>
                                         <ColumnDefinition Width="auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="balance" Text="{Binding Deposit.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"  PlaceholderText="Введите значение" CornerRadius="10"/>
+                                    <TextBox x:Name="balance" Text="{Binding Deposit.AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" PlaceholderText="Введите значение" CornerRadius="10"/>
                                     <Rectangle x:Name="Colum2Pre2" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.AmountValid, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
                                 <Grid>
@@ -466,15 +397,13 @@ HorizontalScrollBarVisibility="Disabled" >
                                     <Button Content="Пополнить счёт" Command="{Binding Deposit.ExecuteCommand}" Grid.Column="0" HorizontalAlignment="Left" CornerRadius="10"/>
                                     <Rectangle x:Name="Colum3Post1" Grid.Column="1" Width="40" Height="40" Fill="{Binding Deposit.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
-
                                 <Button x:Name="cotract3" Content="Показать контракт" HorizontalAlignment="Left" Click="contract3_Click" CornerRadius="10"/>
                             </StackPanel>
-                            <!--сепаратор-->
                             <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Spacing="12" Margin="50">
                                 <TextBlock Text="Суммы пополнения" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold"/>
                                 <StackPanel Orientation="Horizontal" Spacing="40">
-                                    <Button x:Name="Button100" Content="100"  Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
+                                    <Button x:Name="Button100" Content="100" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
                                     <Button x:Name="Button200" Content="200" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
                                     <Button x:Name="Button300" Content="500" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
                                 </StackPanel>
@@ -487,7 +416,6 @@ HorizontalScrollBarVisibility="Disabled" >
                                     <Button x:Name="Button10000" Content="10 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
                                     <Button x:Name="Button15000" Content="15 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
                                     <Button x:Name="Button20000" Content="20 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
-                                    
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="40">
                                     <Button x:Name="Button30000" Content="30 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
@@ -504,14 +432,11 @@ HorizontalScrollBarVisibility="Disabled" >
                                     <Button x:Name="Button15l" Content="1 500 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
                                     <Button x:Name="Button2l" Content="2 000 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel3"/>
                                 </StackPanel>
-                            </StackPanel> 
+                            </StackPanel>
                         </StackPanel>
-                        
                     </ScrollViewer>
 
-                    <!--панель4-->
-                    <ScrollViewer x:Name="PanelV4" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer x:Name="PanelV4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel x:Name="Panel4" Spacing="12" Visibility="Collapsed">
                                 <TextBlock Text="Номер счёта" Padding="0, 40, 0, 0"/>
@@ -553,15 +478,13 @@ HorizontalScrollBarVisibility="Disabled">
                                     <Button Content="Снять всё" Grid.Column="1" HorizontalAlignment="Left" CornerRadius="10" Click="withdrawMoney_Clik"/>
                                     <Rectangle x:Name="Colum4Post1" Grid.Column="2" Width="40" Height="40" Fill="{Binding Withdraw.Postcondition, Converter={StaticResource ConditionBrush}}" HorizontalAlignment="Right" RadiusY="10" RadiusX="10" Margin="5"/>
                                 </Grid>
-
                                 <Button x:Name="cotract4" Content="Показать контракт" HorizontalAlignment="Left" Click="contract4_Click" CornerRadius="10"/>
                             </StackPanel>
-                            <!--сепаратор-->
                             <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="1"/>
                             <StackPanel Spacing="12" Margin="50">
                                 <TextBlock Text="Суммы снятия" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold"/>
                                 <StackPanel Orientation="Horizontal" Spacing="40">
-                                    <Button Content="100"  Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
+                                    <Button Content="100" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
                                     <Button Content="200" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
                                     <Button Content="500" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
                                 </StackPanel>
@@ -574,7 +497,6 @@ HorizontalScrollBarVisibility="Disabled">
                                     <Button Content="10 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
                                     <Button Content="15 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
                                     <Button Content="20 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
-
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="40">
                                     <Button Content="30 000" Width="140" Height="80" CornerRadius="10" Click="Button_ClickPanel4"/>
@@ -593,14 +515,11 @@ HorizontalScrollBarVisibility="Disabled">
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                        
-                        
                     </ScrollViewer>
                 </Grid>
             </Border>
 
-            <!--Панель для показа контракта-->
-            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="2"  Padding="20" Margin="16, 0, 0, 0">
+            <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="2" Padding="20" Margin="16, 0, 0, 0">
                 <Grid>
                     <Grid.Resources>
                         <Style TargetType="TextBlock">
@@ -613,9 +532,8 @@ HorizontalScrollBarVisibility="Disabled">
                             <Setter Property="FontSize" Value="20"/>
                         </Style>
                     </Grid.Resources>
-                    <!--контракт 1-->
-                    <ScrollViewer x:Name="contractV1" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled">
+
+                    <ScrollViewer x:Name="contractV1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel x:Name="contract1" Visibility="Collapsed">
                             <TextBlock Text="Перевод средств на другой счёт" FontWeight="Bold" TextWrapping="Wrap"/>
                             <TextBlock Text="Предусловия:" Foreground="Gray"/>
@@ -625,7 +543,7 @@ HorizontalScrollBarVisibility="Disabled">
                             <TextBlock Text="Валюты на счетах совпадают"/>
                             <TextBlock Text="Баланс отправителя должен быть больше суммы перевода" Padding="0,63, 0, 0" TextWrapping="Wrap"/>
                             <TextBlock Text="Постусловия:" Foreground="Gray"/>
-                            <TextBlock Text="Баланс отправителя уменьшен"  FontSize="20" TextWrapping="Wrap"/>
+                            <TextBlock Text="Баланс отправителя уменьшен" FontSize="20" TextWrapping="Wrap"/>
                             <TextBlock Text="Баланс получателя увеличен"/>
                             <TextBlock Text="Эффекты:" Foreground="Gray"/>
                             <TextBlock Text="Изменение балансов получателя и отправителя" TextWrapping="Wrap"/>
@@ -648,10 +566,7 @@ HorizontalScrollBarVisibility="Disabled">
                         </StackPanel>
                     </ScrollViewer>
 
-
-                    <!--контракт 2-->
-                    <ScrollViewer x:Name="contractV2" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer x:Name="contractV2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel x:Name="contract2" Visibility="Collapsed">
                             <TextBlock Text="Обмен валюты" FontWeight="Bold"/>
                             <TextBlock Text="Предусловия:" Foreground="Gray" Padding="0, 20, 0, 0"/>
@@ -677,13 +592,10 @@ HorizontalScrollBarVisibility="Disabled">
                             </StackPanel>
                             <TextBlock Text="Сумма на счету равен 100 руб." TextWrapping="Wrap"/>
                             <TextBlock Text="Выбранная валюта - Рубль"/>
-
                         </StackPanel>
                     </ScrollViewer>
 
-                    <!--контракт 3-->
-                    <ScrollViewer x:Name="contractV3" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer x:Name="contractV3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel x:Name="contract3" Visibility="Collapsed">
                             <TextBlock Text="Пополнение баланса" FontWeight="Bold"/>
                             <TextBlock Text="Предусловия:" Foreground="Gray" Padding="0, 40, 0, 0"/>
@@ -712,9 +624,8 @@ HorizontalScrollBarVisibility="Disabled">
                             <TextBlock Text="Сумма пополнения 0 руб."/>
                         </StackPanel>
                     </ScrollViewer>
-                    <!--контракт 4-->
-                    <ScrollViewer x:Name="contractV4" VerticalScrollBarVisibility="Auto"
-HorizontalScrollBarVisibility="Disabled">
+
+                    <ScrollViewer x:Name="contractV4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel x:Name="contract4" Visibility="Collapsed">
                             <TextBlock Text="Снятие средств баланса" FontWeight="Bold"/>
                             <TextBlock Text="Предусловия:" Foreground="Gray" Padding="0, 40, 0, 0"/>
@@ -749,35 +660,26 @@ HorizontalScrollBarVisibility="Disabled">
             </Border>
         </Grid>
 
-        <Border x:Name="About" Grid.Row="1" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="2"  Padding="20" Visibility="Collapsed">
+        <Border x:Name="About" Grid.Row="1" BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" BorderThickness="2" CornerRadius="10" Background="Transparent" Grid.Column="2" Padding="20" Visibility="Collapsed">
             <Grid>
                 <StackPanel Spacing="8">
-
                     <TextBlock Text="Платёжный модуль" FontSize="24" FontWeight="Bold"/>
-
                     <TextBlock Text="Назначение" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0"/>
                     <TextBlock Text="Приложение моделирует работу банковского платёжного модуля и позволяет выполнять четыре операции:" TextWrapping="Wrap"/>
                     <TextBlock Text="перевод на другой счёт, перевод в другую валюту, пополнение и снятие средств." TextWrapping="Wrap"/>
-
                     <TextBlock Text="Технологии" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0"/>
                     <TextBlock Text="• Язык: C# (.NET 8)"/>
                     <TextBlock Text="• UI: WinUI 3"/>
                     <TextBlock Text="• Архитектура: MVVM"/>
                     <TextBlock Text="• Тестирование: xUnit"/>
-
                     <TextBlock Text="Контрактный подход" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0"/>
                     <TextBlock Text="Каждая операция имеет формально описанные предусловия (Pre) и постусловия (Post)." TextWrapping="Wrap"/>
                     <TextBlock Text="Их выполнение отображается в интерфейсе цветными индикаторами," TextWrapping="Wrap"/>
                     <TextBlock Text="а полное описание доступно по кнопке «Показать контракт»." TextWrapping="Wrap"/>
-
                     <TextBlock Text="Разработчик" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0"/>
                     <TextBlock Text="CrutchProduction"/>
-
                 </StackPanel>
             </Grid>
-            
         </Border>
-
     </Grid>
 </Window>
-

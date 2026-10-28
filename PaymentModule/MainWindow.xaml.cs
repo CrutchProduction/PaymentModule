@@ -17,21 +17,13 @@ using Windows.Foundation.Collections;
 using PaymentClassLibrary.Managers;
 using PaymentClassLibrary;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace PaymentModule
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainWindow : Window
     {
-        /// <summary>Подключает модели операций и выбирает первую панель.</summary>
         public MainWindow()
         {
             InitializeComponent();
-            // Поля счета заполняются один раз и недоступны для редактирования.
             RootGrid.Loaded += RootGrid_Loaded;
             NavList.SelectedIndex = 0;
         }
@@ -57,7 +49,6 @@ namespace PaymentModule
                 viewModel.ErrorOccurred += ShowError;
                 RootGrid.DataContext = viewModel;
                 Logger.StartNewLog();
-
             }
             catch (Exception error)
             {
@@ -80,17 +71,17 @@ namespace PaymentModule
             dialog.CloseButtonText = "ОК";
             await dialog.ShowAsync();
         }
+
         /// <summary>Переключает видимую панель операции.</summary>
         private void NavList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //скрыть панели
             Panel1.Visibility = Visibility.Collapsed;
             Panel2.Visibility = Visibility.Collapsed;
             Panel3.Visibility = Visibility.Collapsed;
             Panel4.Visibility = Visibility.Collapsed;
             CalculatorPanel.Visibility = Visibility.Collapsed;
             listboxitem5.IsEnabled = true;
-            //скрываем контракты
+
             contract1.Visibility = Visibility.Collapsed;
             contract2.Visibility = Visibility.Collapsed;
             contract3.Visibility = Visibility.Collapsed;
@@ -106,15 +97,12 @@ namespace PaymentModule
             PanelV3.Visibility = Visibility.Collapsed;
             PanelV4.Visibility = Visibility.Collapsed;
 
-
-
             panelContract.Width = new GridLength(0, GridUnitType.Pixel);
             contractIsOpen = false;
-            
-            //показываем
+
             switch (NavList.SelectedIndex)
             {
-                case 0: 
+                case 0:
                     Panel1.Visibility = Visibility.Visible;
                     PanelV1.Visibility = Visibility.Visible;
                     listboxitem1.IsEnabled = false;
@@ -122,7 +110,7 @@ namespace PaymentModule
                     listboxitem3.IsEnabled = true;
                     listboxitem4.IsEnabled = true;
                     break;
-                case 1: 
+                case 1:
                     Panel2.Visibility = Visibility.Visible;
                     PanelV2.Visibility = Visibility.Visible;
                     listboxitem1.IsEnabled = true;
@@ -130,7 +118,7 @@ namespace PaymentModule
                     listboxitem3.IsEnabled = true;
                     listboxitem4.IsEnabled = true;
                     break;
-                case 2: 
+                case 2:
                     Panel3.Visibility = Visibility.Visible;
                     PanelV3.Visibility = Visibility.Visible;
                     listboxitem1.IsEnabled = true;
@@ -138,7 +126,7 @@ namespace PaymentModule
                     listboxitem3.IsEnabled = false;
                     listboxitem4.IsEnabled = true;
                     break;
-                case 3: 
+                case 3:
                     Panel4.Visibility = Visibility.Visible;
                     PanelV4.Visibility = Visibility.Visible;
                     listboxitem1.IsEnabled = true;
@@ -157,18 +145,16 @@ namespace PaymentModule
             }
         }
 
-        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract1_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
             {
-                //скрываем контракт        
                 contract1.Visibility = Visibility.Collapsed;
                 contractV1.Visibility = Visibility.Collapsed;
                 panelContract.Width = new GridLength(0, GridUnitType.Pixel);
-            }else
+            }
+            else
             {
-                //показываем контракт       
                 contract1.Visibility = Visibility.Visible;
                 contractV1.Visibility = Visibility.Visible;
                 panelContract.Width = new GridLength(1.5, GridUnitType.Star);
@@ -176,40 +162,33 @@ namespace PaymentModule
             contractIsOpen = contractIsOpen == false;
         }
 
-        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract2_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
             {
-                //скрываем контракт        
                 contract2.Visibility = Visibility.Collapsed;
                 contractV2.Visibility = Visibility.Collapsed;
                 panelContract.Width = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
-                //показываем контракт       
                 contract2.Visibility = Visibility.Visible;
-                contractV2.Visibility= Visibility.Visible;
+                contractV2.Visibility = Visibility.Visible;
                 panelContract.Width = new GridLength(1.5, GridUnitType.Star);
             }
             contractIsOpen = contractIsOpen == false;
         }
 
-
-        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract3_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
             {
-                //скрываем контракт        
                 contract3.Visibility = Visibility.Collapsed;
                 contractV3.Visibility = Visibility.Collapsed;
                 panelContract.Width = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
-                //показываем контракт       
                 contract3.Visibility = Visibility.Visible;
                 contractV3.Visibility = Visibility.Visible;
                 panelContract.Width = new GridLength(1.5, GridUnitType.Star);
@@ -217,20 +196,16 @@ namespace PaymentModule
             contractIsOpen = contractIsOpen == false;
         }
 
-
-        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract4_Click(object sender, RoutedEventArgs e)
         {
             if (contractIsOpen)
             {
-                //скрываем контракт        
                 contract4.Visibility = Visibility.Collapsed;
                 contractV4.Visibility = Visibility.Collapsed;
                 panelContract.Width = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
-                //показываем контракт       
                 contract4.Visibility = Visibility.Visible;
                 contractV4.Visibility = Visibility.Visible;
                 panelContract.Width = new GridLength(1.5, GridUnitType.Star);
@@ -245,7 +220,8 @@ namespace PaymentModule
                 General.Visibility = Visibility.Collapsed;
                 About.Visibility = Visibility.Visible;
                 aboutAppIsOpen = false;
-            } else
+            }
+            else
             {
                 About.Visibility = Visibility.Collapsed;
                 General.Visibility = Visibility.Visible;
@@ -262,6 +238,7 @@ namespace PaymentModule
         {
             AccountsManager.ExportData();
         }
+
         private void Button_ClickPanel3(object sender, RoutedEventArgs e)
         {
             balance.Text = ((Button)sender).Content.ToString().Replace(" ", "");
@@ -271,10 +248,65 @@ namespace PaymentModule
         {
             withDrawMoney.Text = ((Button)sender).Content.ToString().Replace(" ", "");
         }
+
         private void withdrawMoney_Clik(object sender, RoutedEventArgs e)
         {
             withDrawMoney.Text = amount.Text;
         }
+
+        // Кнопка "Max из двух" — просто заполняет поля готовым примером.
+        private void MaxBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CodeBox.Text = "if (x1 >= x2) { max := x1; } else { max := x2; }";
+            PostBox.Text = "max >= x1 && max >= x2";
+            ClearOutputs();
+        }
+
+        // Кнопка "Квадратное уравнение".
+        private void QuadraticBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CodeBox.Text = "if (D >= 0 && a != 0) { x1 := (-b + sqrt(D)) / (2 * a); } else { x1 := -999; }";
+            PostBox.Text = "(D >= 0 && a != 0 && a * x1 * x1 + b * x1 + c == 0) || ((D < 0 || a == 0) && x1 == -999)";
+            ClearOutputs();
+        }
+
+        // Кнопка "Последовательность присваиваний".
+        private void SequenceBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CodeBox.Text = "x := x + 10; y := x + 1;";
+            PostBox.Text = "y == x + 1 && x > 15";
+            ClearOutputs();
+        }
+
+        // Стирает все поля вывода — чтобы не путаться между запусками.
+        private void ClearOutputs()
+        {
+            StepsBox.Text = "";
+            WpBox.Text = "";
+            WpWordsBox.Text = "";
+            DefinedBox.Text = "";
+            HoareBox.Text = "";
+        }
+
+        // Кнопка "Рассчитать wp" — зовёт движок и раскладывает ответ по полям.
+        private void CalculateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Одна строка — вызов движка. Внутри он вернёт сразу 4 строки.
+                WpResult r = WpEngine.Analyze(CodeBox.Text, PostBox.Text);
+
+                StepsBox.Text = r.Steps;                // пошаговые преобразования
+                WpBox.Text = r.Wp;                   // краткая запись
+                WpWordsBox.Text = "Формула: " + r.Wp;     // словами
+                DefinedBox.Text = r.Defined;              // условия определённости
+                HoareBox.Text = r.Hoare;                // триада Хоара
+            }
+            catch (Exception error)
+            {
+                ClearOutputs();
+                StepsBox.Text = "Ошибка: " + error.Message;
+            }
+        }
     }
 }
-
