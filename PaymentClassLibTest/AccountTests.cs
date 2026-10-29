@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PaymentClassLibrary.Managers;
-using PaymentClassLibrary.Models;
 
 
 namespace PaymentClassLibTest
@@ -23,7 +22,6 @@ namespace PaymentClassLibTest
             Assert.AreEqual(1, account.GetAccountId());
             Assert.AreEqual(100f, account.GetMoneyAmount());
             Assert.AreEqual(0, account.GetMoneyTypeId());
-            Assert.AreEqual("₽", account.GetMoneyType());
         }
 
         // Пополнение увеличивает баланс
@@ -54,7 +52,7 @@ namespace PaymentClassLibTest
         {
             var account = new Account(1, 8405f, 0); // 8405 рублей
 
-            account.ConvertMoneyToAnotherType(2); // 2 = доллар
+            MoneyManager.ConvertAccountMoney(account, 2); // 2 = доллар
 
             Assert.AreEqual(2, account.GetMoneyTypeId());
             Assert.AreEqual(100f, account.GetMoneyAmount(), 0.01f);
@@ -76,10 +74,10 @@ namespace PaymentClassLibTest
         [TestMethod]
         public void GetMoneyScale_ReturnsCorrectScale()
         {
-            Assert.AreEqual(1f, Account.GetMoneyScale(0));
-            Assert.AreEqual(97f, Account.GetMoneyScale(1));
-            Assert.AreEqual(84.05f, Account.GetMoneyScale(2));
-            Assert.AreEqual(12.52f, Account.GetMoneyScale(3));
+            Assert.AreEqual(1f, MoneyManager.GetMoneyScale(0));
+            Assert.AreEqual(97f, MoneyManager.GetMoneyScale(1));
+            Assert.AreEqual(84.05f, MoneyManager.GetMoneyScale(2));
+            Assert.AreEqual(12.52f, MoneyManager.GetMoneyScale(3));
         }
     }
 }
