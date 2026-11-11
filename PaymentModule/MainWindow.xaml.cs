@@ -33,6 +33,7 @@ namespace PaymentModule
             InitializeComponent();
             // Поля счета заполняются один раз и недоступны для редактирования.
             RootGrid.Loaded += RootGrid_Loaded;
+            LaboratoryTabs.SelectedIndex = 0;
             NavList.SelectedIndex = 0;
         }
         private bool contractIsOpen = false;
@@ -41,6 +42,9 @@ namespace PaymentModule
 
         private async void LaboratoryTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (LaboratoryOne == null || Calculator == null) return;
+            LaboratoryOne.Visibility = LaboratoryTabs.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            Calculator.Visibility = LaboratoryTabs.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             if (LaboratoryTabs?.SelectedIndex == 1 && Calculator?.IsLoaded == true)
             {
                 await Calculator.ShowHelpOnceAsync();

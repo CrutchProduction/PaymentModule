@@ -63,9 +63,20 @@
 
         <TabView x:Name="LaboratoryTabs" Grid.Row="1" IsAddTabButtonVisible="False"
                  CanDragTabs="False" CanReorderTabs="False" TabWidthMode="SizeToContent"
-                 SelectionChanged="LaboratoryTabs_SelectionChanged">
-            <TabViewItem Header="Лабораторная №1" IsClosable="False">
-                <Grid Margin="0,12,0,0">
+                 SelectionChanged="LaboratoryTabs_SelectionChanged"
+                 AutomationProperties.Name="Лабораторные работы">
+            <TabView.Resources>
+                <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="#A82020"/>
+                <SolidColorBrush x:Key="TabViewItemHeaderForegroundSelected" Color="White"/>
+                <SolidColorBrush x:Key="TabViewBorderBrush" Color="Transparent"/>
+                <SolidColorBrush x:Key="TabViewItemSeparator" Color="Transparent"/>
+                <Style TargetType="TabViewItem">
+                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="MinHeight" Value="48"/>
+                </Style>
+            </TabView.Resources>
+            <TabViewItem Header="Лаб.№1 Операции" IsClosable="False">
+                <Grid x:Name="LaboratoryOne">
         <Grid ColumnSpacing="16" x:Name="General">
             <Grid.ColumnDefinitions>
                 <!--список-->
@@ -692,8 +703,8 @@ HorizontalScrollBarVisibility="Disabled">
 
                 </Grid>
             </TabViewItem>
-            <TabViewItem Header="Лабораторная №2 — Калькулятор предусловий" IsClosable="False">
-                <local:CalculatorView x:Name="Calculator" Margin="0,12,0,0" Loaded="Calculator_Loaded"/>
+            <TabViewItem Header="Лаб.№2 Калькулятор" IsClosable="False">
+                <local:CalculatorView x:Name="Calculator" Visibility="Collapsed" Loaded="Calculator_Loaded"/>
             </TabViewItem>
         </TabView>
     </Grid>
