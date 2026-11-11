@@ -46,7 +46,7 @@ namespace PaymentModule
         private bool initialized;
         private readonly HashSet<ButtonBase> laserButtons = new();
         private Storyboard? laserAnimation;
-        private bool photoEffectsVisible = true;
+        private bool photoEffectsVisible = false;
 
         private void TogglePhotoButton_Click(object sender, RoutedEventArgs e)
         {

@@ -855,7 +855,7 @@ HorizontalScrollBarVisibility="Disabled">
             </StackPanel>
         </ScrollViewer>
     </Border>
-                    <Border x:Name="PhotoPanel" Grid.Column="1" CornerRadius="10">
+                    <Border x:Name="PhotoPanel" Grid.Column="1" CornerRadius="10" Visibility="Collapsed">
                         <Image x:Name="CalculatorPhoto" Source="ms-appx:///Assets/CalculatorPhoto.jpg" Stretch="Uniform"
                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                AutomationProperties.AccessibilityView="Raw"/>
