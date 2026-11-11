@@ -855,11 +855,16 @@ HorizontalScrollBarVisibility="Disabled">
             </StackPanel>
         </ScrollViewer>
     </Border>
-                    <Border Grid.Column="1" CornerRadius="10">
-                        <Image Source="ms-appx:///Assets/CalculatorPhoto.jpg" Stretch="Uniform"
+                    <Border x:Name="PhotoPanel" Grid.Column="1" CornerRadius="10">
+                        <Image x:Name="CalculatorPhoto" Source="ms-appx:///Assets/CalculatorPhoto.jpg" Stretch="Uniform"
                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                AutomationProperties.AccessibilityView="Raw"/>
                     </Border>
+                    <Button x:Name="TogglePhotoButton" Grid.Column="1" Width="24" Height="24"
+                            MinWidth="0" MinHeight="0" Padding="0" Opacity="0" IsTabStop="False"
+                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                            AutomationProperties.Name="Скрыть или показать фото и лазеры"
+                            Click="TogglePhotoButton_Click"/>
 </Grid>
 
             </TabViewItem>
@@ -892,6 +897,8 @@ HorizontalScrollBarVisibility="Disabled">
             </Grid>
             
         </Border>
+        <Canvas x:Name="LaserOverlay" Grid.RowSpan="2" Canvas.ZIndex="100"
+                IsHitTestVisible="False" Opacity="0"/>
     </Grid>
 </Window>
 

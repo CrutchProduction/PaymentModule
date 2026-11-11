@@ -5,6 +5,9 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
@@ -41,9 +44,95 @@ namespace PaymentModule
         private bool contractIsOpen = false;
         private bool aboutAppIsOpen;
         private bool initialized;
+        private readonly HashSet<ButtonBase> laserButtons = new();
+        private Storyboard? laserAnimation;
+        private bool photoEffectsVisible = true;
+
+        private void TogglePhotoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (photoEffectsVisible)
+            {
+                photoEffectsVisible = false;
+                PhotoPanel.Visibility = Visibility.Collapsed;
+                laserAnimation?.Stop();
+                LaserOverlay.Children.Clear();
+            }
+            else
+            {
+                photoEffectsVisible = true;
+                PhotoPanel.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ConnectLaserButtons(DependencyObject parent)
+        {
+            if (parent is ButtonBase button && laserButtons.Add(button))
+            {
+                button.Click += LaserButton_Click;
+            }
+            for (int index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+            {
+                ConnectLaserButtons(VisualTreeHelper.GetChild(parent, index));
+            }
+        }
+
+        private void LaserButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not ButtonBase button || button == TogglePhotoButton ||
+                !photoEffectsVisible || aboutAppIsOpen ||
+                LaboratoryTabs.SelectedIndex != 1 || CalculatorPhoto.ActualWidth <= 0 ||
+                CalculatorPhoto.ActualHeight <= 0 || CalculatorPhoto.Source is not BitmapSource photo ||
+                photo.PixelWidth <= 0 || photo.PixelHeight <= 0) return;
+
+            laserAnimation?.Stop();
+            LaserOverlay.Children.Clear();
+
+            double scale = Math.Min(CalculatorPhoto.ActualWidth / photo.PixelWidth,
+                                    CalculatorPhoto.ActualHeight / photo.PixelHeight);
+            double width = photo.PixelWidth * scale;
+            double height = photo.PixelHeight * scale;
+            double left = (CalculatorPhoto.ActualWidth - width) / 2;
+            double top = (CalculatorPhoto.ActualHeight - height) / 2;
+            var imageTransform = CalculatorPhoto.TransformToVisual(LaserOverlay);
+            var target = button.TransformToVisual(LaserOverlay).TransformPoint(
+                new Point(button.ActualWidth / 2, button.ActualHeight / 2));
+
+            // Eye positions in the original photo, independent of its displayed size.
+            foreach (double eyeX in new[] { 0.745, 0.874 })
+            {
+                Point eye = imageTransform.TransformPoint(new Point(left + width * eyeX, top + height * 0.394));
+                AddLaserLine(eye, target, 16, 0.18, Microsoft.UI.Colors.Red);
+                AddLaserLine(eye, target, 7, 0.9, Microsoft.UI.Colors.Red);
+                AddLaserLine(eye, target, 2, 1, Microsoft.UI.Colors.White);
+            }
+
+            var fade = new DoubleAnimationUsingKeyFrames();
+            fade.KeyFrames.Add(new LinearDoubleKeyFrame { KeyTime = TimeSpan.Zero, Value = 0 });
+            fade.KeyFrames.Add(new LinearDoubleKeyFrame { KeyTime = TimeSpan.FromMilliseconds(30), Value = 1 });
+            fade.KeyFrames.Add(new LinearDoubleKeyFrame { KeyTime = TimeSpan.FromMilliseconds(400), Value = 1 });
+            fade.KeyFrames.Add(new LinearDoubleKeyFrame { KeyTime = TimeSpan.FromMilliseconds(500), Value = 0 });
+            Storyboard.SetTarget(fade, LaserOverlay);
+            Storyboard.SetTargetProperty(fade, "Opacity");
+            laserAnimation = new Storyboard();
+            laserAnimation.Children.Add(fade);
+            laserAnimation.Completed += (_, _) => LaserOverlay.Children.Clear();
+            laserAnimation.Begin();
+        }
+
+        private void AddLaserLine(Point eye, Point target, double thickness, double opacity, Windows.UI.Color color)
+        {
+            LaserOverlay.Children.Add(new Line
+            {
+                X1 = eye.X, Y1 = eye.Y, X2 = target.X, Y2 = target.Y,
+                Stroke = new SolidColorBrush(color), StrokeThickness = thickness, Opacity = opacity,
+                StrokeStartLineCap = PenLineCap.Round, StrokeEndLineCap = PenLineCap.Round
+            });
+        }
 
         private async void LaboratoryTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            laserAnimation?.Stop();
+            LaserOverlay?.Children.Clear();
             if (LaboratoryOne == null || Calculator == null) return;
             LaboratoryOne.Visibility = LaboratoryTabs.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             Calculator.Visibility = LaboratoryTabs.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
@@ -55,6 +144,7 @@ namespace PaymentModule
 
         private async void Calculator_Loaded(object sender, RoutedEventArgs e)
         {
+            ConnectLaserButtons(RootGrid);
             if (LaboratoryTabs?.SelectedIndex == 1)
             {
                 await ShowHelpOnceAsync();
