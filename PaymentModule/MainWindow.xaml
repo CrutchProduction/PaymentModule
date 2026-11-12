@@ -759,14 +759,14 @@ HorizontalScrollBarVisibility="Disabled">
 
                 <Grid Style="{StaticResource CalculatorInputRow}" ColumnSpacing="12">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <TextBox x:Name="ScenarioBalance" Header="Текущий баланс, ₽" PlaceholderText="Введите сумму"/>
+                    <TextBox x:Name="ScenarioBalance" Header="Текущий баланс, ₽" PlaceholderText="balance = "/>
                     <Button Grid.Column="1" Style="{StaticResource HelpButton}" AutomationProperties.Name="Подсказка: текущий баланс">
                         <Button.Flyout><Flyout><TextBlock x:Name="BalanceHint" Style="{StaticResource HintText}" Text="Баланс для вашего плана. Вводится вручную и не меняет счёт в шапке приложения."/></Flyout></Button.Flyout>
                     </Button>
                 </Grid>
                 <Grid Style="{StaticResource CalculatorInputRow}" ColumnSpacing="12">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <TextBox x:Name="ScenarioTarget" Header="Желаемый остаток, ₽" PlaceholderText="Введите сумму"/>
+                    <TextBox x:Name="ScenarioTarget" Header="Желаемый остаток, ₽" PlaceholderText="reserve = "/>
                     <Button Grid.Column="1" Style="{StaticResource HelpButton}" AutomationProperties.Name="Подсказка: целевая сумма">
                         <Button.Flyout><Flyout><TextBlock Style="{StaticResource HintText}" x:Name="TargetHint" Text="Сколько должно остаться после платежей. Соответствующее условие в поле Post нужно записать вручную."/></Flyout></Button.Flyout>
                     </Button>
@@ -775,21 +775,21 @@ HorizontalScrollBarVisibility="Disabled">
                 <StackPanel x:Name="TransferFields" Spacing="16" Visibility="Collapsed">
                     <Grid Style="{StaticResource CalculatorInputRow}" ColumnSpacing="12">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <TextBox x:Name="TransferAmount" Header="Сумма перевода, ₽" PlaceholderText="Введите сумму"/>
+                        <TextBox x:Name="TransferAmount" Header="Сумма перевода, ₽" PlaceholderText="amount = "/>
                         <Button Grid.Column="1" Style="{StaticResource HelpButton}" AutomationProperties.Name="Подсказка: сумма перевода">
                             <Button.Flyout><Flyout><TextBlock Style="{StaticResource HintText}" Text="Сколько должен получить получатель. Комиссия списывается дополнительно. В коде эта сумма обозначается amount."/></Flyout></Button.Flyout>
                         </Button>
                     </Grid>
                     <Grid Style="{StaticResource CalculatorInputRow}" ColumnSpacing="12">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <TextBox x:Name="CommissionPercent" Header="Комиссия, %" PlaceholderText="Введите процент"/>
+                                        <TextBox x:Name="CommissionPercent" Header="Комиссия, %" PlaceholderText="percent = "/>
                         <Button Grid.Column="1" Style="{StaticResource HelpButton}" AutomationProperties.Name="Подсказка: процент комиссии">
                             <Button.Flyout><Flyout><TextBlock Style="{StaticResource HintText}" Text="Процент от суммы перевода по вашему тарифу. Например, введите 1 для комиссии 1%. В коде — percent. Поля не подставляются в код автоматически."/></Flyout></Button.Flyout>
                         </Button>
                     </Grid>
                     <Grid Style="{StaticResource CalculatorInputRow}" ColumnSpacing="12">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <TextBox x:Name="MinimumCommission" Header="Минимальная комиссия, ₽" PlaceholderText="Введите минимум или 0"/>
+                                        <TextBox x:Name="MinimumCommission" Header="Минимальная комиссия, ₽" PlaceholderText="minFee = "/>
                         <Button Grid.Column="1" Style="{StaticResource HelpButton}" AutomationProperties.Name="Подсказка: минимальная комиссия">
                             <Button.Flyout><Flyout><TextBlock Style="{StaticResource HintText}" Text="Минимальная плата за перевод по тарифу. Из процента от перевода и этой суммы выбирается большее — они не складываются. В коде — minFee. Если минимума нет, укажите 0."/></Flyout></Button.Flyout>
                         </Button>
@@ -823,19 +823,16 @@ HorizontalScrollBarVisibility="Disabled">
                         <Button.Flyout><Flyout><TextBlock x:Name="CodeHint" Style="{StaticResource HintText}" Text="Каждая строка — действие. Например, balance = balance - 20000; означает расход 20 000 ₽. Можно использовать присваивания и if / else без циклов. Готовый образец доступен по кнопке «Заполнить пример»."/></Flyout></Button.Flyout>
                     </Button>
                 </Grid>
-                <Button x:Name="CalculateWP" Content="Рассчитать условие" IsEnabled="True" HorizontalAlignment="Left" Click="CalculateWP_Click"/>
-                <TextBlock Text="Расчёт пока недоступен."
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <Button x:Name="CalculateWP" Content="Рассчитать условие" IsEnabled="True" HorizontalAlignment="Left" Click="CalculateWP_Click"/>
 
-                <Border Style="{StaticResource SectionBorder}" Width="707" HorizontalAlignment="Left">
+                                <Border Style="{StaticResource SectionBorder}" Width="707" HorizontalAlignment="Left">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Результат планирования" FontSize="28" FontWeight="Light"/>
                         <TextBlock x:Name="ResultCaption" Text="Необходимая сумма на счёте"/>
                         <TextBlock x:Name="ResultValue" Text="— ₽" FontSize="30" Foreground="#4ADE80" IsTextSelectionEnabled="true"/>
                         <TextBlock x:Name="DifferenceCaption" Text="Сколько не хватает"/>
-                        <TextBlock x:Name="DifferenceValue" Text="— ₽" FontSize="30"/>
-                        <TextBlock Text="Результат пока не рассчитан." Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    </StackPanel>
+                                        <TextBlock x:Name="DifferenceValue" Text="— ₽" FontSize="30"/>
+                                    </StackPanel>
                 </Border>
 
                 <Expander Header="Как получено условие" Width="707" HorizontalAlignment="Left"
@@ -843,7 +840,6 @@ HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Spacing="16">
                         <TextBlock Text="Пошаговые преобразования" FontSize="28" FontWeight="Light"/>
                         <TextBlock Text="Постусловие рассматривается от последнего оператора к первому. Здесь появятся промежуточные условия."/>
-                        <TextBox Header="Итоговое предусловие (wp)" Width="Auto" HorizontalAlignment="Stretch" IsReadOnly="True" PlaceholderText="Пока не рассчитано" TextWrapping="Wrap"/>
                         <TextBox Header="Объяснение словами" Width="Auto" HorizontalAlignment="Stretch" IsReadOnly="True" PlaceholderText="Пояснение результата" TextWrapping="Wrap"/>
                         <TextBlock Text="Условия определённости" FontSize="28" FontWeight="Light"/>
                         <TextBlock Text="Здесь будут показаны ограничения: например, знаменатель не равен нулю, а подкоренное выражение неотрицательно."/>

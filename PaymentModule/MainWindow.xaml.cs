@@ -225,8 +225,8 @@ namespace PaymentModule
             ScenarioTarget.Header = "Желаемый остаток, ₽";
             ResultCaption.Text = "Необходимая сумма на счёте";
             DifferenceCaption.Text = "Сколько не хватает";
-            ResultValue.Text = "— ₽";
-            DifferenceValue.Text = "— ₽";
+            ResultValue.Text = "₽";
+            DifferenceValue.Text = "₽";
             BalanceHint.Text = "Баланс для вашего плана. Вводится вручную и не меняет счёт в шапке приложения.";
             CodeHint.Text = "Каждая строка — действие. Например, balance = balance - 20000; означает расход 20 000 ₽. Готовый образец доступен по кнопке «Заполнить пример». Значения из полей не подставляются в код автоматически.";
             if (fillExample) ScenarioBalance.Text = "30000";
@@ -277,10 +277,11 @@ namespace PaymentModule
                     if (fillExample) PostDescription.Text = "Получена неотрицательная ставка, обеспечивающая желаемую сумму через два года, либо специальное значение отсутствия корней.";
                     PostHint.Text = "Цель описывает допустимый результат вычисления ставки. В модели с неотрицательной ставкой начальная сумма должна быть положительной, а желаемая — не меньше начальной. Значение -1 обозначает отсутствие действительных корней; wp также учитывает допустимость деления и квадратного корня.";
                     if (fillExample) CodeInput.Text = "principal = 10000;\ntarget = 12100;\na = principal;\nb = 2*principal;\nc = principal - target;\nD = b*b - 4*a*c;\nif (D >= 0) {\n    rate = (-b + sqrt(D)) / (2*a);\n} else {\n    rate = -1;\n}";
-                    ResultCaption.Text = "Условия корректного расчёта";
+                    ResultCaption.Text = "";
+                    
                     DifferenceCaption.Text = "Годовая ставка по примеру";
-                    ResultValue.Text = "—";
-                    DifferenceValue.Text = "— %";
+                    ResultValue.Text = "";
+                    DifferenceValue.Text = "%";
                     break;
             }
         }
@@ -518,9 +519,43 @@ namespace PaymentModule
 
         private void CalculateWP_Click(object sender, RoutedEventArgs e)
         {
+            string post;
+            string code;
+            switch (ScenarioPicker.SelectedIndex)
+            {
+                case 0:
+                case 1:
+                    post = PostInput.Text.Replace("reserve", ScenarioTarget.Text);
+                    code = CodeInput.Text.Replace("reserve", ScenarioTarget.Text);
+                    code = code.Replace("amount", TransferAmount.Text);
+                    code = code.Replace("percent", CommissionPercent.Text);
+                    code = code.Replace("minFee", MinimumCommission.Text);
+                    var result1 = WpEngine.Analyze(code, post);
+                    decimal number1 = BalanceExpressionSolver.Solve(result1.Wp.ToString());
+                    ResultValue.Text = number1.ToString() + "₽";
+                    DifferenceValue.Text = (number1 - decimal.Parse(ScenarioBalance.Text)).ToString() + "₽";
+                    break;
+                case 2:
+                    post = PostInput.Text.Replace("reserve", ScenarioTarget.Text);
+                    post = post.Replace("balance", ScenarioBalance.Text);
+                    code = CodeInput.Text.Replace("reserve", ScenarioTarget.Text);
+                    code = code.Replace("amount", TransferAmount.Text);
+                    code = code.Replace("percent", CommissionPercent.Text);
+                    code = code.Replace("minFee", MinimumCommission.Text);
+                    code = code.Replace("balance", ScenarioBalance.Text);
 
-            var result = WpEngine.Analyze(CodeInput.Text, PostInput.Text);
-            ResultValue.Text = result.Wp.ToString();
+                    var result2 = WpEngine.Analyze(code, post);
+
+                    double number2 = RateExtractor.ExtractRate(result2.Wp.ToString());
+                    DifferenceValue.Text = number2.ToString() + "%";
+                    break;
+            }
+            
+
+
+            ;
+
+            //ResultValue.Text = result.Wp.ToString();
         }
     }
 }
