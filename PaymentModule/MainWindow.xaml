@@ -35,7 +35,7 @@
             <ScrollView HorizontalScrollBarVisibility="Auto">
             <StackPanel  Spacing="10"  Orientation="Horizontal" >
                 <StackPanel  Spacing="10">
-                    <TextBlock Text="Платежный модуль" FontSize="28" />
+                    <TextBlock Text="Банковский модуль" FontSize="28" />
                     <StackPanel Orientation="Horizontal" Spacing="12" >
                         <Button x:Name="Import" Content="Импорт" Click="Import_Click" FontWeight="Bold" FontSize="20"/>
                             <Button x:Name="Export" Content="Экспорт" Click="Export_Click" FontWeight="Bold" FontSize="20"/>
@@ -823,7 +823,7 @@ HorizontalScrollBarVisibility="Disabled">
                         <Button.Flyout><Flyout><TextBlock x:Name="CodeHint" Style="{StaticResource HintText}" Text="Каждая строка — действие. Например, balance = balance - 20000; означает расход 20 000 ₽. Можно использовать присваивания и if / else без циклов. Готовый образец доступен по кнопке «Заполнить пример»."/></Flyout></Button.Flyout>
                     </Button>
                 </Grid>
-                <Button Content="Рассчитать условие" IsEnabled="False" HorizontalAlignment="Left"/>
+                <Button x:Name="CalculateWP" Content="Рассчитать условие" IsEnabled="True" HorizontalAlignment="Left" Click="CalculateWP_Click"/>
                 <TextBlock Text="Расчёт пока недоступен."
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 
@@ -831,7 +831,7 @@ HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Результат планирования" FontSize="28" FontWeight="Light"/>
                         <TextBlock x:Name="ResultCaption" Text="Необходимая сумма на счёте"/>
-                        <TextBlock x:Name="ResultValue" Text="— ₽" FontSize="30" Foreground="#4ADE80"/>
+                        <TextBlock x:Name="ResultValue" Text="— ₽" FontSize="30" Foreground="#4ADE80" IsTextSelectionEnabled="true"/>
                         <TextBlock x:Name="DifferenceCaption" Text="Сколько не хватает"/>
                         <TextBlock x:Name="DifferenceValue" Text="— ₽" FontSize="30"/>
                         <TextBlock Text="Результат пока не рассчитан." Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>

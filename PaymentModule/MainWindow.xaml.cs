@@ -515,6 +515,13 @@ namespace PaymentModule
         {
             withDrawMoney.Text = amount.Text;
         }
+
+        private void CalculateWP_Click(object sender, RoutedEventArgs e)
+        {
+
+            var result = WpEngine.Analyze(CodeInput.Text, PostInput.Text);
+            ResultValue.Text = result.Wp.ToString();
+        }
     }
 }
 
