@@ -10,6 +10,8 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Shapes;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -54,12 +56,14 @@ namespace PaymentModule
             {
                 photoEffectsVisible = false;
                 PhotoPanel.Visibility = Visibility.Collapsed;
+                CalculationResultsPanel.Visibility = Visibility.Visible;
                 laserAnimation?.Stop();
                 LaserOverlay.Children.Clear();
             }
             else
             {
                 photoEffectsVisible = true;
+                CalculationResultsPanel.Visibility = Visibility.Collapsed;
                 PhotoPanel.Visibility = Visibility.Visible;
             }
         }
@@ -220,16 +224,20 @@ namespace PaymentModule
         private void ConfigureScenario(bool fillExample)
         {
             if (CodeInput == null) return;
+            ResetCalculationDetails();
+            CalculationError.IsOpen = false;
             TransferFields.Visibility = ScenarioPicker.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             ScenarioBalance.Header = "Текущий баланс, ₽";
             ScenarioTarget.Header = "Желаемый остаток, ₽";
             ResultCaption.Text = "Необходимая сумма на счёте";
             DifferenceCaption.Text = "Сколько не хватает";
-            ResultValue.Text = "₽";
-            DifferenceValue.Text = "₽";
+            DifferenceCaption.Visibility = Visibility.Visible;
+            DifferenceValue.Visibility = Visibility.Visible;
+            ResultValue.Text = "— ₽";
+            DifferenceValue.Text = "— ₽";
             BalanceHint.Text = "Баланс для вашего плана. Вводится вручную и не меняет счёт в шапке приложения.";
             CodeHint.Text = "Каждая строка — действие. Например, balance = balance - 20000; означает расход 20 000 ₽. Готовый образец доступен по кнопке «Заполнить пример». Значения из полей не подставляются в код автоматически.";
-            if (fillExample) ScenarioBalance.Text = "30000";
+            if (fillExample) ScenarioBalance.Text = "1000";
             TargetHint.Text = "Сколько должно остаться после платежей. Условие в поле Post записывается вручную; значения полей не связаны автоматически.";
             switch (ScenarioPicker.SelectedIndex)
             {
@@ -237,11 +245,10 @@ namespace PaymentModule
                     ScenarioTitle.Text = "Оплатить расходы и сохранить резерв";
                     ScenarioDescription.Text = "План: аренда — 20 000 ₽, закупка — 15 000 ₽, доставка — 2 000 ₽. Задайте, сколько денег должно остаться после всех платежей.";
                     ScenarioVariables.Text = "balance — остаток на счёте; числа в коде — суммы трёх расходов в рублях.";
-                    if (fillExample) ScenarioTarget.Text = "5000";
-                    if (fillExample) PostInput.Text = "balance >= 5000";
-                    if (fillExample) PostDescription.Text = "После всех платежей на счёте осталось не менее 5 000 ₽.";
+                    if (fillExample) ScenarioTarget.Text = "500";
+                    if (fillExample) PostInput.Text = "balance >= reserve";
                     PostHint.Text = "Для резерва 5 000 ₽ цель записывается как balance >= 5000. Меняя резерв, отредактируйте Post вручную.";
-                    if (fillExample) CodeInput.Text = "balance = balance - 20000;\nbalance = balance - 15000;\nbalance = balance - 2000;";
+                    if (fillExample) CodeInput.Text = "balance := balance - 100;\nbalance := balance - 200;\nbalance := balance - 300;";
                     break;
                 case 1:
                     ScenarioTitle.Text = "Перевести деньги и сохранить остаток";
@@ -256,9 +263,8 @@ namespace PaymentModule
                         TransferAmount.Text = "1000";
                         CommissionPercent.Text = "1";
                         MinimumCommission.Text = "50";
-                        PostInput.Text = "balance >= 500";
-                        PostDescription.Text = "После перевода и списания комиссии осталось не менее 500 ₽.";
-                        CodeInput.Text = "amount = 1000;\npercent = 1;\nminFee = 50;\npercentFee = amount * percent / 100;\nif (percentFee >= minFee) {\n    fee = percentFee;\n} else {\n    fee = minFee;\n}\nbalance = balance - amount;\nbalance = balance - fee;";
+                        PostInput.Text = "balance >= reserve";
+                        CodeInput.Text = "var := amount * percent / 100;\nif (var >= minFee) {\n    commission := var;\n} else {\n    commission := minFee;\n};\nbalance := balance - amount;\nbalance := balance - commission;";
                     }
                     PostHint.Text = "Условие на баланс после перевода и комиссии. Например, balance >= 500 означает, что должно остаться хотя бы 500 ₽.";
                     break;
@@ -273,15 +279,13 @@ namespace PaymentModule
                     CodeHint.Text = "Код преобразует формулу накоплений в квадратное уравнение и рассматривает корень с неотрицательной ставкой. Калькулятор wp предназначен для проверки условий корректности этого кода. Это учебная модель без комиссий и округлений.";
                     if (fillExample) ScenarioBalance.Text = "10000";
                     if (fillExample) ScenarioTarget.Text = "12100";
-                    if (fillExample) PostInput.Text = "rate == -1 || (rate >= 0 && principal*(1 + rate)*(1 + rate) == target)";
-                    if (fillExample) PostDescription.Text = "Получена неотрицательная ставка, обеспечивающая желаемую сумму через два года, либо специальное значение отсутствия корней.";
+                    if (fillExample) PostInput.Text = "(rate >= 0 && balance * (1 + rate) * (1 + rate) == reserve) || (D < 0 && rate == -1)";
                     PostHint.Text = "Цель описывает допустимый результат вычисления ставки. В модели с неотрицательной ставкой начальная сумма должна быть положительной, а желаемая — не меньше начальной. Значение -1 обозначает отсутствие действительных корней; wp также учитывает допустимость деления и квадратного корня.";
-                    if (fillExample) CodeInput.Text = "principal = 10000;\ntarget = 12100;\na = principal;\nb = 2*principal;\nc = principal - target;\nD = b*b - 4*a*c;\nif (D >= 0) {\n    rate = (-b + sqrt(D)) / (2*a);\n} else {\n    rate = -1;\n}";
-                    ResultCaption.Text = "";
-                    
-                    DifferenceCaption.Text = "Годовая ставка по примеру";
-                    ResultValue.Text = "";
-                    DifferenceValue.Text = "%";
+                    if (fillExample) CodeInput.Text = "a := balance;\nb := 2 * balance;\nc := balance - reserve;\nD := b * b - 4 * a * c;\nif (D >= 0) {\n    rate := (-b + sqrt(D)) / (2 * a);\n} else {\n    rate := -1;\n}";
+                    ResultCaption.Text = "Необходимая годовая ставка";
+                    ResultValue.Text = "— %";
+                    DifferenceCaption.Visibility = Visibility.Collapsed;
+                    DifferenceValue.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -327,6 +331,147 @@ namespace PaymentModule
             dialog.CloseButtonText = "ОК";
             await dialog.ShowAsync();
         }
+        private void AccountHeaderLayout_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (HeaderTitleGroup == null || HeaderAccountGroup == null || HeaderBalanceGroup == null)
+            {
+                return;
+            }
+
+            bool compact = AccountHeaderLayout.ActualWidth < 1000;
+            bool narrow = AccountHeaderLayout.ActualWidth < 600;
+            int rows = narrow ? 3 : compact ? 2 : 1;
+            while (AccountHeaderLayout.RowDefinitions.Count < rows)
+            {
+                AccountHeaderLayout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            }
+            while (AccountHeaderLayout.RowDefinitions.Count > rows)
+            {
+                AccountHeaderLayout.RowDefinitions.RemoveAt(AccountHeaderLayout.RowDefinitions.Count - 1);
+            }
+
+            Grid.SetColumnSpan(HeaderTitleGroup, compact ? 3 : 1);
+            Grid.SetRow(HeaderAccountGroup, compact ? 1 : 0);
+            Grid.SetColumn(HeaderAccountGroup, compact ? 0 : 1);
+            Grid.SetColumnSpan(HeaderAccountGroup, narrow ? 3 : compact ? 2 : 1);
+            Grid.SetRow(HeaderBalanceGroup, narrow ? 2 : compact ? 1 : 0);
+            Grid.SetColumn(HeaderBalanceGroup, narrow ? 0 : 2);
+            Grid.SetColumnSpan(HeaderBalanceGroup, narrow ? 3 : 1);
+        }
+
+        private void PaymentLayout_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (PaymentNavigationColumn == null || CompactOperationPicker == null ||
+                PaymentOperationPanel == null || PaymentContractPanel == null)
+            {
+                return;
+            }
+
+            bool compact = General.ActualWidth < 900;
+            if (compact)
+            {
+                PaymentNavigationColumn.Width = new GridLength(0);
+                BorderListBox.Visibility = Visibility.Collapsed;
+                CompactOperationPicker.Visibility = Visibility.Visible;
+                Grid.SetColumn(PaymentOperationPanel, 0);
+                Grid.SetColumnSpan(PaymentOperationPanel, 2);
+                Grid.SetRow(PaymentOperationPanel, 1);
+                Grid.SetColumn(PaymentContractPanel, 0);
+                Grid.SetColumnSpan(PaymentContractPanel, 2);
+                Grid.SetRow(PaymentContractPanel, 2);
+            }
+            else
+            {
+                PaymentNavigationColumn.Width = new GridLength(260);
+                BorderListBox.Visibility = Visibility.Visible;
+                CompactOperationPicker.Visibility = Visibility.Collapsed;
+                Grid.SetColumn(PaymentOperationPanel, 1);
+                Grid.SetColumnSpan(PaymentOperationPanel, 1);
+                Grid.SetRow(PaymentOperationPanel, 0);
+                Grid.SetColumn(PaymentContractPanel, 1);
+                Grid.SetColumnSpan(PaymentContractPanel, 1);
+                Grid.SetRow(PaymentContractPanel, 1);
+            }
+        }
+
+        private void OperationLayout_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is not Grid layout || layout.Children.Count != 3)
+            {
+                return;
+            }
+
+            // Форма операции, разделитель и вспомогательная панель.
+            FrameworkElement form = (FrameworkElement)layout.Children[0];
+            FrameworkElement separator = (FrameworkElement)layout.Children[1];
+            FrameworkElement details = (FrameworkElement)layout.Children[2];
+            bool sideBySide = layout.ActualWidth >= 860;
+
+            layout.ColumnDefinitions[1].Width = new GridLength(sideBySide ? 1 : 0);
+            layout.ColumnDefinitions[2].Width = sideBySide
+                ? new GridLength(1.3, GridUnitType.Star)
+                : new GridLength(0);
+            layout.ColumnSpacing = sideBySide ? 20 : 0;
+
+            Grid.SetColumnSpan(form, sideBySide ? 1 : 3);
+            Grid.SetColumn(separator, sideBySide ? 1 : 0);
+            Grid.SetRow(separator, sideBySide ? 0 : 1);
+            Grid.SetColumnSpan(separator, sideBySide ? 1 : 3);
+            Grid.SetColumn(details, sideBySide ? 2 : 0);
+            Grid.SetRow(details, sideBySide ? 0 : 2);
+            Grid.SetColumnSpan(details, sideBySide ? 1 : 3);
+
+            separator.Width = sideBySide ? 1 : double.NaN;
+            separator.Height = sideBySide ? double.NaN : 1;
+            separator.Margin = sideBySide ? new Thickness(0) : new Thickness(0, 20, 0, 20);
+        }
+
+        private void PaymentAmounts_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is not Grid amounts)
+            {
+                return;
+            }
+
+            int columns;
+            if (amounts.ActualWidth >= 480)
+            {
+                columns = 3;
+            }
+            else if (amounts.ActualWidth >= 300)
+            {
+                columns = 2;
+            }
+            else
+            {
+                columns = 1;
+            }
+
+            if (amounts.ColumnDefinitions.Count == columns)
+            {
+                return;
+            }
+
+            amounts.ColumnDefinitions.Clear();
+            for (int column = 0; column < columns; column++)
+            {
+                amounts.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            }
+
+            amounts.RowDefinitions.Clear();
+            int rows = (amounts.Children.Count + columns - 1) / columns;
+            for (int row = 0; row < rows; row++)
+            {
+                amounts.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            }
+
+            for (int index = 0; index < amounts.Children.Count; index++)
+            {
+                Grid.SetRow((FrameworkElement)amounts.Children[index], index / columns);
+                Grid.SetColumn((FrameworkElement)amounts.Children[index], index % columns);
+            }
+        }
+
         /// <summary>Переключает видимую панель операции.</summary>
         private void NavList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -355,7 +500,7 @@ namespace PaymentModule
 
 
 
-            panelContract.Width = new GridLength(0, GridUnitType.Pixel);
+            PaymentContractPanel.Visibility = Visibility.Collapsed;
             contractIsOpen = false;
             
             //показываем
@@ -397,85 +542,42 @@ namespace PaymentModule
             }
         }
 
-        /// <summary>Показывает или скрывает текст контракта.</summary>
+        private void ToggleContractPanel(FrameworkElement text, FrameworkElement viewer)
+        {
+            if (contractIsOpen)
+            {
+                text.Visibility = Visibility.Collapsed;
+                viewer.Visibility = Visibility.Collapsed;
+                PaymentContractPanel.Visibility = Visibility.Collapsed;
+                contractIsOpen = false;
+            }
+            else
+            {
+                text.Visibility = Visibility.Visible;
+                viewer.Visibility = Visibility.Visible;
+                PaymentContractPanel.Visibility = Visibility.Visible;
+                contractIsOpen = true;
+            }
+        }
+
         private void contract1_Click(object sender, RoutedEventArgs e)
         {
-            if (contractIsOpen)
-            {
-                //скрываем контракт        
-                contract1.Visibility = Visibility.Collapsed;
-                contractV1.Visibility = Visibility.Collapsed;
-                panelContract.Width = new GridLength(0, GridUnitType.Pixel);
-            }else
-            {
-                //показываем контракт       
-                contract1.Visibility = Visibility.Visible;
-                contractV1.Visibility = Visibility.Visible;
-                panelContract.Width = new GridLength(1.5, GridUnitType.Star);
-            }
-            contractIsOpen = contractIsOpen == false;
+            ToggleContractPanel(contract1, contractV1);
         }
 
-        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract2_Click(object sender, RoutedEventArgs e)
         {
-            if (contractIsOpen)
-            {
-                //скрываем контракт        
-                contract2.Visibility = Visibility.Collapsed;
-                contractV2.Visibility = Visibility.Collapsed;
-                panelContract.Width = new GridLength(0, GridUnitType.Pixel);
-            }
-            else
-            {
-                //показываем контракт       
-                contract2.Visibility = Visibility.Visible;
-                contractV2.Visibility= Visibility.Visible;
-                panelContract.Width = new GridLength(1.5, GridUnitType.Star);
-            }
-            contractIsOpen = contractIsOpen == false;
+            ToggleContractPanel(contract2, contractV2);
         }
 
-
-        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract3_Click(object sender, RoutedEventArgs e)
         {
-            if (contractIsOpen)
-            {
-                //скрываем контракт        
-                contract3.Visibility = Visibility.Collapsed;
-                contractV3.Visibility = Visibility.Collapsed;
-                panelContract.Width = new GridLength(0, GridUnitType.Pixel);
-            }
-            else
-            {
-                //показываем контракт       
-                contract3.Visibility = Visibility.Visible;
-                contractV3.Visibility = Visibility.Visible;
-                panelContract.Width = new GridLength(1.5, GridUnitType.Star);
-            }
-            contractIsOpen = contractIsOpen == false;
+            ToggleContractPanel(contract3, contractV3);
         }
 
-
-        /// <summary>Показывает или скрывает текст контракта.</summary>
         private void contract4_Click(object sender, RoutedEventArgs e)
         {
-            if (contractIsOpen)
-            {
-                //скрываем контракт        
-                contract4.Visibility = Visibility.Collapsed;
-                contractV4.Visibility = Visibility.Collapsed;
-                panelContract.Width = new GridLength(0, GridUnitType.Pixel);
-            }
-            else
-            {
-                //показываем контракт       
-                contract4.Visibility = Visibility.Visible;
-                contractV4.Visibility = Visibility.Visible;
-                panelContract.Width = new GridLength(1.5, GridUnitType.Star);
-            }
-            contractIsOpen = contractIsOpen == false;
+            ToggleContractPanel(contract4, contractV4);
         }
 
         private void AboutApp_Click(object sender, RoutedEventArgs e)
@@ -517,45 +619,123 @@ namespace PaymentModule
             withDrawMoney.Text = amount.Text;
         }
 
+        private void ResetCalculationDetails()
+        {
+            CalculationResultHint.Text = "Заполните поля слева и нажмите «Рассчитать условие».";
+            CalculationSteps.Text = "Шаги появятся после расчёта.";
+            CalculationPrecondition.Text = string.Empty;
+            CalculationDefinedness.Text = "Ограничения появятся после расчёта.";
+            CalculationHoare.Text = "Предусловие → Код → Постусловие";
+            CalculationDetails.IsExpanded = false;
+        }
+
+        private void ShowCalculationDetails(WpResult result)
+        {
+            CalculationResultHint.Text = "Подробности — в разделе «Как получено условие».";
+            CalculationSteps.Text = result.Steps;
+            CalculationPrecondition.Text = result.Wp;
+            CalculationDefinedness.Text = result.Defined;
+            CalculationHoare.Text = result.Hoare;
+        }
+
+        private decimal ReadCalculationNumber(TextBox input)
+        {
+            string label = input.Header?.ToString() ?? "Число";
+            if (string.IsNullOrWhiteSpace(input.Text))
+            {
+                throw new FormatException($"Заполните поле «{label}».");
+            }
+
+            string text = input.Text.Trim().Replace(',', '.');
+            NumberStyles numberStyles = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign;
+            if (!decimal.TryParse(text, numberStyles, CultureInfo.InvariantCulture, out decimal value) || value < 0)
+            {
+                throw new FormatException($"В поле «{label}» нужно неотрицательное число.");
+            }
+
+            return value;
+        }
+
+        private string ReplaceCalculationParameter(string expression, string name, decimal value)
+        {
+            string pattern = @"\b" + Regex.Escape(name) + @"\b";
+            string number = value.ToString(CultureInfo.InvariantCulture);
+            return Regex.Replace(expression, pattern, _ => number);
+        }
+
         private void CalculateWP_Click(object sender, RoutedEventArgs e)
         {
-            string post;
-            string code;
-            switch (ScenarioPicker.SelectedIndex)
+            CalculationError.IsOpen = false;
+
+            try
             {
-                case 0:
-                case 1:
-                    post = PostInput.Text.Replace("reserve", ScenarioTarget.Text);
-                    code = CodeInput.Text.Replace("reserve", ScenarioTarget.Text);
-                    code = code.Replace("amount", TransferAmount.Text);
-                    code = code.Replace("percent", CommissionPercent.Text);
-                    code = code.Replace("minFee", MinimumCommission.Text);
-                    var result1 = WpEngine.Analyze(code, post);
-                    decimal number1 = BalanceExpressionSolver.Solve(result1.Wp.ToString());
-                    ResultValue.Text = number1.ToString() + "₽";
-                    DifferenceValue.Text = (number1 - decimal.Parse(ScenarioBalance.Text)).ToString() + "₽";
-                    break;
-                case 2:
-                    post = PostInput.Text.Replace("reserve", ScenarioTarget.Text);
-                    post = post.Replace("balance", ScenarioBalance.Text);
-                    code = CodeInput.Text.Replace("reserve", ScenarioTarget.Text);
-                    code = code.Replace("amount", TransferAmount.Text);
-                    code = code.Replace("percent", CommissionPercent.Text);
-                    code = code.Replace("minFee", MinimumCommission.Text);
-                    code = code.Replace("balance", ScenarioBalance.Text);
+                if (string.IsNullOrWhiteSpace(PostInput.Text))
+                {
+                    throw new FormatException("Заполните «Цель (Post)» или нажмите «Заполнить пример».");
+                }
+                if (string.IsNullOrWhiteSpace(CodeInput.Text))
+                {
+                    throw new FormatException("Введите код расчёта или нажмите «Заполнить пример».");
+                }
 
-                    var result2 = WpEngine.Analyze(code, post);
+                decimal balance = ReadCalculationNumber(ScenarioBalance);
+                decimal reserve = ReadCalculationNumber(ScenarioTarget);
+                string post = ReplaceCalculationParameter(PostInput.Text, "reserve", reserve);
+                string code = ReplaceCalculationParameter(CodeInput.Text, "reserve", reserve);
 
-                    double number2 = RateExtractor.ExtractRate(result2.Wp.ToString());
-                    DifferenceValue.Text = number2.ToString() + "%";
-                    break;
+                if (ScenarioPicker.SelectedIndex == 1)
+                {
+                    decimal amount = ReadCalculationNumber(TransferAmount);
+                    decimal percent = ReadCalculationNumber(CommissionPercent);
+                    decimal minimumFee = ReadCalculationNumber(MinimumCommission);
+                    code = ReplaceCalculationParameter(code, "amount", amount);
+                    code = ReplaceCalculationParameter(code, "percent", percent);
+                    code = ReplaceCalculationParameter(code, "minFee", minimumFee);
+                }
+
+                if (ScenarioPicker.SelectedIndex == 2)
+                {
+                    if (balance == 0)
+                    {
+                        throw new FormatException("Начальная сумма накоплений должна быть больше нуля.");
+                    }
+                    post = ReplaceCalculationParameter(post, "balance", balance);
+                    code = ReplaceCalculationParameter(code, "balance", balance);
+                }
+
+                WpResult result = WpEngine.Analyze(code, post);
+                if (ScenarioPicker.SelectedIndex == 2)
+                {
+                    double rate = RateExtractor.ExtractRate(result.Wp);
+                    if (!double.IsFinite(rate) || rate < 0)
+                    {
+                        throw new InvalidOperationException("Для этих сумм не удалось получить допустимую неотрицательную ставку.");
+                    }
+                    ResultValue.Text = (rate * 100).ToString("0.####", CultureInfo.CurrentCulture) + " %";
+                }
+                else
+                {
+                    decimal requiredBalance = BalanceExpressionSolver.Solve(result.Wp);
+                    ResultValue.Text = requiredBalance.ToString() + "₽";
+                    DifferenceValue.Text = (requiredBalance - balance).ToString() + "₽";
+                }
+
+                ShowCalculationDetails(result);
             }
-            
-
-
-            ;
-
-            //ResultValue.Text = result.Wp.ToString();
+            catch (Exception error) when (
+                error is FormatException ||
+                error is InvalidOperationException ||
+                error is NotSupportedException ||
+                error is ArithmeticException ||
+                error is ArgumentException)
+            {
+                ResetCalculationDetails();
+                ResultValue.Text = "—";
+                DifferenceValue.Text = "—";
+                CalculationResultHint.Text = "Исправьте данные слева и повторите расчёт.";
+                CalculationError.Message = error.Message;
+                CalculationError.IsOpen = true;
+            }
         }
     }
 }
