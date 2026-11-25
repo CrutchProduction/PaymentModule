@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="PaymentModule.Views.LoopLabView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:PaymentModule.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:ConditionBrushConverter x:Key="ConditionBrush" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:CellStateBrushConverter x:Key="CellStateBrush" />
+
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+
+        <Style x:Key="CardTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="Formula" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="MaxWidth" Value="860" />
+            <Setter Property="IsTextSelectionEnabled" Value="True" />
+        </Style>
+
+        <Style x:Key="Label" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}"
+            BorderThickness="2" CornerRadius="10" Padding="20">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <StackPanel MinWidth="1240" Spacing="16">
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <TextBlock Text="Циклы под микроскопом" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" />
+                    <ComboBox Header="Режим (готовый пресет)" Width="280" FontSize="16"
+                              SelectedIndex="{Binding SelectedModeIndex, Mode=TwoWay}">
+                        <ComboBoxItem Content="Сумма префикса" />
+                        <ComboBoxItem Content="Счётчик &gt; T" />
+                        <ComboBoxItem Content="Максимум префикса" />
+                    </ComboBox>
+                </StackPanel>
+                <TextBlock Style="{StaticResource Label}"
+                           Text="При выборе режима инвариант, код цикла и вариант-функция заполняются автоматически." />
+
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="360" />
+                        <ColumnDefinition Width="430" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--данные-->
+                    <Border Grid.Column="0" Style="{StaticResource Card}" VerticalAlignment="Top">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Данные" Style="{StaticResource CardTitle}" />
+
+                            <Grid ColumnSpacing="8" RowSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <NumberBox Header="n" Value="{Binding N, Mode=TwoWay}" Minimum="1" Maximum="24"
+                                           SpinButtonPlacementMode="Compact" />
+                                <NumberBox Grid.Column="1" Header="T (порог)" Value="{Binding Threshold, Mode=TwoWay}"
+                                           Minimum="-50" Maximum="50" SpinButtonPlacementMode="Compact" />
+                                <NumberBox Grid.Row="1" Header="min" Value="{Binding MinValue, Mode=TwoWay}"
+                                           Minimum="-50" Maximum="50" SpinButtonPlacementMode="Compact" />
+                                <NumberBox Grid.Row="1" Grid.Column="1" Header="max" Value="{Binding MaxValue, Mode=TwoWay}"
+                                           Minimum="-50" Maximum="50" SpinButtonPlacementMode="Compact" />
+                            </Grid>
+
+                            <Button Content="Сгенерировать массив" Command="{Binding GenerateCommand}"
+                                    HorizontalAlignment="Left" />
+
+                            <Grid ColumnSpacing="8" Padding="4,8,4,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="36" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="40" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="i" Style="{StaticResource Label}" />
+                                <TextBlock Grid.Column="1" Text="a[i]" Style="{StaticResource Label}" />
+                                <TextBlock Grid.Column="2" Text="&gt; T" Style="{StaticResource Label}" />
+                            </Grid>
+
+                            <ListView ItemsSource="{Binding Cells}" Height="330" SelectionMode="None"
+                                      HorizontalContentAlignment="Stretch">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="6" Padding="4"
+                                                Background="{Binding State, Converter={StaticResource CellStateBrush}}">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="24" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="34" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Index}" FontSize="14"
+                                                           VerticalAlignment="Center" />
+                                                <NumberBox Grid.Column="1" Value="{Binding Value, Mode=TwoWay}"
+                                                           Minimum="-50" Maximum="50" FontSize="14" Height="32"
+                                                           MinWidth="0" SpinButtonPlacementMode="Hidden" />
+                                                <TextBlock Grid.Column="2" Text="да" FontSize="12"
+                                                           Foreground="#F87171" VerticalAlignment="Center"
+                                                           Visibility="{Binding AboveThreshold, Converter={StaticResource BoolToVisibility}}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <TextBlock Style="{StaticResource Label}"
+                                       Text="жёлтый — текущий индекс j, зелёный — ячейка уже в префиксе, ярче — только что прочитанная" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--исполнение-->
+                    <Border Grid.Column="1" Style="{StaticResource Card}" VerticalAlignment="Top">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Исполнение" Style="{StaticResource CardTitle}" />
+
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8" Padding="10">
+                                <TextBlock Text="{Binding CodeText}" FontFamily="Consolas" FontSize="14"
+                                           TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            </Border>
+
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        CornerRadius="8" Padding="10">
+                                    <StackPanel>
+                                        <TextBlock Text="j" Style="{StaticResource Label}" />
+                                        <TextBlock Text="{Binding J}" FontSize="22" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        CornerRadius="8" Padding="10">
+                                    <StackPanel>
+                                        <TextBlock Text="res" Style="{StaticResource Label}" />
+                                        <TextBlock Text="{Binding Res}" FontSize="22" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        CornerRadius="8" Padding="10">
+                                    <StackPanel>
+                                        <TextBlock Text="t = n − j" Style="{StaticResource Label}" />
+                                        <TextBlock Text="{Binding VariantValue}" FontSize="22" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button Content="Шаг" Command="{Binding StepCommand}" />
+                                <Button Content="{Binding RunButtonText}" Command="{Binding RunCommand}" />
+                                <Button Content="Сброс" Command="{Binding ResetCommand}" />
+                            </StackPanel>
+
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8" Padding="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
+                                            Background="{Binding PostHolds, Converter={StaticResource ConditionBrush}}"
+                                            Visibility="{Binding IsFinished, Converter={StaticResource BoolToVisibility}}" />
+                                    <TextBlock Text="{Binding PostStatusText}" TextWrapping="Wrap" FontSize="14" />
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Text="Трасса выполнения" FontSize="17" FontWeight="SemiBold" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8" Padding="8" Height="120">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <TextBlock Text="{Binding TraceText}" FontFamily="Consolas" FontSize="12"
+                                               TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                                </ScrollViewer>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!--инвариант, вариант и проверка-->
+                    <StackPanel Grid.Column="2" Spacing="16">
+                        <Border Style="{StaticResource Card}" VerticalAlignment="Top">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Инвариант и вариант" Style="{StaticResource CardTitle}" />
+
+                                <TextBox Header="Инвариант словами" Text="{Binding InvariantWords, Mode=TwoWay}"
+                                         AcceptsReturn="True" TextWrapping="Wrap" Height="70" FontSize="14"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                                <TextBox Header="Инвариант (формула)" Text="{Binding InvariantFormula, Mode=TwoWay}"
+                                         FontFamily="Consolas" FontSize="14" TextWrapping="Wrap" />
+                                <TextBox Header="Вариант-функция t" Text="{Binding VariantFormula, Mode=TwoWay}"
+                                         FontFamily="Consolas" FontSize="14" TextWrapping="Wrap" />
+
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
+                                                Background="{Binding InvBefore, Converter={StaticResource ConditionBrush}}" />
+                                        <TextBlock Text="до шага" FontSize="14" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                        <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
+                                                Background="{Binding InvAfter, Converter={StaticResource ConditionBrush}}" />
+                                        <TextBlock Text="после шага" FontSize="14" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <TextBlock Text="{Binding VariantText}" FontSize="16" FontWeight="SemiBold" />
+                                <ProgressBar Minimum="0" Maximum="{Binding VariantMax}" Value="{Binding VariantValue}"
+                                             Foreground="{Binding VariantOk, Converter={StaticResource ConditionBrush}}" />
+                                <TextBlock Text="{Binding VariantStatus}" Style="{StaticResource Label}" />
+
+                                <TextBlock Text="Лог убывания t" Style="{StaticResource Label}" />
+                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        CornerRadius="8" Padding="8" Height="70">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <TextBlock Text="{Binding VariantLogText}" FontFamily="Consolas" FontSize="12"
+                                                   TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}" VerticalAlignment="Top">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Проверка (wp)" Style="{StaticResource CardTitle}" />
+                                <TextBlock Text="{Binding SpecText}" Style="{StaticResource Formula}" />
+
+                                <Button Content="Проверить условия" Command="{Binding VerifyCommand}"
+                                        HorizontalAlignment="Left" />
+                                <TextBlock Text="{Binding SummaryText}" Style="{StaticResource Label}" />
+                                <TextBlock Style="{StaticResource Label}"
+                                           Text="Сами условия корректности считает модуль wp из ЛР-2, на фронте показаны формулы и место под статусы." />
+
+                                <ItemsControl ItemsSource="{Binding Proofs}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                                      Margin="0,2,0,2">
+                                                <Expander.Header>
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <Border Width="12" Height="12" CornerRadius="6"
+                                                                VerticalAlignment="Center"
+                                                                Background="{Binding StatusBrush}" />
+                                                        <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="SemiBold" />
+                                                        <TextBlock Text="{Binding StatusText}" FontSize="15" />
+                                                    </StackPanel>
+                                                </Expander.Header>
+                                                <StackPanel Spacing="6">
+                                                    <TextBlock Text="{Binding Formula}" Style="{StaticResource Formula}" />
+                                                    <TextBlock Text="{Binding Explanation}" FontSize="13" TextWrapping="Wrap"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                </StackPanel>
+                                            </Expander>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="{Binding WpInvariant}" Style="{StaticResource Formula}" />
+                                <TextBlock Text="{Binding WpVariant}" Style="{StaticResource Formula}" />
+                                <TextBlock Text="{Binding DefText}" Style="{StaticResource Label}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>
