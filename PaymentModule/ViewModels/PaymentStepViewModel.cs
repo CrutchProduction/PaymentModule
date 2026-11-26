@@ -8,6 +8,7 @@ namespace PaymentModule.ViewModels
         public string Title { get; set; } = "";
         public string PaymentText { get; set; } = "";
         public string ResultText { get; set; } = "";
+        public int Result { get; set; }
 
         public bool InvBeforeOk { get; set; }
         public bool InvAfterOk { get; set; }

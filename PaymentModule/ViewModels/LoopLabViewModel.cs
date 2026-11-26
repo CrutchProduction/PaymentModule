@@ -1,3 +1,7 @@
+using PaymentClassLibrary.Loops;
+using System.Linq;
+using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -17,6 +21,8 @@ namespace PaymentModule.ViewModels
         private int variantValue;
         private int variantMax = 1;
         private bool isRunning;
+        private int playbackVersion;
+        private LoopAnalysis? currentAnalysis;
         private bool invBefore = true;
         private bool invAfter = true;
         private bool postHolds;
@@ -191,9 +197,19 @@ namespace PaymentModule.ViewModels
 
         public string InvariantWords { get; set; } = "";
 
-        public string InvariantFormula { get; set; } = "";
+        private string invariantFormula = "";
+        public string InvariantFormula
+        {
+            get => invariantFormula;
+            set { if (invariantFormula == value) return; invariantFormula = value; OnPropertyChanged(); InvalidateResult(); }
+        }
 
-        public string VariantFormula { get; set; } = "n - j";
+        private string variantFormula = "n - j";
+        public string VariantFormula
+        {
+            get => variantFormula;
+            set { if (variantFormula == value) return; variantFormula = value; OnPropertyChanged(); InvalidateResult(); }
+        }
 
         public string CodeText
         {
@@ -252,7 +268,7 @@ namespace PaymentModule.ViewModels
 
         public bool VariantOk
         {
-            get { return variantValue >= 0; }
+            get { return currentStepIndex >= 0 && currentStepIndex < Steps.Count && Steps[currentStepIndex].VariantOk; }
         }
 
         public string VariantText
@@ -410,86 +426,81 @@ namespace PaymentModule.ViewModels
         //сбрасывает результат и историю, если данные поменялись
         private void InvalidateResult()
         {
+            currentAnalysis = null;
             HasResult = false;
+            wpInvariant = "wp(S, Inv): ещё не вычислено.";
+            wpVariant = "wp варианта: ещё не вычислено.";
+            defText = "Определённость проверяется при расчёте.";
+            wpResultText = "После изменения данных или формул выполните расчёт заново.";
+            foreach (var proof in Proofs)
+            {
+                proof.StatusText = "Не проверено";
+                proof.StatusBrush = new SolidColorBrush(Colors.Gray);
+            }
+            NotifySpec();
             ResultText = "Нажмите «Рассчитать», чтобы получить результат.";
             Steps.Clear();
             ResetViewer();
             OnPropertyChanged(nameof(HistoryHint));
         }
 
-        //полный расчёт и сохранение истории шагов
+        // Библиотека возвращает результат, историю и вычисленные wp.
         private void Calculate()
         {
-            if (Payments.Count == 0)
+            isRunning = false;
+            playbackVersion++;
+            try
             {
-                return;
+                LoopAnalysis analysis = PaymentLoop.Analyze(Payments.Select((_, i) => Amount(i)).ToArray(),
+                    selectedModeIndex, (int)threshold, InvariantFormula, VariantFormula);
+                Steps.Clear();
+                for (int i = 0; i < analysis.Steps.Count; i++)
+                {
+                    LoopStep step = analysis.Steps[i];
+                    Steps.Add(new PaymentStepViewModel {
+                        IsStart = i == 0,
+                        Title = i == 0 ? "Старт" : "Шаг " + i,
+                        PaymentText = i == 0 ? (selectedModeIndex == 2 ? Money(Amount(0)) : "—") : Money(Amount(step.Index - 1)),
+                        Result = step.Result,
+                        ResultText = selectedModeIndex == 1 ? step.Result.ToString() : Money(step.Result),
+                        InvBeforeOk = step.InvariantBefore, InvAfterOk = step.InvariantAfter,
+                        VariantBefore = step.VariantBefore, VariantAfter = step.VariantAfter,
+                        VariantOk = step.VariantOk
+                    });
+                }
+                Proofs[0].Formula = "n >= 1 => " + analysis.InitializationWp.Wp;
+                Proofs[1].Formula = "(" + InvariantFormula + ") && j < n => " + analysis.InvariantWp.Wp;
+                Proofs[2].Formula = "(" + InvariantFormula + ") && j >= n => " + postSpecText;
+                Proofs[3].Formula = "(" + InvariantFormula + ") && j < n => (" + VariantFormula +
+                    ") >= 0 && " + analysis.VariantWp.Wp;
+                wpInvariant = "wp(S, Inv) = " + analysis.InvariantWp.Wp;
+                wpVariant = "wp(S, t >= 0 && t < old_t) = " + analysis.VariantWp.Wp;
+                defText = "Индексы и границы префиксов проверены при выполнении.\n" +
+                    analysis.InvariantWp.Defined + "\n" + analysis.VariantWp.Defined;
+                wpResultText = "Проверки выполнены на введённых платежах. Это не доказательство для всех массивов.\n" +
+                    "old_t — значение варианта перед шагом.\n" + analysis.InvariantWp.Steps;
+                bool[] checks = { analysis.Initialization, analysis.Preservation, analysis.Exit, analysis.Termination };
+                for (int i = 0; i < Proofs.Count; i++)
+                {
+                    Proofs[i].StatusText = checks[i] ? "Выполнено на этих данных" : "Нарушено на этих данных";
+                    Proofs[i].StatusBrush = new SolidColorBrush(checks[i] ? Colors.Green : Colors.Red);
+                }
+                currentAnalysis = analysis;
+                ResultText = BuildResult(analysis.Result);
+                HasResult = true;
+                ResetViewer();
+                NotifySpec();
+                OnPropertyChanged(nameof(HistoryHint));
             }
-
-            //демо-расчёт для фронта, позже данные придут от бэкенда
-            int total = Payments.Count;
-            int value = InitialResult();
-            int index = InitialJ();
-
-            Steps.Clear();
-            bool initOk = InvariantAt(value, index);
-            Steps.Add(new PaymentStepViewModel
+            catch (Exception error) when (error is FormatException || error is ArgumentException ||
+                                          error is ArithmeticException || error is InvalidOperationException)
             {
-                IsStart = true,
-                Title = "Старт",
-                PaymentText = selectedModeIndex == 2 ? Money(Amount(0)) : "—",
-                ResultText = Money(value),
-                InvBeforeOk = initOk,
-                InvAfterOk = initOk,
-                VariantBefore = total - index,
-                VariantAfter = total - index,
-                VariantOk = true
-            });
-
-            while (index < total)
-            {
-                int variantBefore = total - index;
-                bool invBeforeStep = InvariantAt(value, index);
-                int payment = Amount(index);
-
-                if (selectedModeIndex == 0)
-                {
-                    value = value + payment;
-                }
-                else if (selectedModeIndex == 1)
-                {
-                    if (payment > (int)threshold)
-                    {
-                        value = value + 1;
-                    }
-                }
-                else
-                {
-                    value = Math.Max(value, payment);
-                }
-
-                index = index + 1;
-                bool invAfterStep = InvariantAt(value, index);
-                int variantAfter = total - index;
-
-                Steps.Add(new PaymentStepViewModel
-                {
-                    Title = "Шаг " + Steps.Count,
-                    PaymentText = Money(payment),
-                    ResultText = Money(value),
-                    InvBeforeOk = invBeforeStep,
-                    InvAfterOk = invAfterStep,
-                    VariantBefore = variantBefore,
-                    VariantAfter = variantAfter,
-                    VariantOk = variantAfter == variantBefore - 1 && variantAfter >= 0
-                });
+                InvalidateResult();
+                ResultText = "Не удалось выполнить проверку: " + error.Message;
+                wpResultText = ResultText;
+                NotifySpec();
             }
-
-            ResultText = BuildResult(value);
-            HasResult = true;
-            ResetViewer();
-            OnPropertyChanged(nameof(HistoryHint));
         }
-
         private string BuildResult(int value)
         {
             if (selectedModeIndex == 0)
@@ -503,53 +514,26 @@ namespace PaymentModule.ViewModels
             return "Самый крупный платёж: " + value + " ₽.";
         }
 
-        //один шаг цикла
+        // Просмотр готовой истории без повторного выполнения расчёта во фронте.
         private void Step()
         {
-            if (Payments.Count == 0 || isFinished || Steps.Count == 0)
-            {
-                return;
-            }
-            if (currentStepIndex < 0)
-            {
-                return;
-            }
-
-            int oldJ = j;
-            invBefore = InvariantAt(res, j);
-
-            if (selectedModeIndex == 0)
-            {
-                res = res + Amount(j);
-                j = j + 1;
-            }
-            else if (selectedModeIndex == 1)
-            {
-                if (Amount(j) > (int)threshold)
-                {
-                    res = res + 1;
-                }
-                j = j + 1;
-            }
-            else
-            {
-                res = Math.Max(res, Amount(j));
-                j = j + 1;
-            }
-
-            invAfter = InvariantAt(res, j);
-            variantValue = Payments.Count - j;
-            isFinished = j >= Payments.Count;
-            if (isFinished)
-            {
-                postHolds = PostAt(res);
-            }
-
-            UpdatePaymentStates(isFinished ? -1 : oldJ);
-            SetCurrentStep(currentStepIndex + 1);
+            if (!HasResult || isFinished || currentStepIndex < 0 ||
+                currentStepIndex + 1 >= Steps.Count) return;
+            int next = currentStepIndex + 1;
+            j++;
+            LoopStepView(next);
+            UpdatePaymentStates(j - 1);
             NotifyState();
         }
 
+        private void LoopStepView(int index)
+        {
+            res = Steps[index].Result;
+            SetCurrentStep(index);
+            variantValue = Steps[index].VariantAfter;
+            isFinished = index == Steps.Count - 1;
+            postHolds = isFinished && currentAnalysis != null && currentAnalysis.Exit;
+        }
         //пуск и пауза пошагового просмотра
         private async void RunClicked()
         {
@@ -561,25 +545,31 @@ namespace PaymentModule.ViewModels
             if (isRunning)
             {
                 isRunning = false;
+                playbackVersion++;
                 OnPropertyChanged(nameof(RunButtonText));
                 return;
             }
 
+            int version = ++playbackVersion;
             isRunning = true;
             OnPropertyChanged(nameof(RunButtonText));
-            while (isRunning && !isFinished)
+            while (isRunning && !isFinished && version == playbackVersion)
             {
                 Step();
                 await Task.Delay(700);
             }
-            isRunning = false;
-            OnPropertyChanged(nameof(RunButtonText));
+            if (version == playbackVersion)
+            {
+                isRunning = false;
+                OnPropertyChanged(nameof(RunButtonText));
+            }
         }
 
         //возвращает просмотр в начало
         private void ResetViewer()
         {
             isRunning = false;
+            playbackVersion++;
             j = InitialJ();
             res = InitialResult();
             variantValue = Payments.Count - j;
@@ -587,10 +577,15 @@ namespace PaymentModule.ViewModels
             invBefore = InvariantAt(res, j);
             invAfter = invBefore;
             isFinished = j >= Payments.Count;
-            postHolds = isFinished && PostAt(res);
+            postHolds = isFinished && currentAnalysis != null && currentAnalysis.Exit;
 
             UpdatePaymentStates(-1);
             SetCurrentStep(Steps.Count > 0 ? 0 : -1);
+            if (Steps.Count > 0)
+            {
+                variantValue = Steps[0].VariantAfter;
+                variantMax = Math.Max(1, Steps.Max(step => Math.Max(step.VariantBefore, step.VariantAfter)));
+            }
             NotifyState();
         }
 
@@ -666,78 +661,16 @@ namespace PaymentModule.ViewModels
 
         private bool InvariantAt(int value, int index)
         {
-            if (index < 0 || index > Payments.Count)
+            try
+            {
+                return PaymentLoop.CheckInvariant(InvariantFormula,
+                    Payments.Select((_, i) => Amount(i)).ToArray(), (int)threshold, index, value);
+            }
+            catch (Exception error) when (error is FormatException || error is ArithmeticException)
             {
                 return false;
             }
-            if (selectedModeIndex == 0)
-            {
-                return value == SumPrefix(index);
-            }
-            if (selectedModeIndex == 1)
-            {
-                return value == CountPrefix(index);
-            }
-            if (index < 1)
-            {
-                return false;
-            }
-            return value == MaxPrefix(index);
         }
-
-        private bool PostAt(int value)
-        {
-            if (Payments.Count == 0)
-            {
-                return false;
-            }
-            if (selectedModeIndex == 0)
-            {
-                return value == SumPrefix(Payments.Count);
-            }
-            if (selectedModeIndex == 1)
-            {
-                return value == CountPrefix(Payments.Count);
-            }
-            return value == MaxPrefix(Payments.Count);
-        }
-
-        private int SumPrefix(int end)
-        {
-            int sum = 0;
-            for (int i = 0; i < end; i++)
-            {
-                sum = sum + Amount(i);
-            }
-            return sum;
-        }
-
-        private int CountPrefix(int end)
-        {
-            int count = 0;
-            for (int i = 0; i < end; i++)
-            {
-                if (Amount(i) > (int)threshold)
-                {
-                    count = count + 1;
-                }
-            }
-            return count;
-        }
-
-        private int MaxPrefix(int end)
-        {
-            int max = Amount(0);
-            for (int i = 1; i < end; i++)
-            {
-                if (Amount(i) > max)
-                {
-                    max = Amount(i);
-                }
-            }
-            return max;
-        }
-
         private void ApplyMode()
         {
             Proofs.Clear();

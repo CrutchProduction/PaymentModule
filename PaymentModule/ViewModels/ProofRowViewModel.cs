@@ -9,7 +9,12 @@ namespace PaymentModule.ViewModels
         private SolidColorBrush statusBrush = new SolidColorBrush(Colors.Gray);
 
         public string Title { get; set; } = "";
-        public string Formula { get; set; } = "";
+        private string formula = "";
+        public string Formula
+        {
+            get => formula;
+            set { formula = value; OnPropertyChanged(); }
+        }
         public string Explanation { get; set; } = "";
 
         public string StatusText

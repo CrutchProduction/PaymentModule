@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -223,7 +223,8 @@ internal sealed class Node
         //узел у которых нет дочерних узлов числа, идентификаторы, bool
         if (Kind == "id" || Kind == "number" || Kind == "bool") return Value;
         //вызов функции
-        if (Kind == "call") return Value + "(" + Children[0] + ")";
+        if (Kind == "call") return Value + "(" + string.Join(", ", Children) + ")";
+        if (Kind == "index") return Value + "[" + Children[0] + "]";
         //унарный оператор: ! или -
         if (Kind == "unary") return Value == "!" ? "!(" + Children[0] + ")" : "-" + Children[0];
         //бинарный оператор: (левый операнд, оператор, правый операнд)
@@ -262,7 +263,7 @@ internal sealed class Parser
     {
         //регулярка выделяет числа, идентификаторы и операторы
         tokens = Regex.Matches(input,
-            @"\s*(?:(\d+(?:\.\d+)?)|([A-Za-z_][A-Za-z0-9_]*)|(:=|==|!=|<=|>=|&&|\|\||[{}();,+*/<>!-]))")
+            @"\s*(?:(\d+(?:\.\d+)?)|([A-Za-z_][A-Za-z0-9_]*)|(:=|==|!=|<=|>=|&&|\|\||[{}\[\]();,+*/<>!-]))")
             .Select(m => m.Groups[1].Success ? m.Groups[1].Value
                        : m.Groups[2].Success ? m.Groups[2].Value
                        : m.Groups[3].Value).ToList();
@@ -356,8 +357,22 @@ internal sealed class Parser
             //идентификатор или вызов функции
             else if (Regex.IsMatch(token, @"^[A-Za-z_][A-Za-z0-9_]*$"))
             {
-                if ((token == "abs" || token == "sqrt") && Match("("))
-                { Node arg = ParseExpression(); Need(")"); left = new Node("call", token, new List<Node> { arg }); }
+                if (Match("("))
+                {
+                    var arguments = new List<Node>();
+                    if (!Match(")"))
+                    {
+                        do { arguments.Add(ParseExpression()); } while (Match(","));
+                        Need(")");
+                    }
+                    left = new Node("call", token, arguments);
+                }
+                else if (Match("["))
+                {
+                    Node index = ParseExpression();
+                    Need("]");
+                    left = new Node("index", token, new List<Node> { index });
+                }
                 else if (token == "true" || token == "false") left = new Node("bool", token);
                 else left = new Node("id", token);
             }

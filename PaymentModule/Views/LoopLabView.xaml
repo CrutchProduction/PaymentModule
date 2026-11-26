@@ -46,9 +46,30 @@
             BorderThickness="2" CornerRadius="10" Padding="20">
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <StackPanel MinWidth="1100" Spacing="16">
-                <TextBlock Text="Анализ будущих платежей" FontSize="30" FontWeight="Bold" />
-                <TextBlock Style="{StaticResource Label}"
-                           Text="Введите суммы платежей, выберите расчёт и нажмите «Рассчитать». Учебная проверка цикла спрятана в блоке ниже." />
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Анализ будущих платежей" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" />
+                    <Button Grid.Column="1" Content="Как пользоваться" VerticalAlignment="Center">
+                        <Button.Flyout>
+                            <Flyout Placement="Bottom">
+                                <ScrollViewer MaxHeight="480" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel MaxWidth="420" Spacing="12">
+                                        <TextBlock Text="Как пользоваться" FontSize="22" FontWeight="SemiBold" />
+                                        <TextBlock Text="1. Укажите количество платежей и введите суммы в таблице." TextWrapping="Wrap" FontSize="16" />
+                                        <TextBlock Text="2. Выберите, что узнать: общую сумму, количество платежей больше заданной суммы или самый крупный платёж. Для подсчёта укажите сумму, с которой нужно сравнивать платежи." TextWrapping="Wrap" FontSize="16" />
+                                        <TextBlock Text="3. Нажмите «Рассчитать». Ответ появится в блоке «Результат»." TextWrapping="Wrap" FontSize="16" />
+                                        <TextBlock Text="Для примера задайте минимальную и максимальную сумму и нажмите «Заполнить случайными суммами». Это заменит суммы в таблице." TextWrapping="Wrap" FontSize="16" />
+                                        <TextBlock Text="Чтобы посмотреть подробности, раскройте «Проверка корректности расчёта». Там находятся история и проверки каждого шага. Кнопка «Шаг» показывает следующий шаг, «Пуск» включает автоматический просмотр, «Пауза» останавливает его, «Сброс» возвращает просмотр к началу." TextWrapping="Wrap" FontSize="16" />
+                                        <TextBlock Text="После изменения платежей, режима или формул нажмите «Рассчитать» заново." TextWrapping="Wrap" FontSize="16" />
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
 
                 <Grid ColumnSpacing="16">
                     <Grid.ColumnDefinitions>
@@ -147,9 +168,6 @@
                                                TextWrapping="Wrap" />
                                 </StackPanel>
                             </Border>
-
-                            <TextBlock Style="{StaticResource Label}"
-                                       Text="После расчёта история шагов сохранится — её можно посмотреть в блоке «Проверка корректности расчёта»." />
                         </StackPanel>
                     </Border>
                 </Grid>
