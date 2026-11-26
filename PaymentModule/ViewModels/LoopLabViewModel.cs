@@ -6,112 +6,115 @@ namespace PaymentModule.ViewModels
 {
     public class LoopLabViewModel : ViewModelBase
     {
-        private double n = 8;
-        private double minValue = 0;
-        private double maxValue = 9;
-        private double threshold = 5;
+        private double minAmount = 100;
+        private double maxAmount = 500;
+        private double threshold = 150;
         private int selectedModeIndex;
-        private int[] values = new int[0];
 
-        //состояние исполнения цикла
+        //состояние пошагового просмотра
         private int j;
         private int res;
-        private int stepCount;
         private int variantValue;
         private int variantMax = 1;
         private bool isRunning;
-        private bool invBefore;
-        private bool invAfter;
+        private bool invBefore = true;
+        private bool invAfter = true;
         private bool postHolds;
         private bool isFinished;
 
-        private string traceText = "";
-        private string variantLogText = "";
-        private string summaryText = "wp-проверка подключается отдельно";
+        //результат расчёта
+        private string resultText = "Нажмите «Рассчитать», чтобы получить результат.";
+        private bool hasResult;
 
-        //тексты выбранного режима
+        //текущий шаг для панели просмотра
+        private int currentStepIndex = -1;
+        private string currentStepTitle = "Нажмите «Рассчитать»";
+        private string currentPaymentText = "—";
+        private string currentResultText = "—";
+        private string currentVariantText = "—";
+        private string currentVariantStatus = "—";
+        private string currentInvBeforeText = "—";
+        private string currentInvAfterText = "—";
+
+        //тексты выбранного расчёта
         private string codeText = "";
-        private string preSpecText = "";
-        private string postSpecText = "";
         private string specText = "";
+        private string postSpecText = "";
         private string wpInvariant = "";
         private string wpVariant = "";
         private string defText = "";
+        private string wpResultText = "Результат wp от бэкенда: ожидается.";
 
         public LoopLabViewModel()
         {
-            GenerateCommand = new RelayCommand(Generate, () => true);
+            GenerateCommand = new RelayCommand(GenerateRandom, () => true);
+            CalculateCommand = new RelayCommand(Calculate, () => true);
             StepCommand = new RelayCommand(Step, () => true);
             RunCommand = new RelayCommand(RunClicked, () => true);
-            ResetCommand = new RelayCommand(Reset, () => true);
-            VerifyCommand = new RelayCommand(Verify, () => true);
+            ResetCommand = new RelayCommand(ResetViewer, () => true);
+
+            //стартовый пример из задания
+            Payments.Add(new ArrayCellViewModel(0, 100, OnPaymentChanged));
+            Payments.Add(new ArrayCellViewModel(1, 200, OnPaymentChanged));
+            Payments.Add(new ArrayCellViewModel(2, 300, OnPaymentChanged));
 
             ApplyMode();
-            Generate();
+            ResetViewer();
         }
 
-        public ObservableCollection<ArrayCellViewModel> Cells { get; } = new ObservableCollection<ArrayCellViewModel>();
+        public ObservableCollection<ArrayCellViewModel> Payments { get; } = new ObservableCollection<ArrayCellViewModel>();
+        public ObservableCollection<PaymentStepViewModel> Steps { get; } = new ObservableCollection<PaymentStepViewModel>();
         public ObservableCollection<ProofRowViewModel> Proofs { get; } = new ObservableCollection<ProofRowViewModel>();
 
         public RelayCommand GenerateCommand { get; }
+        public RelayCommand CalculateCommand { get; }
         public RelayCommand StepCommand { get; }
         public RelayCommand RunCommand { get; }
         public RelayCommand ResetCommand { get; }
-        public RelayCommand VerifyCommand { get; }
 
-        public double N
+        //количество платежей в таблице
+        public double PaymentCount
         {
-            get { return n; }
+            get { return Payments.Count; }
             set
             {
                 if (double.IsNaN(value))
                 {
                     return;
                 }
-                double newValue = Math.Round(Math.Clamp(value, 1, 24));
-                if (n == newValue)
+                int newValue = (int)Math.Round(Math.Clamp(value, 1, 24));
+                if (Payments.Count == newValue)
                 {
                     return;
                 }
-                n = newValue;
+                ResizePayments(newValue);
+            }
+        }
+
+        public double MinAmount
+        {
+            get { return minAmount; }
+            set
+            {
+                if (double.IsNaN(value))
+                {
+                    return;
+                }
+                minAmount = Math.Round(Math.Clamp(value, 0, 1000000));
                 OnPropertyChanged();
             }
         }
 
-        public double MinValue
+        public double MaxAmount
         {
-            get { return minValue; }
+            get { return maxAmount; }
             set
             {
                 if (double.IsNaN(value))
                 {
                     return;
                 }
-                double newValue = Math.Round(Math.Clamp(value, -50, 50));
-                if (minValue == newValue)
-                {
-                    return;
-                }
-                minValue = newValue;
-                OnPropertyChanged();
-            }
-        }
-
-        public double MaxValue
-        {
-            get { return maxValue; }
-            set
-            {
-                if (double.IsNaN(value))
-                {
-                    return;
-                }
-                double newValue = Math.Round(Math.Clamp(value, -50, 50));
-                if (maxValue == newValue)
-                {
-                    return;
-                }
-                maxValue = newValue;
+                maxAmount = Math.Round(Math.Clamp(value, 0, 1000000));
                 OnPropertyChanged();
             }
         }
@@ -125,14 +128,9 @@ namespace PaymentModule.ViewModels
                 {
                     return;
                 }
-                double newValue = Math.Round(Math.Clamp(value, -50, 50));
-                if (threshold == newValue)
-                {
-                    return;
-                }
-                threshold = newValue;
+                threshold = Math.Round(Math.Clamp(value, 0, 1000000));
                 OnPropertyChanged();
-                Reset();
+                InvalidateResult();
             }
         }
 
@@ -148,112 +146,54 @@ namespace PaymentModule.ViewModels
                 }
                 selectedModeIndex = newValue;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsCountMode));
                 ApplyMode();
-                Reset();
+                InvalidateResult();
             }
         }
 
-        public int J
+        public bool IsCountMode
         {
-            get { return j; }
+            get { return selectedModeIndex == 1; }
         }
 
-        public int Res
+        public string ResultText
         {
-            get { return res; }
+            get { return resultText; }
+            private set
+            {
+                resultText = value;
+                OnPropertyChanged();
+            }
         }
 
-        public int StepCount
+        public bool HasResult
         {
-            get { return stepCount; }
+            get { return hasResult; }
+            private set
+            {
+                hasResult = value;
+                OnPropertyChanged();
+            }
         }
 
-        public int VariantValue
-        {
-            get { return variantValue; }
-        }
-
-        public int VariantMax
-        {
-            get { return variantMax; }
-        }
-
-        public bool InvBefore
-        {
-            get { return invBefore; }
-        }
-
-        public bool InvAfter
-        {
-            get { return invAfter; }
-        }
-
-        public bool PostHolds
-        {
-            get { return postHolds; }
-        }
-
-        public bool IsFinished
-        {
-            get { return isFinished; }
-        }
-
-        public string RunButtonText
-        {
-            get { return isRunning ? "Пауза" : "Пуск"; }
-        }
-
-        public string VariantText
-        {
-            get { return "t = n − j = " + variantValue; }
-        }
-
-        public string VariantStatus
+        public string HistoryHint
         {
             get
             {
-                if (variantValue < 0)
+                if (Steps.Count == 0)
                 {
-                    return "t < 0 — условие завершения нарушено";
+                    return "История появится после нажатия «Рассчитать».";
                 }
-                if (stepCount == 0)
-                {
-                    return "t неотрицателен, шагов ещё не было";
-                }
-                return "t неотрицателен и строго убывает";
+                return "Текущий шаг подсвечивается.";
             }
         }
 
-        public bool VariantOk
-        {
-            get { return variantValue >= 0; }
-        }
+        public string InvariantWords { get; set; } = "";
 
-        public string PostStatusText
-        {
-            get
-            {
-                if (!isFinished)
-                {
-                    return "Post: цикл ещё не завершён";
-                }
-                if (postHolds)
-                {
-                    return "Post выполнено: " + postSpecText;
-                }
-                return "Post нарушено: " + postSpecText;
-            }
-        }
+        public string InvariantFormula { get; set; } = "";
 
-        public string TraceText
-        {
-            get { return traceText; }
-        }
-
-        public string VariantLogText
-        {
-            get { return variantLogText; }
-        }
+        public string VariantFormula { get; set; } = "n - j";
 
         public string CodeText
         {
@@ -263,11 +203,6 @@ namespace PaymentModule.ViewModels
         public string SpecText
         {
             get { return specText; }
-        }
-
-        public string PreSpecText
-        {
-            get { return preSpecText; }
         }
 
         public string PostSpecText
@@ -290,30 +225,164 @@ namespace PaymentModule.ViewModels
             get { return defText; }
         }
 
-        public string SummaryText
+        public string WpResultText
         {
-            get { return summaryText; }
-            set
+            get { return wpResultText; }
+        }
+
+        public int J
+        {
+            get { return j; }
+        }
+
+        public int Res
+        {
+            get { return res; }
+        }
+
+        public int VariantValue
+        {
+            get { return variantValue; }
+        }
+
+        public int VariantMax
+        {
+            get { return variantMax; }
+        }
+
+        public bool VariantOk
+        {
+            get { return variantValue >= 0; }
+        }
+
+        public string VariantText
+        {
+            get { return "Осталось платежей: " + variantValue; }
+        }
+
+        public bool InvBefore
+        {
+            get { return invBefore; }
+        }
+
+        public bool InvAfter
+        {
+            get { return invAfter; }
+        }
+
+        public bool PostHolds
+        {
+            get { return postHolds; }
+        }
+
+        public bool IsFinished
+        {
+            get { return isFinished; }
+        }
+
+        public string PostStatusText
+        {
+            get
             {
-                summaryText = value;
-                OnPropertyChanged();
+                if (!isFinished)
+                {
+                    return "Post: цикл ещё не завершён.";
+                }
+                if (postHolds)
+                {
+                    return "Post выполнено: res = " + Money(res) + " — " + postSpecText + ".";
+                }
+                return "Post нарушено: " + postSpecText + ".";
             }
         }
 
-        public string InvariantWords { get; set; } = "";
-
-        public string InvariantFormula { get; set; } = "";
-
-        public string VariantFormula { get; set; } = "n - j";
-
-        //заполняет массив случайными числами
-        private void Generate()
+        public string RunButtonText
         {
-            isRunning = false;
+            get { return isRunning ? "Пауза" : "Пуск"; }
+        }
 
-            int count = (int)Math.Round(n);
-            int low = (int)Math.Round(minValue);
-            int high = (int)Math.Round(maxValue);
+        public int CurrentStepIndex
+        {
+            get { return currentStepIndex; }
+        }
+
+        public string CurrentStepTitle
+        {
+            get { return currentStepTitle; }
+        }
+
+        public string CurrentPaymentText
+        {
+            get { return currentPaymentText; }
+        }
+
+        public string CurrentResultText
+        {
+            get { return currentResultText; }
+        }
+
+        public string CurrentVariantText
+        {
+            get { return currentVariantText; }
+        }
+
+        public string CurrentVariantStatus
+        {
+            get { return currentVariantStatus; }
+        }
+
+        public string CurrentInvBeforeText
+        {
+            get { return currentInvBeforeText; }
+        }
+
+        public string CurrentInvAfterText
+        {
+            get { return currentInvAfterText; }
+        }
+
+        //сумма конкретного платежа
+        private int Amount(int index)
+        {
+            return (int)Math.Round(Payments[index].Value);
+        }
+
+        private int InitialJ()
+        {
+            //для максимума первый платёж уже взят как начальный
+            return selectedModeIndex == 2 ? 1 : 0;
+        }
+
+        private int InitialResult()
+        {
+            return selectedModeIndex == 2 ? Amount(0) : 0;
+        }
+
+        private string Money(int value)
+        {
+            return value + " ₽";
+        }
+
+        private void ResizePayments(int count)
+        {
+            while (Payments.Count > count)
+            {
+                Payments.RemoveAt(Payments.Count - 1);
+            }
+            while (Payments.Count < count)
+            {
+                Payments.Add(new ArrayCellViewModel(Payments.Count, 0, OnPaymentChanged));
+            }
+            OnPropertyChanged(nameof(PaymentCount));
+            InvalidateResult();
+        }
+
+        //случайные суммы для всех платежей
+        private void GenerateRandom()
+        {
+            int count = Payments.Count;
+            int low = (int)Math.Round(minAmount);
+            int high = (int)Math.Round(maxAmount);
             if (high < low)
             {
                 int temp = low;
@@ -322,114 +391,141 @@ namespace PaymentModule.ViewModels
             }
 
             Random random = new Random();
-            values = new int[count];
-            for (int i = 0; i < values.Length; i++)
+            Payments.Clear();
+            for (int i = 0; i < count; i++)
             {
-                values[i] = random.Next(low, high + 1);
+                Payments.Add(new ArrayCellViewModel(i, random.Next(low, high + 1), OnPaymentChanged));
             }
 
-            Cells.Clear();
-            for (int i = 0; i < values.Length; i++)
-            {
-                Cells.Add(new ArrayCellViewModel(i, values[i], OnCellValueChanged));
-            }
-
-            Reset();
+            OnPropertyChanged(nameof(PaymentCount));
+            InvalidateResult();
         }
 
-        //пользователь изменил ячейку таблицы
-        private void OnCellValueChanged(int index, double value)
+        //пользователь изменил сумму платежа
+        private void OnPaymentChanged(int index, double value)
         {
-            if (index < 0 || index >= values.Length)
+            InvalidateResult();
+        }
+
+        //сбрасывает результат и историю, если данные поменялись
+        private void InvalidateResult()
+        {
+            HasResult = false;
+            ResultText = "Нажмите «Рассчитать», чтобы получить результат.";
+            Steps.Clear();
+            ResetViewer();
+            OnPropertyChanged(nameof(HistoryHint));
+        }
+
+        //полный расчёт и сохранение истории шагов
+        private void Calculate()
+        {
+            if (Payments.Count == 0)
             {
                 return;
             }
 
-            int newValue = (int)Math.Round(value);
-            if (newValue < -50)
+            //демо-расчёт для фронта, позже данные придут от бэкенда
+            int total = Payments.Count;
+            int value = InitialResult();
+            int index = InitialJ();
+
+            Steps.Clear();
+            bool initOk = InvariantAt(value, index);
+            Steps.Add(new PaymentStepViewModel
             {
-                newValue = -50;
-            }
-            if (newValue > 50)
+                IsStart = true,
+                Title = "Старт",
+                PaymentText = selectedModeIndex == 2 ? Money(Amount(0)) : "—",
+                ResultText = Money(value),
+                InvBeforeOk = initOk,
+                InvAfterOk = initOk,
+                VariantBefore = total - index,
+                VariantAfter = total - index,
+                VariantOk = true
+            });
+
+            while (index < total)
             {
-                newValue = 50;
+                int variantBefore = total - index;
+                bool invBeforeStep = InvariantAt(value, index);
+                int payment = Amount(index);
+
+                if (selectedModeIndex == 0)
+                {
+                    value = value + payment;
+                }
+                else if (selectedModeIndex == 1)
+                {
+                    if (payment > (int)threshold)
+                    {
+                        value = value + 1;
+                    }
+                }
+                else
+                {
+                    value = Math.Max(value, payment);
+                }
+
+                index = index + 1;
+                bool invAfterStep = InvariantAt(value, index);
+                int variantAfter = total - index;
+
+                Steps.Add(new PaymentStepViewModel
+                {
+                    Title = "Шаг " + Steps.Count,
+                    PaymentText = Money(payment),
+                    ResultText = Money(value),
+                    InvBeforeOk = invBeforeStep,
+                    InvAfterOk = invAfterStep,
+                    VariantBefore = variantBefore,
+                    VariantAfter = variantAfter,
+                    VariantOk = variantAfter == variantBefore - 1 && variantAfter >= 0
+                });
             }
 
-            values[index] = newValue;
-            Reset();
+            ResultText = BuildResult(value);
+            HasResult = true;
+            ResetViewer();
+            OnPropertyChanged(nameof(HistoryHint));
         }
 
-        //возвращает цикл в начальное состояние
-        private void Reset()
+        private string BuildResult(int value)
         {
-            isRunning = false;
-            stepCount = 0;
-            isFinished = false;
-            postHolds = false;
-            traceText = "";
-            variantLogText = "";
-
-            if (values.Length == 0)
+            if (selectedModeIndex == 0)
             {
-                j = 0;
-                res = 0;
-                variantValue = 0;
-                variantMax = 1;
-                invBefore = true;
-                invAfter = true;
-                NotifyState();
-                return;
+                return "На все платежи потребуется " + value + " ₽.";
             }
-
-            if (selectedModeIndex == 2)
+            if (selectedModeIndex == 1)
             {
-                //для максимума префикса начинаем с первого элемента
-                res = values[0];
-                j = 1;
+                return "Платежей больше " + (int)threshold + " ₽: " + value + ".";
             }
-            else
-            {
-                res = 0;
-                j = 0;
-            }
-
-            variantValue = values.Length - j;
-            variantMax = Math.Max(1, selectedModeIndex == 2 ? values.Length - 1 : values.Length);
-            invBefore = CheckInvariant();
-            invAfter = invBefore;
-            isFinished = j >= values.Length;
-            if (isFinished)
-            {
-                postHolds = CheckPost();
-            }
-
-            traceText = "старт: res = " + res + ", j = " + j;
-            variantLogText = "t = n − j = " + variantValue;
-            UpdateCellStates(-1);
-            NotifyState();
+            return "Самый крупный платёж: " + value + " ₽.";
         }
 
-        //один шаг тела цикла
+        //один шаг цикла
         private void Step()
         {
-            if (values.Length == 0 || isFinished)
+            if (Payments.Count == 0 || isFinished || Steps.Count == 0)
+            {
+                return;
+            }
+            if (currentStepIndex < 0)
             {
                 return;
             }
 
-            invBefore = CheckInvariant();
             int oldJ = j;
-            int oldRes = res;
-            int oldVariant = values.Length - j;
+            invBefore = InvariantAt(res, j);
 
             if (selectedModeIndex == 0)
             {
-                res = res + values[j];
+                res = res + Amount(j);
                 j = j + 1;
             }
             else if (selectedModeIndex == 1)
             {
-                if (values[j] > (int)threshold)
+                if (Amount(j) > (int)threshold)
                 {
                     res = res + 1;
                 }
@@ -437,31 +533,27 @@ namespace PaymentModule.ViewModels
             }
             else
             {
-                res = Math.Max(res, values[j]);
+                res = Math.Max(res, Amount(j));
                 j = j + 1;
             }
 
-            stepCount = stepCount + 1;
-            invAfter = CheckInvariant();
-            variantValue = values.Length - j;
-            isFinished = j >= values.Length;
+            invAfter = InvariantAt(res, j);
+            variantValue = Payments.Count - j;
+            isFinished = j >= Payments.Count;
             if (isFinished)
             {
-                postHolds = CheckPost();
+                postHolds = PostAt(res);
             }
 
-            traceText = "шаг " + stepCount + ": res " + oldRes + " → " + res + ", j " + oldJ + " → " + j + ", t " + oldVariant + " → " + variantValue + "\n" + traceText;
-            variantLogText = "шаг " + stepCount + ": t = " + variantValue + (variantValue < oldVariant ? " — убывает" : " — не убывает") + "\n" + variantLogText;
-            traceText = Shorten(traceText);
-            variantLogText = Shorten(variantLogText);
-            UpdateCellStates(isFinished ? -1 : oldJ);
+            UpdatePaymentStates(isFinished ? -1 : oldJ);
+            SetCurrentStep(currentStepIndex + 1);
             NotifyState();
         }
 
-        //запуск и пауза прокрутки цикла
+        //пуск и пауза пошагового просмотра
         private async void RunClicked()
         {
-            if (isFinished)
+            if (Steps.Count == 0 || isFinished)
             {
                 return;
             }
@@ -478,16 +570,80 @@ namespace PaymentModule.ViewModels
             while (isRunning && !isFinished)
             {
                 Step();
-                await Task.Delay(550);
+                await Task.Delay(700);
             }
             isRunning = false;
             OnPropertyChanged(nameof(RunButtonText));
         }
 
-        //раскрашивает ячейки массива
-        private void UpdateCellStates(int changedIndex)
+        //возвращает просмотр в начало
+        private void ResetViewer()
         {
-            for (int i = 0; i < Cells.Count; i++)
+            isRunning = false;
+            j = InitialJ();
+            res = InitialResult();
+            variantValue = Payments.Count - j;
+            variantMax = Math.Max(1, Payments.Count);
+            invBefore = InvariantAt(res, j);
+            invAfter = invBefore;
+            isFinished = j >= Payments.Count;
+            postHolds = isFinished && PostAt(res);
+
+            UpdatePaymentStates(-1);
+            SetCurrentStep(Steps.Count > 0 ? 0 : -1);
+            NotifyState();
+        }
+
+        //подсветка текущего шага и заполнение панели просмотра
+        private void SetCurrentStep(int index)
+        {
+            currentStepIndex = index;
+
+            for (int i = 0; i < Steps.Count; i++)
+            {
+                Steps[i].IsCurrent = i == index;
+            }
+
+            if (index >= 0 && index < Steps.Count)
+            {
+                PaymentStepViewModel step = Steps[index];
+                currentStepTitle = step.IsStart ? "Старт" : "Шаг " + index + " из " + (Payments.Count - InitialJ());
+                currentPaymentText = step.PaymentText;
+                currentResultText = step.ResultText;
+                currentVariantText = step.VariantText;
+                currentVariantStatus = step.IsStart ? "сколько платежей осталось" : (step.VariantOk ? "уменьшился и остался ≥ 0" : "нарушено");
+                currentInvBeforeText = step.InvBeforeText;
+                currentInvAfterText = step.InvAfterText;
+                invBefore = step.InvBeforeOk;
+                invAfter = step.InvAfterOk;
+            }
+            else
+            {
+                currentStepTitle = "Нажмите «Рассчитать»";
+                currentPaymentText = "—";
+                currentResultText = "—";
+                currentVariantText = "—";
+                currentVariantStatus = "—";
+                currentInvBeforeText = "—";
+                currentInvAfterText = "—";
+            }
+
+            OnPropertyChanged(nameof(CurrentStepIndex));
+            OnPropertyChanged(nameof(CurrentStepTitle));
+            OnPropertyChanged(nameof(CurrentPaymentText));
+            OnPropertyChanged(nameof(CurrentResultText));
+            OnPropertyChanged(nameof(CurrentVariantText));
+            OnPropertyChanged(nameof(CurrentVariantStatus));
+            OnPropertyChanged(nameof(CurrentInvBeforeText));
+            OnPropertyChanged(nameof(CurrentInvAfterText));
+            OnPropertyChanged(nameof(InvBefore));
+            OnPropertyChanged(nameof(InvAfter));
+        }
+
+        //раскрашивает таблицу платежей
+        private void UpdatePaymentStates(int changedIndex)
+        {
+            for (int i = 0; i < Payments.Count; i++)
             {
                 CellState state = CellState.Normal;
                 if (i == j)
@@ -503,52 +659,47 @@ namespace PaymentModule.ViewModels
                     state = CellState.InPrefix;
                 }
 
-                Cells[i].State = state;
-                Cells[i].AboveThreshold = values[i] > (int)threshold;
+                Payments[i].State = state;
+                Payments[i].AboveThreshold = selectedModeIndex == 1 && Amount(i) > (int)threshold;
             }
         }
 
-        //проверка инварианта на текущем состоянии
-        //это только подсветка для визуализации, формальные условия проверяет wp-модуль
-        private bool CheckInvariant()
+        private bool InvariantAt(int value, int index)
         {
-            if (j < 0 || j > values.Length)
+            if (index < 0 || index > Payments.Count)
             {
                 return false;
             }
-
             if (selectedModeIndex == 0)
             {
-                return res == SumPrefix(j);
+                return value == SumPrefix(index);
             }
             if (selectedModeIndex == 1)
             {
-                return res == CountPrefix(j);
+                return value == CountPrefix(index);
             }
-            if (j < 1)
+            if (index < 1)
             {
                 return false;
             }
-            return res == MaxPrefix(j);
+            return value == MaxPrefix(index);
         }
 
-        //проверка постусловия после цикла
-        private bool CheckPost()
+        private bool PostAt(int value)
         {
-            if (values.Length == 0)
+            if (Payments.Count == 0)
             {
                 return false;
             }
-
             if (selectedModeIndex == 0)
             {
-                return res == SumPrefix(values.Length);
+                return value == SumPrefix(Payments.Count);
             }
             if (selectedModeIndex == 1)
             {
-                return res == CountPrefix(values.Length);
+                return value == CountPrefix(Payments.Count);
             }
-            return res == MaxPrefix(values.Length);
+            return value == MaxPrefix(Payments.Count);
         }
 
         private int SumPrefix(int end)
@@ -556,7 +707,7 @@ namespace PaymentModule.ViewModels
             int sum = 0;
             for (int i = 0; i < end; i++)
             {
-                sum = sum + values[i];
+                sum = sum + Amount(i);
             }
             return sum;
         }
@@ -566,7 +717,7 @@ namespace PaymentModule.ViewModels
             int count = 0;
             for (int i = 0; i < end; i++)
             {
-                if (values[i] > (int)threshold)
+                if (Amount(i) > (int)threshold)
                 {
                     count = count + 1;
                 }
@@ -576,118 +727,108 @@ namespace PaymentModule.ViewModels
 
         private int MaxPrefix(int end)
         {
-            int max = values[0];
+            int max = Amount(0);
             for (int i = 1; i < end; i++)
             {
-                if (values[i] > max)
+                if (Amount(i) > max)
                 {
-                    max = values[i];
+                    max = Amount(i);
                 }
             }
             return max;
         }
 
-        //кнопка проверки условий корректности
-        private void Verify()
-        {
-            //сами условия проверяет модуль wp, тут только заглушка для фронта
-            SummaryText = "статусы условий заполнит wp-модуль (бэкенд)";
-        }
-
         private void ApplyMode()
         {
             Proofs.Clear();
-            SummaryText = "wp-проверка подключается отдельно";
+            VariantFormula = "n - j";
 
             if (selectedModeIndex == 0)
             {
-                ApplyPrefixSum();
+                ApplySum();
             }
             else if (selectedModeIndex == 1)
             {
-                ApplyCountGreater();
+                ApplyCount();
             }
             else
             {
-                ApplyPrefixMax();
+                ApplyMax();
             }
 
             NotifySpec();
         }
 
-        private void ApplyPrefixSum()
+        private void ApplySum()
         {
-            InvariantWords = "res равна сумме элементов a[0..j−1], и 0 ≤ j ≤ n.";
+            InvariantWords = "res — сумма уже обработанных платежей, и 0 ≤ j ≤ n.";
             InvariantFormula = "res == sum(a, 0, j) && 0 <= j && j <= n";
             codeText = "res := 0; j := 0;\nwhile (j < n) {\n    res := res + a[j];\n    j := j + 1;\n}";
-            preSpecText = "n ≥ 0";
-            postSpecText = "res = sum(a, 0, n)";
-            specText = "Pre:  n ≥ 0\nInv:  res = Σ_{i<j} a[i] ∧ 0 ≤ j ≤ n\nPost: res = Σ_{i<n} a[i]\nt:    n − j";
+            specText = "Pre:  n ≥ 1\nInv:  res = Σ_{i<j} a[i] ∧ 0 ≤ j ≤ n\nPost: res = Σ_{i<n} a[i]\nt:    n − j";
+            postSpecText = "итог равен сумме всех платежей";
             wpInvariant = "wp(S, Inv) = res + a[j] = Σ_{i<j+1} a[i]\n           ∧ 0 ≤ j+1 ≤ n";
             wpVariant = "wp(S, t' < t) = n − (j+1) < n − j";
-            defText = "Def: n ≥ 0; 0 ≤ j < n — индекс a[j] в границах массива";
+            defText = "Def: n ≥ 1; 0 ≤ j < n — индекс a[j] в границах массива";
 
             AddProof("1. Инициализация",
-                "n ≥ 0 ⇒ 0 = Σ пустого префикса ∧ 0 ≤ 0 ≤ n",
-                "После res := 0 и j := 0 сумма по пустому префиксу равна нулю, поэтому инвариант истинен.");
+                "n ≥ 1 ⇒ 0 = Σ пустого префикса ∧ 0 ≤ 0 ≤ n",
+                "До цикла ни один платёж не обработан, поэтому итог равен нулю.");
             AddProof("2. Сохранение",
                 "Inv ∧ j < n ⇒ res + a[j] = Σ_{i<j+1} a[i] ∧ 0 ≤ j+1 ≤ n",
-                "Один шаг добавляет a[j] к сумме и сдвигает j вправо, инвариант остаётся истинным.");
+                "Один шаг добавляет сумму текущего платежа к итогу и сдвигает j вправо.");
             AddProof("3. Выход",
                 "Inv ∧ j ≥ n ⇒ res = Σ_{i<n} a[i]",
-                "Когда j = n, сумма по префиксу совпадает с суммой всего массива.");
+                "Когда все платежи обработаны, итог равен сумме всего массива.");
             AddProof("4. Завершение",
                 "Inv ∧ j < n ⇒ n − j ≥ 0 ∧ n − (j+1) < n − j",
                 "Вариант n − j неотрицателен и строго убывает на каждом шаге.");
         }
 
-        private void ApplyCountGreater()
+        private void ApplyCount()
         {
-            InvariantWords = "res равно числу элементов a[0..j−1], которые больше T, и 0 ≤ j ≤ n.";
+            InvariantWords = "res — число уже обработанных платежей больше T, и 0 ≤ j ≤ n.";
             InvariantFormula = "res == count_gt(a, 0, j, T) && 0 <= j && j <= n";
             codeText = "res := 0; j := 0;\nwhile (j < n) {\n    if (a[j] > T) { res := res + 1; }\n    j := j + 1;\n}";
-            preSpecText = "n ≥ 0";
-            postSpecText = "res = count_gt(a, 0, n, T)";
-            specText = "Pre:  n ≥ 0\nInv:  res = |{i < j : a[i] > T}| ∧ 0 ≤ j ≤ n\nPost: res = |{i < n : a[i] > T}|\nt:    n − j";
+            specText = "Pre:  n ≥ 1\nInv:  res = |{i < j : a[i] > T}| ∧ 0 ≤ j ≤ n\nPost: res = |{i < n : a[i] > T}|\nt:    n − j";
+            postSpecText = "счётчик равен числу платежей больше T";
             wpInvariant = "wp(S, Inv) = (a[j] > T ⇒ res+1 = |{i<j+1: a[i]>T}|)\n           ∧ (a[j] ≤ T ⇒ res = |{i<j+1: a[i]>T}|)\n           ∧ 0 ≤ j+1 ≤ n";
             wpVariant = "wp(S, t' < t) = n − (j+1) < n − j";
-            defText = "Def: n ≥ 0; 0 ≤ j < n — индекс a[j] в границах массива; T — целое число";
+            defText = "Def: n ≥ 1; 0 ≤ j < n — индекс a[j] в границах массива; T — целое число";
 
             AddProof("1. Инициализация",
-                "n ≥ 0 ⇒ 0 = |∅| ∧ 0 ≤ 0 ≤ n",
-                "Для пустого префикса ни один элемент не больше T, поэтому res = 0.");
+                "n ≥ 1 ⇒ 0 = |∅| ∧ 0 ≤ 0 ≤ n",
+                "До цикла ни один платёж не обработан, счётчик равен нулю.");
             AddProof("2. Сохранение",
                 "Inv ∧ j < n ⇒ wp(S, Inv)",
-                "Если a[j] > T, счётчик увеличивается на единицу, иначе остаётся прежним. В обоих случаях инвариант сохраняется.");
+                "Если текущий платёж больше T, счётчик увеличивается на единицу, иначе не меняется.");
             AddProof("3. Выход",
                 "Inv ∧ j ≥ n ⇒ res = |{i<n: a[i] > T}|",
-                "Когда j = n, счётчик охватывает весь массив.");
+                "Когда все платежи обработаны, счётчик охватывает весь массив.");
             AddProof("4. Завершение",
                 "Inv ∧ j < n ⇒ n − j ≥ 0 ∧ n − (j+1) < n − j",
                 "Вариант n − j неотрицателен и строго убывает на каждом шаге.");
         }
 
-        private void ApplyPrefixMax()
+        private void ApplyMax()
         {
-            InvariantWords = "res — максимум элементов a[0..j−1], и 1 ≤ j ≤ n.";
+            InvariantWords = "res — максимум уже обработанных платежей, и 1 ≤ j ≤ n.";
             InvariantFormula = "res == max_prefix(a, 0, j) && 1 <= j && j <= n";
             codeText = "res := a[0]; j := 1;\nwhile (j < n) {\n    res := max(res, a[j]);\n    j := j + 1;\n}";
-            preSpecText = "n ≥ 1";
-            postSpecText = "res = max_prefix(a, 0, n)";
             specText = "Pre:  n ≥ 1\nInv:  res = max a[0..j) ∧ 1 ≤ j ≤ n\nPost: res = max a[0..n)\nt:    n − j";
+            postSpecText = "итог равен максимуму всех платежей";
             wpInvariant = "wp(S, Inv) = max(res, a[j]) = max a[0..j+1)\n           ∧ 1 ≤ j+1 ≤ n";
             wpVariant = "wp(S, t' < t) = n − (j+1) < n − j";
-            defText = "Def: n ≥ 1; 1 ≤ j < n — индекс a[j] и элемент a[0] определены";
+            defText = "Def: n ≥ 1; 1 ≤ j < n — a[0] и a[j] определены";
 
             AddProof("1. Инициализация",
                 "n ≥ 1 ⇒ a[0] = max a[0..1) ∧ 1 ≤ 1 ≤ n",
-                "Максимум одного элемента равен самому элементу, поэтому res := a[0] и j := 1 дают истинный инвариант.");
+                "Первый платёж сразу становится начальным максимумом.");
             AddProof("2. Сохранение",
                 "Inv ∧ j < n ⇒ max(res, a[j]) = max a[0..j+1) ∧ 1 ≤ j+1 ≤ n",
-                "Новый максимум префикса — это максимум из старого максимума и нового элемента a[j].");
+                "Новый максимум — это максимум из старого максимума и текущего платежа.");
             AddProof("3. Выход",
                 "Inv ∧ j ≥ n ⇒ res = max a[0..n)",
-                "Когда j = n, максимум префикса совпадает с максимумом всего массива.");
+                "Когда все платежи обработаны, максимум префикса равен максимуму всего массива.");
             AddProof("4. Завершение",
                 "Inv ∧ j < n ⇒ n − j ≥ 0 ∧ n − (j+1) < n − j",
                 "Вариант n − j неотрицателен и строго убывает на каждом шаге.");
@@ -710,42 +851,27 @@ namespace PaymentModule.ViewModels
             OnPropertyChanged(nameof(VariantFormula));
             OnPropertyChanged(nameof(CodeText));
             OnPropertyChanged(nameof(SpecText));
-            OnPropertyChanged(nameof(PreSpecText));
             OnPropertyChanged(nameof(PostSpecText));
             OnPropertyChanged(nameof(WpInvariant));
             OnPropertyChanged(nameof(WpVariant));
             OnPropertyChanged(nameof(DefText));
+            OnPropertyChanged(nameof(WpResultText));
         }
 
         private void NotifyState()
         {
             OnPropertyChanged(nameof(J));
             OnPropertyChanged(nameof(Res));
-            OnPropertyChanged(nameof(StepCount));
             OnPropertyChanged(nameof(VariantValue));
             OnPropertyChanged(nameof(VariantMax));
-            OnPropertyChanged(nameof(VariantText));
-            OnPropertyChanged(nameof(VariantStatus));
             OnPropertyChanged(nameof(VariantOk));
+            OnPropertyChanged(nameof(VariantText));
             OnPropertyChanged(nameof(InvBefore));
             OnPropertyChanged(nameof(InvAfter));
-            OnPropertyChanged(nameof(IsFinished));
             OnPropertyChanged(nameof(PostHolds));
             OnPropertyChanged(nameof(PostStatusText));
-            OnPropertyChanged(nameof(TraceText));
-            OnPropertyChanged(nameof(VariantLogText));
+            OnPropertyChanged(nameof(IsFinished));
             OnPropertyChanged(nameof(RunButtonText));
-        }
-
-        //оставляет в логе только последние строки
-        private static string Shorten(string text)
-        {
-            string[] lines = text.Split('\n');
-            if (lines.Length <= 12)
-            {
-                return text;
-            }
-            return string.Join("\n", lines, 0, 12);
         }
     }
 }

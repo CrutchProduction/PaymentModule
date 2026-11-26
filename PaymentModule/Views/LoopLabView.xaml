@@ -12,6 +12,7 @@
         <converters:ConditionBrushConverter x:Key="ConditionBrush" />
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:CellStateBrushConverter x:Key="CellStateBrush" />
+        <converters:CurrentStepBrushConverter x:Key="CurrentStepBrush" />
 
         <Style x:Key="Card" TargetType="Border">
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}" />
@@ -29,7 +30,8 @@
             <Setter Property="FontFamily" Value="Consolas" />
             <Setter Property="FontSize" Value="14" />
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="MaxWidth" Value="860" />
+            <Setter Property="MaxWidth" Value="900" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="IsTextSelectionEnabled" Value="True" />
         </Style>
 
@@ -43,52 +45,38 @@
     <Border BorderBrush="{ThemeResource SystemControlHighlightAccent2RevealBackgroundBrush}"
             BorderThickness="2" CornerRadius="10" Padding="20">
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <StackPanel MinWidth="1240" Spacing="16">
-                <StackPanel Orientation="Horizontal" Spacing="16">
-                    <TextBlock Text="Циклы под микроскопом" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" />
-                    <ComboBox Header="Режим (готовый пресет)" Width="280" FontSize="16"
-                              SelectedIndex="{Binding SelectedModeIndex, Mode=TwoWay}">
-                        <ComboBoxItem Content="Сумма префикса" />
-                        <ComboBoxItem Content="Счётчик &gt; T" />
-                        <ComboBoxItem Content="Максимум префикса" />
-                    </ComboBox>
-                </StackPanel>
+            <StackPanel MinWidth="1100" Spacing="16">
+                <TextBlock Text="Анализ будущих платежей" FontSize="30" FontWeight="Bold" />
                 <TextBlock Style="{StaticResource Label}"
-                           Text="При выборе режима инвариант, код цикла и вариант-функция заполняются автоматически." />
+                           Text="Введите суммы платежей, выберите расчёт и нажмите «Рассчитать». Учебная проверка цикла спрятана в блоке ниже." />
 
                 <Grid ColumnSpacing="16">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="360" />
-                        <ColumnDefinition Width="430" />
+                        <ColumnDefinition Width="1.1*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <!--данные-->
+                    <!--платежи-->
                     <Border Grid.Column="0" Style="{StaticResource Card}" VerticalAlignment="Top">
                         <StackPanel Spacing="10">
-                            <TextBlock Text="Данные" Style="{StaticResource CardTitle}" />
+                            <TextBlock Text="Платежи" Style="{StaticResource CardTitle}" />
 
-                            <Grid ColumnSpacing="8" RowSpacing="8">
+                            <Grid ColumnSpacing="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
 
-                                <NumberBox Header="n" Value="{Binding N, Mode=TwoWay}" Minimum="1" Maximum="24"
-                                           SpinButtonPlacementMode="Compact" />
-                                <NumberBox Grid.Column="1" Header="T (порог)" Value="{Binding Threshold, Mode=TwoWay}"
-                                           Minimum="-50" Maximum="50" SpinButtonPlacementMode="Compact" />
-                                <NumberBox Grid.Row="1" Header="min" Value="{Binding MinValue, Mode=TwoWay}"
-                                           Minimum="-50" Maximum="50" SpinButtonPlacementMode="Compact" />
-                                <NumberBox Grid.Row="1" Grid.Column="1" Header="max" Value="{Binding MaxValue, Mode=TwoWay}"
-                                           Minimum="-50" Maximum="50" SpinButtonPlacementMode="Compact" />
+                                <NumberBox Header="Платежей" Value="{Binding PaymentCount, Mode=TwoWay}"
+                                           Minimum="1" Maximum="24" SpinButtonPlacementMode="Compact" />
+                                <NumberBox Grid.Column="1" Header="Мин, ₽" Value="{Binding MinAmount, Mode=TwoWay}"
+                                           Minimum="0" Maximum="1000000" SpinButtonPlacementMode="Compact" />
+                                <NumberBox Grid.Column="2" Header="Макс, ₽" Value="{Binding MaxAmount, Mode=TwoWay}"
+                                           Minimum="0" Maximum="1000000" SpinButtonPlacementMode="Compact" />
                             </Grid>
 
-                            <Button Content="Сгенерировать массив" Command="{Binding GenerateCommand}"
+                            <Button Content="Заполнить случайными суммами" Command="{Binding GenerateCommand}"
                                     HorizontalAlignment="Left" />
 
                             <Grid ColumnSpacing="8" Padding="4,8,4,0">
@@ -97,12 +85,12 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="40" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="i" Style="{StaticResource Label}" />
-                                <TextBlock Grid.Column="1" Text="a[i]" Style="{StaticResource Label}" />
-                                <TextBlock Grid.Column="2" Text="&gt; T" Style="{StaticResource Label}" />
+                                <TextBlock Text="#" Style="{StaticResource Label}" />
+                                <TextBlock Grid.Column="1" Text="Платёж, ₽" Style="{StaticResource Label}" />
+                                <TextBlock Grid.Column="2" Text="&gt; T" Style="{StaticResource Label}" Visibility="{Binding IsCountMode, Converter={StaticResource BoolToVisibility}}" />
                             </Grid>
 
-                            <ListView ItemsSource="{Binding Cells}" Height="330" SelectionMode="None"
+                            <ListView ItemsSource="{Binding Payments}" MaxHeight="250" SelectionMode="None"
                                       HorizontalContentAlignment="Stretch">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
@@ -114,12 +102,12 @@
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="34" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding Index}" FontSize="14"
+                                                <TextBlock Text="{Binding Number}" FontSize="14"
                                                            VerticalAlignment="Center" />
                                                 <NumberBox Grid.Column="1" Value="{Binding Value, Mode=TwoWay}"
-                                                           Minimum="-50" Maximum="50" FontSize="14" Height="32"
+                                                           Minimum="0" Maximum="1000000" FontSize="14" Height="32"
                                                            MinWidth="0" SpinButtonPlacementMode="Hidden" />
-                                                <TextBlock Grid.Column="2" Text="да" FontSize="12"
+                                                <TextBlock Grid.Column="2" Text="&gt; T" FontSize="12"
                                                            Foreground="#F87171" VerticalAlignment="Center"
                                                            Visibility="{Binding AboveThreshold, Converter={StaticResource BoolToVisibility}}" />
                                             </Grid>
@@ -129,139 +117,210 @@
                             </ListView>
 
                             <TextBlock Style="{StaticResource Label}"
-                                       Text="жёлтый — текущий индекс j, зелёный — ячейка уже в префиксе, ярче — только что прочитанная" />
+                                       Text="Суммы можно менять прямо в таблице. Поле «Платежей» задаёт количество строк." />
                         </StackPanel>
                     </Border>
 
-                    <!--исполнение-->
+                    <!--расчёт-->
                     <Border Grid.Column="1" Style="{StaticResource Card}" VerticalAlignment="Top">
                         <StackPanel Spacing="10">
-                            <TextBlock Text="Исполнение" Style="{StaticResource CardTitle}" />
+                            <TextBlock Text="Расчёт" Style="{StaticResource CardTitle}" />
+
+                            <ComboBox Header="Что считаем?" SelectedIndex="{Binding SelectedModeIndex, Mode=TwoWay}">
+                                <ComboBoxItem Content="Общая сумма платежей" />
+                                <ComboBoxItem Content="Количество платежей больше суммы" />
+                                <ComboBoxItem Content="Самый крупный платёж" />
+                            </ComboBox>
+
+                            <NumberBox Header="Считать платежи больше, ₽" Value="{Binding Threshold, Mode=TwoWay}"
+                                       Minimum="0" Maximum="1000000" SpinButtonPlacementMode="Compact"
+                                       Visibility="{Binding IsCountMode, Converter={StaticResource BoolToVisibility}}" />
+
+                            <Button Content="Рассчитать" Command="{Binding CalculateCommand}"
+                                    HorizontalAlignment="Left" />
 
                             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8" Padding="10">
-                                <TextBlock Text="{Binding CodeText}" FontFamily="Consolas" FontSize="14"
-                                           TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                            </Border>
-
-                            <Grid ColumnSpacing="8">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        CornerRadius="8" Padding="10">
-                                    <StackPanel>
-                                        <TextBlock Text="j" Style="{StaticResource Label}" />
-                                        <TextBlock Text="{Binding J}" FontSize="22" FontWeight="SemiBold" />
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        CornerRadius="8" Padding="10">
-                                    <StackPanel>
-                                        <TextBlock Text="res" Style="{StaticResource Label}" />
-                                        <TextBlock Text="{Binding Res}" FontSize="22" FontWeight="SemiBold" />
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        CornerRadius="8" Padding="10">
-                                    <StackPanel>
-                                        <TextBlock Text="t = n − j" Style="{StaticResource Label}" />
-                                        <TextBlock Text="{Binding VariantValue}" FontSize="22" FontWeight="SemiBold" />
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Button Content="Шаг" Command="{Binding StepCommand}" />
-                                <Button Content="{Binding RunButtonText}" Command="{Binding RunCommand}" />
-                                <Button Content="Сброс" Command="{Binding ResetCommand}" />
-                            </StackPanel>
-
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8" Padding="10">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
-                                            Background="{Binding PostHolds, Converter={StaticResource ConditionBrush}}"
-                                            Visibility="{Binding IsFinished, Converter={StaticResource BoolToVisibility}}" />
-                                    <TextBlock Text="{Binding PostStatusText}" TextWrapping="Wrap" FontSize="14" />
+                                    CornerRadius="10" Padding="16">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Результат" Style="{StaticResource Label}" />
+                                    <TextBlock Text="{Binding ResultText}" FontSize="24" FontWeight="SemiBold"
+                                               TextWrapping="Wrap" />
                                 </StackPanel>
                             </Border>
 
-                            <TextBlock Text="Трасса выполнения" FontSize="17" FontWeight="SemiBold" />
-                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8" Padding="8" Height="120">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                    <TextBlock Text="{Binding TraceText}" FontFamily="Consolas" FontSize="12"
-                                               TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                                </ScrollViewer>
-                            </Border>
+                            <TextBlock Style="{StaticResource Label}"
+                                       Text="После расчёта история шагов сохранится — её можно посмотреть в блоке «Проверка корректности расчёта»." />
                         </StackPanel>
                     </Border>
+                </Grid>
 
-                    <!--инвариант, вариант и проверка-->
-                    <StackPanel Grid.Column="2" Spacing="16">
-                        <Border Style="{StaticResource Card}" VerticalAlignment="Top">
-                            <StackPanel Spacing="10">
-                                <TextBlock Text="Инвариант и вариант" Style="{StaticResource CardTitle}" />
+                <Expander Header="Проверка корректности расчёта" IsExpanded="False"
+                          HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <StackPanel Spacing="16" HorizontalAlignment="Stretch">
+                        <Grid ColumnSpacing="16" HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.35*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                                <TextBox Header="Инвариант словами" Text="{Binding InvariantWords, Mode=TwoWay}"
-                                         AcceptsReturn="True" TextWrapping="Wrap" Height="70" FontSize="14"
-                                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                                <TextBox Header="Инвариант (формула)" Text="{Binding InvariantFormula, Mode=TwoWay}"
-                                         FontFamily="Consolas" FontSize="14" TextWrapping="Wrap" />
-                                <TextBox Header="Вариант-функция t" Text="{Binding VariantFormula, Mode=TwoWay}"
-                                         FontFamily="Consolas" FontSize="14" TextWrapping="Wrap" />
+                            <!--история шагов-->
+                            <Border Grid.Column="0" Style="{StaticResource Card}" VerticalAlignment="Top">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="История шагов" Style="{StaticResource CardTitle}" FontSize="20" />
 
-                                <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
+                                    <Grid ColumnSpacing="8" Padding="6,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="70" />
+                                            <ColumnDefinition Width="40" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Шаг" Style="{StaticResource Label}" />
+                                        <TextBlock Grid.Column="1" Text="Платёж" Style="{StaticResource Label}" />
+                                        <TextBlock Grid.Column="2" Text="Итог" Style="{StaticResource Label}" />
+                                        <TextBlock Grid.Column="3" Text="Инв. до" Style="{StaticResource Label}" />
+                                        <TextBlock Grid.Column="4" Text="Инв. после" Style="{StaticResource Label}" />
+                                        <TextBlock Grid.Column="5" Text="t" Style="{StaticResource Label}" />
+                                        <TextBlock Grid.Column="6" Text="t ok" Style="{StaticResource Label}" />
+                                    </Grid>
 
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
-                                                Background="{Binding InvBefore, Converter={StaticResource ConditionBrush}}" />
-                                        <TextBlock Text="до шага" FontSize="14" />
-                                    </StackPanel>
+                                    <ListView ItemsSource="{Binding Steps}" MaxHeight="320" SelectionMode="None"
+                                              HorizontalContentAlignment="Stretch">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="6" Padding="6,4"
+                                                        Background="{Binding IsCurrent, Converter={StaticResource CurrentStepBrush}}">
+                                                    <Grid ColumnSpacing="8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="60" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="70" />
+                                                            <ColumnDefinition Width="40" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Title}" FontSize="12" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding PaymentText}" FontSize="12" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding ResultText}" FontSize="12" />
+                                                        <TextBlock Grid.Column="3" Text="{Binding InvBeforeText}" FontSize="12"
+                                                                   Foreground="{Binding InvBeforeOk, Converter={StaticResource ConditionBrush}}" />
+                                                        <TextBlock Grid.Column="4" Text="{Binding InvAfterText}" FontSize="12"
+                                                                   Foreground="{Binding InvAfterOk, Converter={StaticResource ConditionBrush}}" />
+                                                        <TextBlock Grid.Column="5" Text="{Binding VariantText}" FontSize="12" />
+                                                        <TextBlock Grid.Column="6" Text="{Binding VariantCheckText}" FontSize="12"
+                                                                   Foreground="{Binding VariantOk, Converter={StaticResource ConditionBrush}}" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
 
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                        <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
-                                                Background="{Binding InvAfter, Converter={StaticResource ConditionBrush}}" />
-                                        <TextBlock Text="после шага" FontSize="14" />
-                                    </StackPanel>
-                                </Grid>
+                                    <TextBlock Style="{StaticResource Label}"
+                                               Text="{Binding HistoryHint}" />
+                                </StackPanel>
+                            </Border>
 
-                                <TextBlock Text="{Binding VariantText}" FontSize="16" FontWeight="SemiBold" />
-                                <ProgressBar Minimum="0" Maximum="{Binding VariantMax}" Value="{Binding VariantValue}"
-                                             Foreground="{Binding VariantOk, Converter={StaticResource ConditionBrush}}" />
-                                <TextBlock Text="{Binding VariantStatus}" Style="{StaticResource Label}" />
+                            <!--пошаговый просмотр-->
+                            <Border Grid.Column="1" Style="{StaticResource Card}" VerticalAlignment="Top">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="Пошаговый просмотр" Style="{StaticResource CardTitle}" FontSize="20" />
 
-                                <TextBlock Text="Лог убывания t" Style="{StaticResource Label}" />
-                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        CornerRadius="8" Padding="8" Height="70">
-                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <TextBlock Text="{Binding VariantLogText}" FontFamily="Consolas" FontSize="12"
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="8" Padding="8">
+                                        <TextBlock Text="{Binding CodeText}" FontFamily="Consolas" FontSize="12"
                                                    TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                                    </ScrollViewer>
-                                </Border>
-                            </StackPanel>
-                        </Border>
+                                    </Border>
 
+                                    <TextBox Header="Инвариант словами" Text="{Binding InvariantWords, Mode=TwoWay}"
+                                             AcceptsReturn="True" TextWrapping="Wrap" Height="56" FontSize="13"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                                    <TextBox Header="Инвариант (формула)" Text="{Binding InvariantFormula, Mode=TwoWay}"
+                                             FontFamily="Consolas" FontSize="13" TextWrapping="Wrap" />
+                                    <TextBox Header="Вариант-функция t" Text="{Binding VariantFormula, Mode=TwoWay}"
+                                             FontFamily="Consolas" FontSize="13" TextWrapping="Wrap" />
+
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="8" Padding="10">
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="{Binding CurrentStepTitle}" FontSize="16" FontWeight="SemiBold" />
+
+                                            <Grid ColumnSpacing="12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="Платёж" Style="{StaticResource Label}" />
+                                                    <TextBlock Text="{Binding CurrentPaymentText}" FontSize="16" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="Текущий итог" Style="{StaticResource Label}" />
+                                                    <TextBlock Text="{Binding CurrentResultText}" FontSize="16" />
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <Grid ColumnSpacing="12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <Border Width="12" Height="12" CornerRadius="6" VerticalAlignment="Center"
+                                                            Background="{Binding InvBefore, Converter={StaticResource ConditionBrush}}" />
+                                                    <TextBlock Text="Инвариант до шага:" FontSize="13" />
+                                                    <TextBlock Text="{Binding CurrentInvBeforeText}" FontSize="13"
+                                                               Foreground="{Binding InvBefore, Converter={StaticResource ConditionBrush}}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                                    <Border Width="12" Height="12" CornerRadius="6" VerticalAlignment="Center"
+                                                            Background="{Binding InvAfter, Converter={StaticResource ConditionBrush}}" />
+                                                    <TextBlock Text="после шага:" FontSize="13" />
+                                                    <TextBlock Text="{Binding CurrentInvAfterText}" FontSize="13"
+                                                               Foreground="{Binding InvAfter, Converter={StaticResource ConditionBrush}}" />
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <TextBlock Text="{Binding CurrentVariantText}" FontSize="15" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding CurrentVariantStatus}" Style="{StaticResource Label}" />
+
+                                            <ProgressBar Minimum="0" Maximum="{Binding VariantMax}"
+                                                         Value="{Binding VariantValue}"
+                                                         Foreground="{Binding VariantOk, Converter={StaticResource ConditionBrush}}" />
+                                            <TextBlock Text="{Binding VariantText}" Style="{StaticResource Label}" />
+
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <Button Content="Шаг" Command="{Binding StepCommand}"
+                                                        IsEnabled="{Binding HasResult}" />
+                                                <Button Content="{Binding RunButtonText}" Command="{Binding RunCommand}"
+                                                        IsEnabled="{Binding HasResult}" />
+                                                <Button Content="Сброс" Command="{Binding ResetCommand}"
+                                                        IsEnabled="{Binding HasResult}" />
+                                            </StackPanel>
+
+                                            <Border Background="{ThemeResource ControlFillColorDefaultBrush}"
+                                                    CornerRadius="8" Padding="10"
+                                                    Visibility="{Binding IsFinished, Converter={StaticResource BoolToVisibility}}">
+                                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                                    <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
+                                                            Background="{Binding PostHolds, Converter={StaticResource ConditionBrush}}" />
+                                                    <TextBlock Text="{Binding PostStatusText}" TextWrapping="Wrap" FontSize="13" />
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!--четыре условия-->
                         <Border Style="{StaticResource Card}" VerticalAlignment="Top">
                             <StackPanel Spacing="10">
-                                <TextBlock Text="Проверка (wp)" Style="{StaticResource CardTitle}" />
+                                <TextBlock Text="Четыре условия корректности" Style="{StaticResource CardTitle}" FontSize="20" />
                                 <TextBlock Text="{Binding SpecText}" Style="{StaticResource Formula}" />
-
-                                <Button Content="Проверить условия" Command="{Binding VerifyCommand}"
-                                        HorizontalAlignment="Left" />
-                                <TextBlock Text="{Binding SummaryText}" Style="{StaticResource Label}" />
-                                <TextBlock Style="{StaticResource Label}"
-                                           Text="Сами условия корректности считает модуль wp из ЛР-2, на фронте показаны формулы и место под статусы." />
 
                                 <ItemsControl ItemsSource="{Binding Proofs}">
                                     <ItemsControl.ItemTemplate>
@@ -290,10 +349,11 @@
                                 <TextBlock Text="{Binding WpInvariant}" Style="{StaticResource Formula}" />
                                 <TextBlock Text="{Binding WpVariant}" Style="{StaticResource Formula}" />
                                 <TextBlock Text="{Binding DefText}" Style="{StaticResource Label}" />
+                                <TextBlock Text="{Binding WpResultText}" Style="{StaticResource Label}" />
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                </Grid>
+                </Expander>
             </StackPanel>
         </ScrollViewer>
     </Border>

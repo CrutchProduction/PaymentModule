@@ -26,7 +26,13 @@ namespace PaymentModule.ViewModels
 
         public int Index { get; }
 
-        //значение ячейки можно менять прямо в таблице
+        //номер платежа для таблицы
+        public int Number
+        {
+            get { return Index + 1; }
+        }
+
+        //сумму платежа можно менять прямо в таблице
         public double Value
         {
             get { return value; }
@@ -39,13 +45,13 @@ namespace PaymentModule.ViewModels
                 }
 
                 double newValue = Math.Round(value);
-                if (newValue < -50)
+                if (newValue < 0)
                 {
-                    newValue = -50;
+                    newValue = 0;
                 }
-                if (newValue > 50)
+                if (newValue > 1000000)
                 {
-                    newValue = 50;
+                    newValue = 1000000;
                 }
                 if (this.value == newValue)
                 {
