@@ -363,11 +363,6 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-
-                                <TextBlock Text="{Binding WpInvariant}" Style="{StaticResource Formula}" />
-                                <TextBlock Text="{Binding WpVariant}" Style="{StaticResource Formula}" />
-                                <TextBlock Text="{Binding DefText}" Style="{StaticResource Label}" />
-                                <TextBlock Text="{Binding WpResultText}" Style="{StaticResource Label}" />
                             </StackPanel>
                         </Border>
                     </StackPanel>

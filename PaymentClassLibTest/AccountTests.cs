@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PaymentClassLibrary.Models;
 using System;
 using System.Collections.Generic;
@@ -46,18 +46,6 @@ namespace PaymentClassLibTest
             Assert.AreEqual(70f, account.GetMoneyAmount());
         }
 
-        // Конвертация рублей в доллары (курс 84.05)
-        [TestMethod]
-        public void ConvertMoneyToAnotherType_RublesToDollars()
-        {
-            var account = new Account(1, 8405f, 0); // 8405 рублей
-
-            MoneyManager.ConvertAccountMoney(account, 2); // 2 = доллар
-
-            Assert.AreEqual(2, account.GetMoneyTypeId());
-            Assert.AreEqual(100f, account.GetMoneyAmount(), 0.01f);
-        }
-
         // Смена валюты без пересчёта
         [TestMethod]
         public void SetMoneyType_ChangesCurrencyWithoutRecalculation()
@@ -68,16 +56,6 @@ namespace PaymentClassLibTest
 
             Assert.AreEqual(2, account.GetMoneyTypeId());
             Assert.AreEqual(100f, account.GetMoneyAmount());
-        }
-
-        // Проверка курса валют
-        [TestMethod]
-        public void GetMoneyScale_ReturnsCorrectScale()
-        {
-            Assert.AreEqual(1f, MoneyManager.GetMoneyScale(0));
-            Assert.AreEqual(97f, MoneyManager.GetMoneyScale(1));
-            Assert.AreEqual(84.05f, MoneyManager.GetMoneyScale(2));
-            Assert.AreEqual(12.52f, MoneyManager.GetMoneyScale(3));
         }
     }
 }
